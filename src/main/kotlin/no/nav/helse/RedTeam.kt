@@ -44,5 +44,9 @@ class Dag(private val date: LocalDate, private val members: List<String>) {
         return "Dag(date=$date, members=$members)"
     }
 
-
+    fun dto(): Map<String, Any> {
+        return mapOf("date" to date, "members" to members)
+    }
 }
+
+internal fun Iterable<Dag>.dto(): List<Map<String, Any>> = map { it.dto() }

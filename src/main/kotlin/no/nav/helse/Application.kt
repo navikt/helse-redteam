@@ -1,5 +1,8 @@
 package no.nav.helse
 
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
@@ -11,13 +14,19 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
+import java.time.LocalDate
 import kotlin.time.Duration.Companion.minutes
+
+private val mapper = jacksonObjectMapper()
+    .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+    .registerModule(JavaTimeModule())
 
 fun main() = runBlocking { start() }
 
 suspend fun start() {
     val logger = LoggerFactory.getLogger("helse-repos")
-    val ktorServer = ktor()
+    val redTeam = RedTeam(LocalDate.of(2022, 6, 1), team)
+    val ktorServer = ktor(redTeam)
     try {
         coroutineScope {
             launch {
@@ -37,18 +46,20 @@ suspend fun start() {
 }
 
 
-fun ktor() = embeddedServer(CIO, port = 8080, host = "0.0.0.0") {
-    configureRouting()
+fun ktor(redTeam: RedTeam) = embeddedServer(CIO, port = 8080, host = "0.0.0.0") {
+    configureRouting(redTeam)
 }.start(wait = false)
 
 
-fun Application.configureRouting() {
+fun Application.configureRouting(redTeam: RedTeam) {
     routing {
         get("/") {
             call.respondText("TBD red-team")
         }
-        get("repos") {
-            call.respondText("{}", ContentType.Application.Json)
+        get("red-team") {
+            val calander = redTeam.teamsFor(LocalDate.now() to LocalDate.now().plusDays(30)).dto()
+            val json = mapper.writeValueAsString(calander)
+            call.respondText(json, ContentType.Application.Json)
         }
 
         get("isalive") {
@@ -56,3 +67,9 @@ fun Application.configureRouting() {
         }
     }
 }
+
+val team = Team(
+    listOf("David", "Maxi", "Simen", "Håkon", "Hege", "Christian", "Sondre"),
+    listOf("Jakob", "Jonas", "Joakim", "Øvind", "Sindre", "Eirik"),
+    listOf("Morten T", "Cecilie", "Asma", "Margrethe", "Rita", "Øystein", "Solveig", "Morten N")
+)
