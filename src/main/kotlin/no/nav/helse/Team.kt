@@ -1,14 +1,13 @@
 package no.nav.helse
 
 class Team(private val devs1: List<String>, private val dev2s: List<String>, private val fag: List<String>) {
-    private var counter = 0
 
-    internal fun next(): List<String> {
-        return listOf(devs1[counter % devs1.size], dev2s[counter % dev2s.size], fag[counter % fag.size]).also { counter++ }
+    internal fun teamAt(count: Int): List<String> {
+        return listOf(devs1[count % devs1.size], dev2s[count % dev2s.size], fag[count % fag.size])
     }
 
-    internal fun next(swaps: List<Swap>): List<String> {
-        val nextTeam = next()
+    internal fun teamAt(swaps: List<Swap>, count: Int): List<String> {
+        val nextTeam = teamAt(count)
         validate(swaps,  nextTeam)
         val replaced = swaps.map { it.from }
         val replacements = swaps.map { it.to }

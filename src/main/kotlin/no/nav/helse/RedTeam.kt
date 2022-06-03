@@ -2,13 +2,19 @@ package no.nav.helse
 
 import java.time.LocalDate
 
-class Kalender(private var date: LocalDate, private val team: Team) {
+class RedTeam(private var startDate: LocalDate, private val team: Team) {
     private val overrides = mutableMapOf<LocalDate, List<Swap>>()
 
-    fun next() = (overrides[date]?.let { Dag(date, team.next(it)) } ?: Dag(date, team.next())).also { date = date.plusDays(1) }
+    fun teamFor(date: LocalDate) =
+        Dag(date, team.teamAt(overrides.getOrElse(date) { emptyList() }, startDate.datesUntil(date).count().toInt()))
 
     fun override(from: String, to: String, date: LocalDate) {
         overrides.compute(date) { _, value -> return@compute value?.plus(Swap(from, to)) ?: mutableListOf(Swap(from, to)) }
+    }
+
+    fun teamsFor(span: Pair<LocalDate, LocalDate>): List<Dag> {
+        require(span.first.isBefore(span.second))
+        return span.first.datesUntil(span.second).map { teamFor(it) }.toList() + teamFor(span.second)
     }
 }
 

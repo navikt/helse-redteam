@@ -13,15 +13,15 @@ internal class TeamTest {
 
         assertEquals(
             listOf("Sondre", "Jakob", "Morten"),
-            team.next()
+            team.teamAt(0)
         )
         assertEquals(
             listOf("David", "Sindre", "Cecilie"),
-            team.next()
+            team.teamAt(1)
         )
         assertEquals(
             listOf("Christian", "Jakob", "Morten"),
-            team.next()
+            team.teamAt(2)
         )
     }
 
