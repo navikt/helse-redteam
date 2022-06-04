@@ -40,7 +40,7 @@ internal class RedTeamTest {
 
 
     fun Int.januar(dev1: String, dev2: String, fag:String) =
-        Dag(LocalDate.of(2022, 1, this), listOf(dev1, dev2, fag))
+        Workday(LocalDate.of(2022, 1, this), listOf(dev1, dev2, fag))
 
     fun Int.januar() =
         LocalDate.of(2022, 1, this)
