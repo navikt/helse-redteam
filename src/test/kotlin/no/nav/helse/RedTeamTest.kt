@@ -44,6 +44,12 @@ internal class RedTeamTest {
         assertEquals(NonWorkday(2.januar(), "SUNDAY"), kalender.teamFor(2.januar()))
     }
 
+    @Test
+    fun `no red-team on holidays`() {
+        val kalender = RedTeam(startDato, team, holidays())
+        assertEquals(NonWorkday(1.januar(), "1. nyttårsdag"), kalender.teamFor(1.januar()))
+    }
+
 
     fun Int.januar(dev1: String, dev2: String, fag:String) =
         Workday(LocalDate.of(2022, 1, this), listOf(dev1, dev2, fag))

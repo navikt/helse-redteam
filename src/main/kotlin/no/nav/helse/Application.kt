@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory
 import java.time.LocalDate
 import kotlin.time.Duration.Companion.minutes
 
-private val mapper = jacksonObjectMapper()
+internal val mapper = jacksonObjectMapper()
     .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
     .registerModule(JavaTimeModule())
 
@@ -25,7 +25,7 @@ fun main() = runBlocking { start() }
 
 suspend fun start() {
     val logger = LoggerFactory.getLogger("helse-repos")
-    val redTeam = RedTeam(LocalDate.of(2022, 6, 1), team)
+    val redTeam = RedTeam(LocalDate.of(2022, 6, 1), team, holidays())
     val ktorServer = ktor(redTeam)
     try {
         coroutineScope {
