@@ -32,5 +32,5 @@ interface Day
 
 data class Workday(val date: LocalDate, val members: List<String>): Day {
 }
-data class NonWorkday(private val date: LocalDate, private val name: String): Day {
+data class NonWorkday(val date: LocalDate, val name: String): Day {
 }
