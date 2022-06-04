@@ -12,30 +12,36 @@ internal class RedTeamTest {
 
     @Test
     fun teamAt() {
-        assertEquals(1.januar("Sondre", "Jakob", "Morten"), RedTeam(startDato, team).teamFor(1.januar()))
+        assertEquals(3.januar("Sondre", "Jakob", "Morten"), RedTeam(startDato, team).teamFor(3.januar()))
     }
     @Test
     fun sequence() {
         assertEquals(listOf(
-            1.januar("Sondre", "Jakob", "Morten"),
-            2.januar("David", "Sindre", "Cecilie")
-        ), RedTeam(startDato, team).teamsFor(1.januar() to 2.januar()))
+            3.januar("Sondre", "Jakob", "Morten"),
+            4.januar("David", "Sindre", "Cecilie")
+        ), RedTeam(startDato, team).teamsFor(3.januar() to 4.januar()))
     }
 
     @Test
     fun override() {
         val kalender = RedTeam(startDato, team)
-        kalender.override("Morten", "Cecilie", 1.januar())
-        kalender.override("Sondre", "David", 1.januar())
-        assertEquals(1.januar("Jakob", "Cecilie", "David"), kalender.teamFor(1.januar()))
-        assertEquals(2.januar("David", "Sindre", "Cecilie"), kalender.teamFor(2.januar()))
+        kalender.override("Morten", "Cecilie", 3.januar())
+        kalender.override("Sondre", "David", 3.januar())
+        assertEquals(3.januar("Jakob", "Cecilie", "David"), kalender.teamFor(3.januar()))
+        assertEquals(4.januar("David", "Sindre", "Cecilie"), kalender.teamFor(4.januar()))
     }
 
     @Test
     fun `cannot override teams not containing the replacee`() {
         val kalender = RedTeam(startDato, team)
-        kalender.override("Cecilie", "Morten", 1.januar())
-        assertThrows<IllegalArgumentException> { kalender.teamFor(1.januar()) }
+        kalender.override("Cecilie", "Morten", 3.januar())
+        assertThrows<IllegalArgumentException> { kalender.teamFor(3.januar()) }
+    }
+
+    @Test
+    fun `no red-team on weekends`() {
+        val kalender = RedTeam(startDato, team)
+        assertEquals(NonWorkday(2.januar(), "SUNDAY"), kalender.teamFor(2.januar()))
     }
 
 
