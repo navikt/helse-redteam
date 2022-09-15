@@ -4,9 +4,9 @@ Applikasjonen red-team holder styr på red-team ordningen i team Bømlo og sørg
 mennesker som enten er i rotasjonen eller er brukere av red-team er godt opplyst om hvem som er på vakt når.
 
 #### Inkluderer
-- Oversikt og overstyring på redteam via tbd siden.
-- Notifikasjoner på Slack
-- Oppdatering av grupper på Slack
+- [x] Oversikt og overstyring på redteam via tbd siden.
+- [ ] Notifikasjoner på Slack
+- [ ] Oppdatering av grupper på Slack
 
 #### Henvendelser
 Spørsmål knyttet til koden eller prosjektet kan stilles som issues her på GitHub.
