@@ -26,8 +26,13 @@ internal val mapper = jacksonObjectMapper()
 
 fun main() = runBlocking { start() }
 
+
+
 suspend fun start() {
     val logger = LoggerFactory.getLogger("helse-repos")
+    val teamData = teamDataFromFile()
+    val team = Team(teamData[0], teamData[1], teamData[2])
+
     val redTeam = RedTeam(LocalDate.of(2022, 6, 1), team, holidays())
     val ktorServer = ktor(redTeam)
     try {
@@ -87,8 +92,8 @@ fun Application.configureRouting(redTeam: RedTeam) {
     }
 }
 
-val team = Team(
-    listOf("David", "Maxi", "Simen", "Håkon", "Hege", "Marthe", "Helene"),
-    listOf("Jakob", "Jonas","Øvind", "Stephen", "Sindre", "Eirik", "Christian", "Sondre", "Elias"),
-    listOf("Morten T", "Cecilie", "Asma", "Margrethe", "Rita", "Øystein", "Solveig", "Morten N")
-)
+//val team = Team(
+//    listOf("David", "Maxi", "Simen", "Håkon", "Hege", "Marthe", "Helene"),
+//    listOf("Jakob", "Jonas","Øvind", "Stephen", "Sindre", "Eirik", "Christian", "Sondre", "Elias"),
+//    listOf("Morten T", "Cecilie", "Asma", "Margrethe", "Rita", "Øystein", "Solveig", "Morten N")
+//)
