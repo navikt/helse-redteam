@@ -4,9 +4,12 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import io.ktor.server.engine.*
+import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.coroutineScope
@@ -48,6 +51,9 @@ suspend fun start() {
 
 fun ktor(redTeam: RedTeam) = embeddedServer(CIO, port = 8080, host = "0.0.0.0") {
     configureRouting(redTeam)
+    install(ContentNegotiation) {
+        json()
+    }
 }.start(wait = false)
 
 
@@ -61,6 +67,19 @@ fun Application.configureRouting(redTeam: RedTeam) {
             val json = mapper.writeValueAsString(calender)
             call.respondText(json, ContentType.Application.Json)
         }
+        get("red-team/{date}") {
+            val date = LocalDate.parse(call.parameters["date"]) ?: throw IllegalArgumentException("missing parameter: <date>")
+            val calender = redTeam.teamsFor(date to date).first()
+            val json = mapper.writeValueAsString(calender)
+            call.respondText(json, ContentType.Application.Json)
+        }
+        post("red-team/{date}") {
+            val date = LocalDate.parse(call.parameters["date"]) ?: throw IllegalArgumentException("missing parameter: <date>")
+            val swap = call.receive<Swap>()
+            redTeam.override(swap.from, swap.to, date)
+            val response = mapper.writeValueAsString(redTeam.teamFor(date))
+            call.respondText(response, ContentType.Application.Json)
+        }
 
         get("isalive") {
             call.respondText("OK")
@@ -69,7 +88,7 @@ fun Application.configureRouting(redTeam: RedTeam) {
 }
 
 val team = Team(
-    listOf("David", "Maxi", "Simen", "Håkon", "Hege", "Christian", "Sondre"),
-    listOf("Jakob", "Jonas", "Joakim", "Øvind", "Sindre", "Eirik"),
+    listOf("David", "Maxi", "Simen", "Håkon", "Hege", "Marthe", "Helene"),
+    listOf("Jakob", "Jonas","Øvind", "Stephen", "Sindre", "Eirik", "Christian", "Sondre", "Elias"),
     listOf("Morten T", "Cecilie", "Asma", "Margrethe", "Rita", "Øystein", "Solveig", "Morten N")
 )

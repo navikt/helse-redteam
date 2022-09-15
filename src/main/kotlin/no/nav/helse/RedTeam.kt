@@ -21,6 +21,7 @@ class RedTeam(
     }
 
     fun override(from: String, to: String, date: LocalDate) {
+        require(date.dayOfWeek !in weekend && date !in holidays){"Trying to override red team for a non-workday: $date"}
         overrides.compute(date) { _, value ->
             return@compute value?.plus(Swap(from, to)) ?: mutableListOf(
                 Swap(
@@ -32,7 +33,7 @@ class RedTeam(
     }
 
     fun teamsFor(span: Pair<LocalDate, LocalDate>): List<Day> {
-        require(span.first.isBefore(span.second))
+        require(span.first.isBefore(span.second) || span.first == span.second) {"Invalid date span to generate team for"}
         return span.first.datesUntil(span.second).map { teamFor(it) }.toList() + teamFor(span.second)
     }
 
