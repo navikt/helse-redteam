@@ -8,6 +8,7 @@ import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import io.ktor.server.engine.*
+import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -29,7 +30,7 @@ fun main() = runBlocking { start() }
 
 
 suspend fun start() {
-    val logger = LoggerFactory.getLogger("helse-repos")
+    val logger = LoggerFactory.getLogger("red-team")
     val teamData = teamDataFromFile()
     val team = Team(teamData[0], teamData[1], teamData[2])
 
@@ -59,6 +60,7 @@ fun ktor(redTeam: RedTeam) = embeddedServer(CIO, port = 8080, host = "0.0.0.0") 
     install(ContentNegotiation) {
         json()
     }
+    install(CallLogging)
 }.start(wait = false)
 
 
