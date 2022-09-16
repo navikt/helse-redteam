@@ -55,6 +55,5 @@ jobs:
         env:
           RESOURCE: nais.yml
           IMAGE: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_IMAGE_NAME }}
-          CLUSTER: dev-gcp
+          CLUSTER: prod-gcp
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          VARS: dev.yml
