@@ -26,3 +26,7 @@ spec:
   filesFrom:
     - configmap: red-team-data
       mountPath: /var/run/configmaps
+  accessPolicy:
+    inbound:
+      rules:
+        - application: tbd-website
