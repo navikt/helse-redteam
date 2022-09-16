@@ -31,6 +31,7 @@ class Team(private vararg val groups: Pair<String, List<String>>) {
         }
     }
 
+    fun groups() = groups.map { it.first }
     fun minLength() = groups.minOf { it.second.size }
     fun maxLength() = groups.maxOf { it.second.size }
 }

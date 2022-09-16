@@ -25,7 +25,7 @@ internal class RedTeamTest {
             listOf(
                 3.januar("Sondre", "Jakob", "Morten"),
                 4.januar("David", "Sindre", "Cecilie")
-            ), RedTeam(startDato, team).teamsFor(3.januar() to 4.januar())
+            ), RedTeam(startDato, team).teamsFor(3.januar() to 4.januar()).days
         )
     }
 

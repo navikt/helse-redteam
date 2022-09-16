@@ -74,7 +74,7 @@ fun Application.configureRouting(redTeam: RedTeam) {
         }
         get("red-team/{date}") {
             val date = LocalDate.parse(call.parameters["date"]) ?: throw IllegalArgumentException("missing parameter: <date>")
-            val calender = redTeam.teamsFor(date to date).first()
+            val calender = redTeam.teamFor(date)
             val json = mapper.writeValueAsString(calender)
             call.respondText(json, ContentType.Application.Json)
         }
