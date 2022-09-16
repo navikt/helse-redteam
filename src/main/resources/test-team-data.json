@@ -1,5 +1,5 @@
 [
-  ["Sondre", "Christian"],
-  ["Margrethe", "Morten"],
-  ["David", "Hege"]
+  {"name": "Speilvendt", "members": ["Sondre", "Christian"]},
+  {"name": "Fag", "members": ["Margrethe", "Morten"]},
+  {"name": "Spleiselaget", "members": ["David", "Hege"]}
 ]
