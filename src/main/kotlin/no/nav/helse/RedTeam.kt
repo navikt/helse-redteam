@@ -1,5 +1,6 @@
 package no.nav.helse
 
+import no.nav.helse.Team.*
 import java.time.DayOfWeek.SATURDAY
 import java.time.DayOfWeek.SUNDAY
 import java.time.LocalDate
@@ -43,9 +44,10 @@ class RedTeam(
 
 data class Swap(val from: String, val to: String)
 
+
 interface Day
 
-data class Workday(val date: LocalDate, val members: List<String>): Day {
+data class Workday(val date: LocalDate, val members: List<TeamMember>): Day {
 }
 data class NonWorkday(val date: LocalDate, val name: String): Day {
 }

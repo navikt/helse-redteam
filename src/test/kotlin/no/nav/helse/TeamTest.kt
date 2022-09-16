@@ -9,31 +9,31 @@ internal class TeamTest {
 
     @Test
     fun nextDay() {
-        val team = Team(listOf("Sondre", "David", "Christian"), listOf("Jakob", "Sindre"), listOf("Morten", "Cecilie"))
+        val team = Team("Spleiselaget" to listOf("Sondre", "David", "Christian"), "Speilvendt" to listOf("Jakob", "Sindre"), "Fag" to listOf("Morten", "Cecilie"))
 
         assertEquals(
             listOf("Sondre", "Jakob", "Morten"),
-            team.teamAt(0)
+            team.teamAt(0).map { it.name }
         )
         assertEquals(
             listOf("David", "Sindre", "Cecilie"),
-            team.teamAt(1)
+            team.teamAt(1).map { it.name }
         )
         assertEquals(
             listOf("Christian", "Jakob", "Morten"),
-            team.teamAt(2)
+            team.teamAt(2).map { it.name }
         )
     }
 
     @Test
     fun minCycle() {
-        val team = Team(listOf("Sondre", "David", "Christian"), listOf("Jakob", "Sindre"), listOf("Morten", "Cecilie"))
+        val team = Team("Spleiselaget" to listOf("Sondre", "David", "Christian"), "Speilvendt" to listOf("Jakob", "Sindre"), "Fag" to listOf("Morten", "Cecilie"))
         assertEquals(2, team.minLength())
     }
 
     @Test
     fun maxCycle() {
-        val team = Team(listOf("Sondre", "David", "Christian"), listOf("Jakob", "Sindre"), listOf("Morten", "Cecilie"))
+        val team = Team("Spleiselaget" to listOf("Sondre", "David", "Christian"), "Speilvendt" to listOf("Jakob", "Sindre"), "Fag" to listOf("Morten", "Cecilie"))
         assertEquals(3, team.maxLength())
     }
 }

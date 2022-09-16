@@ -21,7 +21,7 @@ internal class E2ETest {
             install(ContentNegotiation) {
                 jackson()
             }
-            configureRouting(RedTeam(LocalDate.of(2022, 1, 1), Team(listOf("Sondre", "Jakob"), listOf("Christian"), listOf("Margrethe"))))
+            configureRouting(RedTeam(LocalDate.of(2022, 1, 1), Team("Speilvendt" to listOf("Sondre", "Jakob"), "Spleiselaget" to listOf("Christian"), "Fag" to listOf("Margrethe"))))
         }
 
         val response = client.post("/red-team/2022-01-03") {
@@ -36,5 +36,5 @@ internal class E2ETest {
     }
 
 
-    fun parsedTeam(json: String) = jacksonObjectMapper().readTree(json)["members"].map { it.asText() }
+    fun parsedTeam(json: String) = jacksonObjectMapper().readTree(json)["members"].map { it["name"].asText() }
 }

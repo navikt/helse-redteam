@@ -31,7 +31,7 @@ fun main() = runBlocking { start() }
 suspend fun start() {
     val logger = LoggerFactory.getLogger("helse-repos")
     val teamData = teamDataFromFile()
-    val team = Team(teamData[0], teamData[1], teamData[2])
+    val team = Team("Spleiselaget" to teamData[0], "Speilvendt" to teamData[1], "Fag" to teamData[2])
 
     val redTeam = RedTeam(LocalDate.of(2022, 6, 1), team, holidays())
     val ktorServer = ktor(redTeam)

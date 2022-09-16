@@ -7,19 +7,26 @@ import kotlin.test.assertEquals
 
 internal class RedTeamTest {
 
-    private val team = Team(listOf("Sondre", "David", "Christian"), listOf("Jakob", "Sindre"), listOf("Morten", "Cecilie"))
+    private val team = Team(
+        "Spleiselaget" to listOf("Sondre", "David", "Christian"),
+        "Speilvendt" to listOf("Jakob", "Sindre"),
+        "Fag" to listOf("Morten", "Cecilie")
+    )
     private val startDato = LocalDate.of(2022, 1, 1)
 
     @Test
     fun teamAt() {
         assertEquals(3.januar("Sondre", "Jakob", "Morten"), RedTeam(startDato, team).teamFor(3.januar()))
     }
+
     @Test
     fun sequence() {
-        assertEquals(listOf(
-            3.januar("Sondre", "Jakob", "Morten"),
-            4.januar("David", "Sindre", "Cecilie")
-        ), RedTeam(startDato, team).teamsFor(3.januar() to 4.januar()))
+        assertEquals(
+            listOf(
+                3.januar("Sondre", "Jakob", "Morten"),
+                4.januar("David", "Sindre", "Cecilie")
+            ), RedTeam(startDato, team).teamsFor(3.januar() to 4.januar())
+        )
     }
 
     @Test
@@ -27,7 +34,7 @@ internal class RedTeamTest {
         val kalender = RedTeam(startDato, team)
         kalender.override("Morten", "Cecilie", 3.januar())
         kalender.override("Sondre", "David", 3.januar())
-        assertEquals(3.januar("Jakob", "Cecilie", "David"), kalender.teamFor(3.januar()))
+        assertEquals(3.januar("David", "Jakob", "Cecilie"), kalender.teamFor(3.januar()))
         assertEquals(4.januar("David", "Sindre", "Cecilie"), kalender.teamFor(4.januar()))
     }
 
@@ -51,8 +58,13 @@ internal class RedTeamTest {
     }
 
 
-    fun Int.januar(dev1: String, dev2: String, fag:String) =
-        Workday(LocalDate.of(2022, 1, this), listOf(dev1, dev2, fag))
+    fun Int.januar(dev1: String, dev2: String, fag: String) =
+        Workday(
+            LocalDate.of(2022, 1, this),
+            listOf(
+                Team.TeamMember("Spleiselaget", dev1),
+                Team.TeamMember("Speilvendt", dev2),
+                Team.TeamMember("Fag", fag)).sortedBy { it.team })
 
     fun Int.januar() =
         LocalDate.of(2022, 1, this)

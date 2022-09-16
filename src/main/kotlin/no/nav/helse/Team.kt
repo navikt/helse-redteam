@@ -1,22 +1,27 @@
 package no.nav.helse
 
-class Team(private val devs1: List<String>, private val dev2s: List<String>, private val fag: List<String>) {
+import no.nav.helse.Team.*
 
-    internal fun teamAt(count: Int): List<String> {
-        return listOf(devs1[count % devs1.size], dev2s[count % dev2s.size], fag[count % fag.size])
-    }
+class Team(private vararg val groups: Pair<String, List<String>>) {
 
-    internal fun teamAt(swaps: List<Swap>, count: Int): List<String> {
+    data class TeamMember(
+        val team: String,
+        val name: String
+    )
+
+    internal fun teamAt(count: Int): List<TeamMember> = groups.map { group -> TeamMember(group.first, group.second[count % group.second.size]) }
+
+    internal fun teamAt(swaps: List<Swap>, count: Int): List<TeamMember> {
         val nextTeam = teamAt(count)
-        validate(swaps,  nextTeam)
-        val replaced = swaps.map { it.from }
-        val replacements = swaps.map { it.to }
-        return (nextTeam.filterNot { it in replaced } + replacements)
+        validate(swaps,  nextTeam.map { it.name })
+        return nextTeam.replaceWith(swaps).sortedBy { it.team }
     }
 
     private fun validate(swaps: List<Swap>) {
-        swaps.forEach { swap -> require(listOf(devs1, dev2s, fag).any { groups -> listOf(swap.from, swap.to).all { it in groups } }
-        ) { "Invalid swap: ${swap.from} and ${swap.to} not in same group" }}
+        swaps.forEach { swap ->
+            require(groups.find { swap.from in it.second } == groups.find { swap.to in it.second })
+            { "Invalid swap: ${swap.from} and ${swap.to} not in same group" }
+        }
     }
 
     private fun validate(swaps: List<Swap>, nextTeam: List<String>) {
@@ -26,6 +31,10 @@ class Team(private val devs1: List<String>, private val dev2s: List<String>, pri
         }
     }
 
-        fun minLength() = minOf(devs1.size, dev2s.size, fag.size)
-        fun maxLength() = maxOf(devs1.size, dev2s.size, fag.size)
-    }
+    fun minLength() = groups.minOf { it.second.size }
+    fun maxLength() = groups.maxOf { it.second.size }
+}
+
+fun List<TeamMember>.replaceWith(swaps: List<Swap>): List<TeamMember> {
+    return map { TeamMember(it.team,  (swaps.find { swap -> swap.from == it.name }?.to ?: it.name)) }
+}
