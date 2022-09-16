@@ -18,6 +18,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
+import org.slf4j.event.Level
 import java.time.LocalDate
 import kotlin.time.Duration.Companion.minutes
 
@@ -60,7 +61,9 @@ fun ktor(redTeam: RedTeam) = embeddedServer(CIO, port = 8080, host = "0.0.0.0") 
     install(ContentNegotiation) {
         json()
     }
-    install(CallLogging)
+    install(CallLogging){
+        level = Level.INFO
+    }
 }.start(wait = false)
 
 
