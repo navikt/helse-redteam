@@ -68,7 +68,7 @@ fun Application.configureRouting(redTeam: RedTeam) {
             call.respondText("TBD red-team")
         }
         get("red-team") {
-            val calender = redTeam.teamsFor(LocalDate.now() to LocalDate.now().plusDays(30))
+            val calender = redTeam.redTeamCalendar(LocalDate.now() to LocalDate.now().plusDays(30))
             val json = mapper.writeValueAsString(calender)
             call.respondText(json, ContentType.Application.Json)
         }

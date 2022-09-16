@@ -8,9 +8,9 @@ import kotlin.test.assertEquals
 internal class RedTeamTest {
 
     private val team = Team(
-        "Spleiselaget" to listOf("Sondre", "David", "Christian"),
-        "Speilvendt" to listOf("Jakob", "Sindre"),
-        "Fag" to listOf("Morten", "Cecilie")
+        TeamDto("Spleiselaget", listOf("Sondre", "David", "Christian")),
+        TeamDto("Speilvendt", listOf("Jakob", "Sindre")),
+        TeamDto("Fag", listOf("Morten", "Cecilie"))
     )
     private val startDato = LocalDate.of(2022, 1, 1)
 
@@ -25,7 +25,7 @@ internal class RedTeamTest {
             listOf(
                 3.januar("Sondre", "Jakob", "Morten"),
                 4.januar("David", "Sindre", "Cecilie")
-            ), RedTeam(startDato, team).teamsFor(3.januar() to 4.januar()).days
+            ), RedTeam(startDato, team).redTeamCalendar(3.januar() to 4.januar()).days
         )
     }
 

@@ -33,10 +33,10 @@ class RedTeam(
         }
     }
 
-    fun teamsFor(span: Pair<LocalDate, LocalDate>): RedTeamCalendar {
+    fun redTeamCalendar(span: Pair<LocalDate, LocalDate>): RedTeamCalendarDto {
         require(span.first.isBefore(span.second) || span.first == span.second) {"Invalid date span to generate team for"}
         val redTeams = span.first.datesUntil(span.second).map { teamFor(it) }.toList() + teamFor(span.second)
-        return RedTeamCalendar( team.groups(), redTeams)
+        return RedTeamCalendarDto( team.groups(), redTeams)
     }
 
     private fun datesTo(date: LocalDate) =
@@ -46,8 +46,8 @@ class RedTeam(
 data class Swap(val from: String, val to: String)
 
 
-data class RedTeamCalendar(
-    val teams: List<String>,
+data class RedTeamCalendarDto(
+    val teams: List<TeamDto>,
     val days: List<Day>
 )
 

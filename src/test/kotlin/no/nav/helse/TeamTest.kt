@@ -6,10 +6,14 @@ import kotlin.test.assertEquals
 internal class TeamTest {
 
 
+    val team = Team(
+        TeamDto("Spleiselaget", listOf("Sondre", "David", "Christian")),
+        TeamDto("Speilvendt", listOf("Jakob", "Sindre")),
+        TeamDto("Fag", listOf("Morten", "Cecilie"))
+    )
 
     @Test
     fun nextDay() {
-        val team = Team("Spleiselaget" to listOf("Sondre", "David", "Christian"), "Speilvendt" to listOf("Jakob", "Sindre"), "Fag" to listOf("Morten", "Cecilie"))
 
         assertEquals(
             listOf("Sondre", "Jakob", "Morten"),
@@ -27,13 +31,11 @@ internal class TeamTest {
 
     @Test
     fun minCycle() {
-        val team = Team("Spleiselaget" to listOf("Sondre", "David", "Christian"), "Speilvendt" to listOf("Jakob", "Sindre"), "Fag" to listOf("Morten", "Cecilie"))
         assertEquals(2, team.minLength())
     }
 
     @Test
     fun maxCycle() {
-        val team = Team("Spleiselaget" to listOf("Sondre", "David", "Christian"), "Speilvendt" to listOf("Jakob", "Sindre"), "Fag" to listOf("Morten", "Cecilie"))
         assertEquals(3, team.maxLength())
     }
 }

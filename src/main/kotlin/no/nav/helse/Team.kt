@@ -2,14 +2,18 @@ package no.nav.helse
 
 import no.nav.helse.Team.*
 
-class Team(private vararg val groups: Pair<String, List<String>>) {
+data class TeamDto(
+    val name: String,
+    val members: List<String>
+)
+class Team(private vararg val groups: TeamDto) {
 
     data class TeamMember(
         val team: String,
         val name: String
     )
 
-    internal fun teamAt(count: Int): List<TeamMember> = groups.map { group -> TeamMember(group.first, group.second[count % group.second.size]) }
+    internal fun teamAt(count: Int): List<TeamMember> = groups.map { group -> TeamMember(group.name, group.members[count % group.members.size]) }
 
     internal fun teamAt(swaps: List<Swap>, count: Int): List<TeamMember> {
         val nextTeam = teamAt(count)
@@ -19,7 +23,7 @@ class Team(private vararg val groups: Pair<String, List<String>>) {
 
     private fun validate(swaps: List<Swap>) {
         swaps.forEach { swap ->
-            require(groups.find { swap.from in it.second } == groups.find { swap.to in it.second })
+            require(groups.find { swap.from in it.members } == groups.find { swap.to in it.members })
             { "Invalid swap: ${swap.from} and ${swap.to} not in same group" }
         }
     }
@@ -31,9 +35,9 @@ class Team(private vararg val groups: Pair<String, List<String>>) {
         }
     }
 
-    fun groups() = groups.map { it.first }
-    fun minLength() = groups.minOf { it.second.size }
-    fun maxLength() = groups.maxOf { it.second.size }
+    fun groups() = groups.toList()
+    fun minLength() = groups.minOf { it.members.size }
+    fun maxLength() = groups.maxOf { it.members.size }
 }
 
 fun List<TeamMember>.replaceWith(swaps: List<Swap>): List<TeamMember> {
