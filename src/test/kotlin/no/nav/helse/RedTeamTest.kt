@@ -41,8 +41,7 @@ internal class RedTeamTest {
     @Test
     fun `cannot override teams not containing the replacee`() {
         val kalender = RedTeam(startDato, team)
-        kalender.override("Cecilie", "Morten", 3.januar())
-        assertThrows<IllegalArgumentException> { kalender.teamFor(3.januar()) }
+        assertThrows<IllegalArgumentException> { kalender.override("Cecilie", "Morten", 3.januar()) }
     }
 
     @Test
