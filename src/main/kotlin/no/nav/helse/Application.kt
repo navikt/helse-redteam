@@ -64,6 +64,10 @@ fun ktor(redTeam: RedTeam) = embeddedServer(CIO, port = 8080, host = "0.0.0.0") 
     }
     install(CallLogging){
         level = Level.INFO
+        disableDefaultColors()
+        filter { call ->
+            !call.request.path().startsWith("isalive")
+        }
     }
 }.start(wait = false)
 
