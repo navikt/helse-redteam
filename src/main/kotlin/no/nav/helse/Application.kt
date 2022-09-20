@@ -66,7 +66,7 @@ fun ktor(redTeam: RedTeam) = embeddedServer(CIO, port = 8080, host = "0.0.0.0") 
         level = Level.INFO
         disableDefaultColors()
         filter { call ->
-            !call.request.path().startsWith("isalive")
+            !call.request.path().startsWith("/isalive")
         }
     }
 }.start(wait = false)
