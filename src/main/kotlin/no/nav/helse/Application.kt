@@ -3,6 +3,7 @@ package no.nav.helse
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -85,7 +86,8 @@ fun Application.configureRouting(redTeam: RedTeam) {
         }
         post("red-team/{date}") {
             val date = LocalDate.parse(call.parameters["date"]) ?: throw IllegalArgumentException("missing parameter: <date>")
-            val swap = call.receive<Swap>()
+            val swapJson = call.receiveText()
+            val swap = mapper.readValue<Swap>(swapJson)
             redTeam.override(swap.from, swap.to, date)
             val response = mapper.writeValueAsString(redTeam.teamFor(date))
             call.respondText(response, ContentType.Application.Json)
