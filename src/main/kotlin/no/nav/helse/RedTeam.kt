@@ -22,7 +22,9 @@ class RedTeam(
     }
 
     fun override(from: String, to: String, date: LocalDate) {
-        require(date.dayOfWeek !in weekend && date !in holidays){"Trying to override red team for a non-workday: $date"}
+        require(teamFor(date) is Workday) { "Trying to override red team for a non-workday: $date" }
+        require(from in (teamFor(date) as Workday).members.map { it.name })
+        { "from: $from in swap(from: $from, to: $to) is not red-team at date: $date" }
         overrides.compute(date) { _, value ->
             return@compute value?.plus(Swap(from, to)) ?: mutableListOf(
                 Swap(

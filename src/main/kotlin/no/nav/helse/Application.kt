@@ -30,7 +30,6 @@ internal val mapper = jacksonObjectMapper()
 fun main() = runBlocking { start() }
 
 
-
 suspend fun start() {
     val logger = LoggerFactory.getLogger("red-team")
     val teamData = teamDataFromFile()
@@ -62,7 +61,7 @@ fun ktor(redTeam: RedTeam) = embeddedServer(CIO, port = 8080, host = "0.0.0.0") 
     install(ContentNegotiation) {
         json()
     }
-    install(CallLogging){
+    install(CallLogging) {
         level = Level.INFO
         disableDefaultColors()
         filter { call ->
@@ -83,16 +82,22 @@ fun Application.configureRouting(redTeam: RedTeam) {
             call.respondText(json, ContentType.Application.Json)
         }
         get("red-team/{date}") {
-            val date = LocalDate.parse(call.parameters["date"]) ?: throw IllegalArgumentException("missing parameter: <date>")
+            val date =
+                LocalDate.parse(call.parameters["date"]) ?: throw IllegalArgumentException("missing parameter: <date>")
             val calender = redTeam.teamFor(date)
             val json = mapper.writeValueAsString(calender)
             call.respondText(json, ContentType.Application.Json)
         }
         post("red-team/{date}") {
-            val date = LocalDate.parse(call.parameters["date"]) ?: throw IllegalArgumentException("missing parameter: <date>")
+            val date =
+                LocalDate.parse(call.parameters["date"]) ?: throw IllegalArgumentException("missing parameter: <date>")
             val swapJson = call.receiveText()
             val swap = mapper.readValue<Swap>(swapJson)
-            redTeam.override(swap.from, swap.to, date)
+            try {
+                redTeam.override(swap.from, swap.to, date)
+            } catch (e: IllegalArgumentException) {
+                call.respondText("""{"error": "${e.message}" }""", ContentType.Application.Json, HttpStatusCode.BadRequest)
+            }
             val response = mapper.writeValueAsString(redTeam.teamFor(date))
             call.respondText(response, ContentType.Application.Json)
         }
