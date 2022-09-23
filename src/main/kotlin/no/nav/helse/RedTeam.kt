@@ -18,13 +18,13 @@ class RedTeam(
     fun teamFor(date: LocalDate): Day {
         if(date in holidays) return holidays[date]!!
         if (date.dayOfWeek in weekend) return NonWorkday(date, date.dayOfWeek.name)
-        return Workday(date, team.teamAt(overrides.getOrElse(date) { emptyList() }, datesTo(date)))
+        return Workday(date, team.teamAt(datesTo(date)).applySwaps(date).sortedBy { it.team })
     }
 
     fun override(from: String, to: String, date: LocalDate) {
         require(teamFor(date) is Workday) { "Trying to override red team for a non-workday: $date" }
         require(from in (teamFor(date) as Workday).members.map { it.name })
-        { "from: $from in swap(from: $from, to: $to) is not red-team at date: $date" }
+            { "from: $from in swap(from: $from, to: $to) is not red-team at date: $date" }
         overrides.compute(date) { _, value ->
             return@compute value?.plus(Swap(from, to)) ?: mutableListOf(
                 Swap(
@@ -43,6 +43,13 @@ class RedTeam(
 
     private fun datesTo(date: LocalDate) =
         startDate.datesUntil(date).filter { it.dayOfWeek !in weekend }.filter { it !in holidays }.count().toInt()
+
+
+    private fun List<TeamMember>.applySwaps(date: LocalDate) =
+        overrides.getOrElse(date) { emptyList() }.fold(this) { acc, swap ->  acc.tryReplaceWith(swap) }
+
+    private fun List<TeamMember>.tryReplaceWith(swap: Swap) =
+        map { TeamMember(it.team,  if(swap.from == it.name ) swap.to else it.name) }
 }
 
 data class Swap(val from: String, val to: String)

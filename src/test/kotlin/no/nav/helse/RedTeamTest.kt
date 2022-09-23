@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 internal class RedTeamTest {
 
@@ -33,8 +34,10 @@ internal class RedTeamTest {
     fun override() {
         val kalender = RedTeam(startDato, team)
         kalender.override("Morten", "Cecilie", 3.januar())
+        assertEquals(3.januar("Sondre", "Jakob", "Cecilie"), kalender.teamFor(3.januar()))
+        kalender.override("Cecilie", "Morten", 3.januar())
+        assertEquals(3.januar("Sondre", "Jakob", "Morten"), kalender.teamFor(3.januar()))
         kalender.override("Sondre", "David", 3.januar())
-        assertEquals(3.januar("David", "Jakob", "Cecilie"), kalender.teamFor(3.januar()))
         assertEquals(4.januar("David", "Sindre", "Cecilie"), kalender.teamFor(4.januar()))
     }
 
@@ -42,6 +45,7 @@ internal class RedTeamTest {
     fun `cannot override teams not containing the replacee`() {
         val kalender = RedTeam(startDato, team)
         assertThrows<IllegalArgumentException> { kalender.override("Cecilie", "Morten", 3.januar()) }
+        kalender.teamFor(3.januar())
     }
 
     @Test
