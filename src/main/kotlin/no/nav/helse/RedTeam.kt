@@ -22,9 +22,18 @@ class RedTeam(
     }
 
     fun override(from: String, to: String, date: LocalDate) {
-        require(teamFor(date) is Workday) { "Trying to override red team for a non-workday: $date" }
-        require(from in (teamFor(date) as Workday).members.map { it.name })
-            { "from: $from in swap(from: $from, to: $to) is not red-team at date: $date" }
+        validateDate(date, from, to)
+        team.validate(from, to)
+        addSwap(date, from, to)
+    }
+
+    fun redTeamCalendar(span: Pair<LocalDate, LocalDate>): RedTeamCalendarDto {
+        require(span.first.isBefore(span.second) || span.first == span.second) {"Invalid date span to generate team for"}
+        val redTeams = span.first.datesUntil(span.second).map { teamFor(it) }.toList() + teamFor(span.second)
+        return RedTeamCalendarDto( team.groups(), redTeams)
+    }
+
+    private fun addSwap(date: LocalDate, from: String, to: String) {
         overrides.compute(date) { _, value ->
             return@compute value?.plus(Swap(from, to)) ?: mutableListOf(
                 Swap(
@@ -35,10 +44,10 @@ class RedTeam(
         }
     }
 
-    fun redTeamCalendar(span: Pair<LocalDate, LocalDate>): RedTeamCalendarDto {
-        require(span.first.isBefore(span.second) || span.first == span.second) {"Invalid date span to generate team for"}
-        val redTeams = span.first.datesUntil(span.second).map { teamFor(it) }.toList() + teamFor(span.second)
-        return RedTeamCalendarDto( team.groups(), redTeams)
+    private fun validateDate(date: LocalDate, from: String, to: String) {
+        require(teamFor(date) is Workday) { "Trying to override red team for a non-workday: $date" }
+        require(from in (teamFor(date) as Workday).members.map { it.name })
+        { "from: $from in swap(from: $from, to: $to) is not red-team at date: $date" }
     }
 
     private fun datesTo(date: LocalDate) =

@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 internal class RedTeamTest {
 
@@ -45,6 +44,13 @@ internal class RedTeamTest {
     fun `cannot override teams not containing the replacee`() {
         val kalender = RedTeam(startDato, team)
         assertThrows<IllegalArgumentException> { kalender.override("Cecilie", "Morten", 3.januar()) }
+        kalender.teamFor(3.januar())
+    }
+
+    @Test
+    fun `cannot override members not in the same group`() {
+        val kalender = RedTeam(startDato, team)
+        assertThrows<IllegalArgumentException> { kalender.override("Morten", "Sondre", 3.januar()) }
         kalender.teamFor(3.januar())
     }
 
