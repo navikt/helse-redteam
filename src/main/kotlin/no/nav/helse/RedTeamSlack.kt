@@ -13,7 +13,7 @@ class RedTeamSlack(private val token: String) {
     fun postRedTeam(team: Workday) {
         val dateString = team.date.dayOfMonth.toString() + "." + team.date.month.getDisplayName(TextStyle.SHORT, Locale.getDefault())
         val response = client.methods(token).chatPostMessage { it
-            .channel("UBCJCLFD5")
+            .channel("team-bømlo")
             .text(":wave: :bomlo: Dagens red-team ($dateString)\n" +
                     " - <@${team.members[0].slackId}>\n" +
                     " - <@${team.members[1].slackId}>\n" +

@@ -45,18 +45,21 @@ suspend fun start() {
         coroutineScope {
             launch {
 
-                val postTime = 16
+                val postTime = 8
                 var locked = false
                 while (true) {
                     val redTeamForDay = redTeam.teamFor(now())
-                    if(LocalDateTime.now().hour == postTime && (redTeamForDay is Workday) && !locked) {
-                        slackClient.postRedTeam(redTeamForDay)
+                    if (LocalDateTime.now().hour == postTime && (redTeamForDay is Workday) && !locked) {
+                        // Skal flyttes ut i Naisjob etterhvert, try for å ikke ta ned resten av appen ved exceptions
+                        try {
+                            slackClient.postRedTeam(redTeamForDay)
+                        } catch (e: Exception) {
+                            logger.error("Error occurred attempting to post to slack API", e)
+                        }
                         locked = true
-                    }
-                    else if (LocalDateTime.now().hour != postTime && locked) {
+                    } else if (LocalDateTime.now().hour != postTime && locked) {
                         locked = false
-                    }
-                    else {
+                    } else {
                         logger.info("slack client loop waiting 10 min. hour: ${LocalDateTime.now().hour}, locked: $locked")
                         delay(10.minutes)
                     }
