@@ -30,13 +30,13 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.4")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4")
 
+    implementation("com.slack.api:slack-api-model-kotlin-extension:1.25.1")
+    implementation("com.slack.api:slack-api-client-kotlin-extension:1.25.1")
 
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.0")
-
-
 }
 
 tasks {

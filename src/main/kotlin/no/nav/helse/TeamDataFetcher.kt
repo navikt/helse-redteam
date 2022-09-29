@@ -10,5 +10,5 @@ fun teamDataFromFile(): List<TeamDto> {
         object {}.javaClass.getResource("/test-team-data.json").readText()
 
     val teamNode = jacksonObjectMapper().readTree(teamJson)
-    return teamNode.map { team ->  TeamDto(team["name"].asText(), team["members"].asSequence().map { it.asText() }.toList()) }
+    return teamNode.map { team ->  TeamDto(team["name"].asText(), team["members"].asSequence().map { MemberDto(it.asText(), "test") }.toList()) }
 }

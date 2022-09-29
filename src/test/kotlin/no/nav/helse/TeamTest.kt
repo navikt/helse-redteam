@@ -7,9 +7,9 @@ internal class TeamTest {
 
 
     val team = Team(
-        TeamDto("Spleiselaget", listOf("Sondre", "David", "Christian")),
-        TeamDto("Speilvendt", listOf("Jakob", "Sindre")),
-        TeamDto("Fag", listOf("Morten", "Cecilie"))
+        TeamDto("Spleiselaget", genTeam("Sondre", "David", "Christian")),
+        TeamDto("Speilvendt", genTeam("Jakob", "Sindre")),
+        TeamDto("Fag", genTeam("Morten", "Cecilie"))
     )
 
     @Test
@@ -39,3 +39,5 @@ internal class TeamTest {
         assertEquals(3, team.maxLength())
     }
 }
+
+internal fun genTeam(vararg names: String) = names.map { MemberDto(it, "slackid-$it") }

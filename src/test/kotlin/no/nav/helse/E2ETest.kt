@@ -25,9 +25,9 @@ internal class E2ETest {
                 RedTeam(
                     LocalDate.of(2022, 1, 1),
                     Team(
-                        TeamDto("Speilvendt", listOf("Sondre", "Jakob")),
-                        TeamDto("Spleiselaget", listOf("Christian")),
-                        TeamDto("Fag", listOf("Margrethe"))
+                        TeamDto("Speilvendt", listOf(MemberDto("Sondre", "slack1"), MemberDto("Jakob", "slack2"))),
+                        TeamDto("Spleiselaget", listOf(MemberDto("Christian", "slack3"))),
+                        TeamDto("Fag", listOf(MemberDto("Margrethe", "slack5")))
                     )
                 )
             )

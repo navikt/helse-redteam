@@ -11,7 +11,7 @@ class RedTeam(
     private val team: Team,
     extraNonWorkDays: List<NonWorkday> = emptyList()
 ) {
-    private val overrides = mutableMapOf<LocalDate, List<Swap>>()
+    private val overrides = mutableMapOf<LocalDate, List<Pair<TeamMember, TeamMember>>>()
     private val weekend = listOf(SATURDAY, SUNDAY)
     private val holidays = extraNonWorkDays.associateBy { it.date }
 
@@ -23,8 +23,8 @@ class RedTeam(
 
     fun override(from: String, to: String, date: LocalDate) {
         validateDate(date, from, to)
-        team.validate(from, to)
-        addSwap(date, from, to)
+        val (fromMember, toMember) = team.swap(from, to)
+        addSwap(date, fromMember, toMember)
     }
 
     fun redTeamCalendar(span: Pair<LocalDate, LocalDate>): RedTeamCalendarDto {
@@ -33,10 +33,10 @@ class RedTeam(
         return RedTeamCalendarDto( team.groups(), redTeams)
     }
 
-    private fun addSwap(date: LocalDate, from: String, to: String) {
+    private fun addSwap(date: LocalDate, from: TeamMember, to: TeamMember) {
         overrides.compute(date) { _, value ->
-            return@compute value?.plus(Swap(from, to)) ?: mutableListOf(
-                Swap(
+            return@compute value?.plus(Pair(from, to)) ?: mutableListOf(
+                Pair(
                     from,
                     to
                 )
@@ -57,8 +57,8 @@ class RedTeam(
     private fun List<TeamMember>.applySwaps(date: LocalDate) =
         overrides.getOrElse(date) { emptyList() }.fold(this) { acc, swap ->  acc.tryReplaceWith(swap) }
 
-    private fun List<TeamMember>.tryReplaceWith(swap: Swap) =
-        map { TeamMember(it.team,  if(swap.from == it.name ) swap.to else it.name) }
+    private fun List<TeamMember>.tryReplaceWith(swap: Pair<TeamMember, TeamMember>) =
+        map { if(swap.first.name == it.name ) swap.second else it }
 }
 
 data class Swap(val from: String, val to: String)
