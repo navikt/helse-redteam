@@ -5,7 +5,7 @@ mennesker som enten er i rotasjonen eller er brukere av red-team er godt opplyst
 
 #### Inkluderer
 - [x] Oversikt og overstyring på redteam via tbd siden.
-- [ ] Notifikasjoner på Slack
+- [x] Notifikasjoner på Slack
 - [ ] Oppdatering av grupper på Slack
 
 #### Henvendelser
