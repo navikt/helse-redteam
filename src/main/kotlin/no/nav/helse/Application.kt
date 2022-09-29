@@ -21,6 +21,8 @@ import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
 import java.time.LocalDate
+import java.time.LocalDate.now
+import java.time.LocalDateTime
 import kotlin.time.Duration.Companion.minutes
 
 internal val mapper = jacksonObjectMapper()
@@ -32,6 +34,8 @@ fun main() = runBlocking { start() }
 
 suspend fun start() {
     val logger = LoggerFactory.getLogger("red-team")
+    val slackToken = System.getenv("SLACK_TOKEN") ?: throw IllegalStateException("Cloud not find slack token in envvar: SLACK_TOKEN")
+    val slackClient = RedTeamSlack(slackToken)
     val teamData = teamDataFromFile()
     val team = Team(teamData[0], teamData[1], teamData[2])
 
@@ -40,8 +44,22 @@ suspend fun start() {
     try {
         coroutineScope {
             launch {
+
+                val postTime = 16
+                var locked = false
                 while (true) {
-                    delay(1.minutes)
+                    val redTeamForDay = redTeam.teamFor(now())
+                    if(LocalDateTime.now().hour == postTime && (redTeamForDay is Workday) && !locked) {
+                        slackClient.postRedTeam(redTeamForDay)
+                        locked = true
+                    }
+                    else if (LocalDateTime.now().hour != postTime && locked) {
+                        locked = false
+                    }
+                    else {
+                        logger.info("slack client loop waiting 10 min. hour: ${LocalDateTime.now().hour}, locked: $locked")
+                        delay(10.minutes)
+                    }
                 }
             }
         }
@@ -77,7 +95,7 @@ fun Application.configureRouting(redTeam: RedTeam) {
             call.respondText("TBD red-team")
         }
         get("red-team") {
-            val calender = redTeam.redTeamCalendar(LocalDate.now() to LocalDate.now().plusDays(30))
+            val calender = redTeam.redTeamCalendar(now() to now().plusDays(30))
             val json = mapper.writeValueAsString(calender)
             call.respondText(json, ContentType.Application.Json)
         }
@@ -107,9 +125,3 @@ fun Application.configureRouting(redTeam: RedTeam) {
         }
     }
 }
-
-//val team = Team(
-//    listOf("David", "Maxi", "Simen", "Håkon", "Hege", "Marthe", "Helene"),
-//    listOf("Jakob", "Jonas","Øvind", "Stephen", "Sindre", "Eirik", "Christian", "Sondre", "Elias"),
-//    listOf("Morten T", "Cecilie", "Asma", "Margrethe", "Rita", "Øystein", "Solveig", "Morten N")
-//)

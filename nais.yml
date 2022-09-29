@@ -23,6 +23,8 @@ spec:
   replicas:
     min: 1
     max: 1
+  envFrom:
+    - secret: red-team-slack-token
   filesFrom:
     - configmap: red-team-data
       mountPath: /var/run/configmaps
