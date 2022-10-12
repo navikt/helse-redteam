@@ -1,6 +1,6 @@
-package no.nav.helse
+package no.nav.helse.model
 
-import no.nav.helse.MemberDto.Companion.names
+import no.nav.helse.model.MemberDto.Companion.names
 
 data class TeamDto(
     val name: String,

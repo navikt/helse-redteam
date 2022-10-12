@@ -1,6 +1,7 @@
-package no.nav.helse
+package no.nav.helse.model
 
-import no.nav.helse.Team.*
+import no.nav.helse.model.Team.*
+import no.nav.helse.mapper
 import java.time.DayOfWeek.SATURDAY
 import java.time.DayOfWeek.SUNDAY
 import java.time.LocalDate
@@ -71,7 +72,9 @@ data class RedTeamCalendarDto(
     fun json() = mapper.writeValueAsString(this)
 }
 
-interface Day
+interface Day {
+    fun json() = mapper.writeValueAsString(this)
+}
 
 data class Workday(val date: LocalDate, val members: List<TeamMember>): Day {
 }

@@ -1,5 +1,6 @@
-package no.nav.helse
+package no.nav.helse.model
 
+import no.nav.helse.mapper
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 

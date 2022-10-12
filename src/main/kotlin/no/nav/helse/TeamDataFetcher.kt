@@ -1,6 +1,8 @@
 package no.nav.helse
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import no.nav.helse.model.MemberDto
+import no.nav.helse.model.TeamDto
 import java.io.File
 
 fun teamDataFromFile(): List<TeamDto> {

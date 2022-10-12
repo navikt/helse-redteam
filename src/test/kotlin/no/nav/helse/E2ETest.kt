@@ -9,6 +9,11 @@ import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.testing.*
 import io.mockk.mockk
+import no.nav.helse.model.MemberDto
+import no.nav.helse.model.RedTeam
+import no.nav.helse.model.Team
+import no.nav.helse.model.TeamDto
+import no.nav.helse.slack.SlackUpdater
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import kotlin.test.assertEquals
@@ -18,13 +23,15 @@ internal class E2ETest {
 
     @Test
     fun `red team member can be overriden`() = testApplication {
+        val slackUpdater: SlackUpdater = mockk(relaxed = true)
+
         application {
             install(ContentNegotiation) {
                 jackson()
             }
             configureRouting(
                 RedteamMediator(
-                    slackClient = mockk(),
+                    slackUpdater = slackUpdater,
                     redTeam = RedTeam(
                         LocalDate.of(2022, 1, 1),
                         Team(

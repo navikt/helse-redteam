@@ -1,6 +1,7 @@
-package no.nav.helse
+package no.nav.helse.slack
 
 import com.slack.api.Slack
+import no.nav.helse.model.*
 import java.time.LocalDate
 import java.time.LocalDate.now
 import java.time.format.TextStyle

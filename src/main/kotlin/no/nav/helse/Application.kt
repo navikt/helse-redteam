@@ -18,6 +18,12 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import no.nav.helse.model.RedTeam
+import no.nav.helse.model.Swap
+import no.nav.helse.model.Team
+import no.nav.helse.model.holidays
+import no.nav.helse.slack.RedTeamSlack
+import no.nav.helse.slack.SlackUpdater
 import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
 import java.time.LocalDate
@@ -36,40 +42,34 @@ fun main() = runBlocking { start() }
 
 suspend fun start() {
     val logger = LoggerFactory.getLogger("red-team")
-    val slackToken = System.getenv("SLACK_TOKEN") ?: throw IllegalStateException("Cloud not find slack token in envvar: SLACK_TOKEN")
-    val slackClient = RedTeamSlack(slackToken, SLACK_CHANNEL, SLACK_USER_GROUP)
+    val slackToken =
+        System.getenv("SLACK_TOKEN") ?: throw IllegalStateException("Cloud not find slack token in envvar: SLACK_TOKEN")
     val teamData = teamDataFromFile()
     val team = Team(teamData[0], teamData[1], teamData[2])
 
     val redTeam = RedTeam(LocalDate.of(2022, 6, 1), team, holidays())
-    val mediator = RedteamMediator(slackClient, redTeam)
+    val mediator = RedteamMediator(
+        SlackUpdater(
+            { LocalDateTime.now() },
+            RedTeamSlack(slackToken, SLACK_CHANNEL, SLACK_USER_GROUP),
+            redTeam
+        ), redTeam
+    )
     val ktorServer = ktor(mediator)
     try {
         coroutineScope {
             launch {
-
-                val postTime = 8
-                var locked = false
                 while (true) {
-                    val redTeamForDay = redTeam.teamFor(now())
-                    if (LocalDateTime.now().hour == postTime && (redTeamForDay is Workday) && !locked) {
-                        // Skal flyttes ut i Naisjob etterhvert, try for å ikke ta ned resten av appen ved exceptions
-                        try {
-                            slackClient.postRedTeam(redTeamForDay)
-                        } catch (e: Exception) {
-                            logger.error("Error occurred attempting to post to slack API", e)
-                        }
-                        locked = true
-                    } else if (LocalDateTime.now().hour != postTime && locked) {
-                        locked = false
-                    } else {
-                        logger.info("slack client loop waiting 10 min. hour: ${LocalDateTime.now().hour}, locked: $locked")
-                        delay(10.minutes)
+                    try {
+                        mediator.update()
+                    } catch (e: Exception) {
+                        logger.error("Error occurred during update", e)
                     }
+                    logger.info("update loop waiting 10 min. hour: ${LocalDateTime.now().hour}")
+                    delay(10.minutes)
                 }
             }
         }
-
     } finally {
         val gracePeriod = 5000L
         val forcefulShutdownTimeout = 30000L
@@ -108,9 +108,8 @@ fun Application.configureRouting(mediator: RedteamMediator) {
         get("red-team/{date}") {
             val date =
                 LocalDate.parse(call.parameters["date"]) ?: throw IllegalArgumentException("missing parameter: <date>")
-            val calender = mediator.teamFor(date)
-            val json = mapper.writeValueAsString(calender)
-            call.respondText(json, ContentType.Application.Json)
+            val day = mediator.teamFor(date).json()
+            call.respondText(day, ContentType.Application.Json)
         }
         post("red-team/{date}") {
             val date = LocalDate.parse(call.parameters["date"])
@@ -121,11 +120,15 @@ fun Application.configureRouting(mediator: RedteamMediator) {
             try {
                 mediator.override(swap.from, swap.to, date)
             } catch (e: IllegalArgumentException) {
-                call.respondText("""{"error": "${e.message}" }""", ContentType.Application.Json, HttpStatusCode.BadRequest)
+                call.respondText(
+                    """{"error": "${e.message}" }""",
+                    ContentType.Application.Json,
+                    HttpStatusCode.BadRequest
+                )
                 logger.error("Error during overriding red-team: {}", e.message)
                 return@post
             }
-            val response = mapper.writeValueAsString(mediator.teamFor(date))
+            val response = mediator.teamFor(date).json()
             call.respondText(response, ContentType.Application.Json)
         }
 
