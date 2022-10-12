@@ -67,7 +67,9 @@ data class Swap(val from: String, val to: String)
 data class RedTeamCalendarDto(
     val teams: List<TeamDto>,
     val days: List<Day>
-)
+) {
+    fun json() = mapper.writeValueAsString(this)
+}
 
 interface Day
 

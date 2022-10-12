@@ -25,22 +25,25 @@ import java.time.LocalDate.now
 import java.time.LocalDateTime
 import kotlin.time.Duration.Companion.minutes
 
+private const val SLACK_CHANNEL = "team-bømlo"
+private const val SLACK_USER_GROUP = "S010U3KQ8LQ"
+
 internal val mapper = jacksonObjectMapper()
     .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
     .registerModule(JavaTimeModule())
 
 fun main() = runBlocking { start() }
 
-
 suspend fun start() {
     val logger = LoggerFactory.getLogger("red-team")
     val slackToken = System.getenv("SLACK_TOKEN") ?: throw IllegalStateException("Cloud not find slack token in envvar: SLACK_TOKEN")
-    val slackClient = RedTeamSlack(slackToken)
+    val slackClient = RedTeamSlack(slackToken, SLACK_CHANNEL, SLACK_USER_GROUP)
     val teamData = teamDataFromFile()
     val team = Team(teamData[0], teamData[1], teamData[2])
 
     val redTeam = RedTeam(LocalDate.of(2022, 6, 1), team, holidays())
-    val ktorServer = ktor(redTeam)
+    val mediator = RedteamMediator(slackClient, redTeam)
+    val ktorServer = ktor(mediator)
     try {
         coroutineScope {
             launch {
@@ -77,8 +80,8 @@ suspend fun start() {
 }
 
 
-fun ktor(redTeam: RedTeam) = embeddedServer(CIO, port = 8080, host = "0.0.0.0") {
-    configureRouting(redTeam)
+fun ktor(mediator: RedteamMediator) = embeddedServer(CIO, port = 8080, host = "0.0.0.0") {
+    configureRouting(mediator)
     install(ContentNegotiation) {
         json()
     }
@@ -92,34 +95,37 @@ fun ktor(redTeam: RedTeam) = embeddedServer(CIO, port = 8080, host = "0.0.0.0") 
 }.start(wait = false)
 
 
-fun Application.configureRouting(redTeam: RedTeam) {
+fun Application.configureRouting(mediator: RedteamMediator) {
+    val logger = LoggerFactory.getLogger("red-team-api")
     routing {
         get("/") {
             call.respondText("TBD red-team")
         }
         get("red-team") {
-            val calender = redTeam.redTeamCalendar(now() to now().plusDays(30))
-            val json = mapper.writeValueAsString(calender)
-            call.respondText(json, ContentType.Application.Json)
+            val calendar = mediator.redTeamCalendar(now() to now().plusDays(30)).json()
+            call.respondText(calendar, ContentType.Application.Json)
         }
         get("red-team/{date}") {
             val date =
                 LocalDate.parse(call.parameters["date"]) ?: throw IllegalArgumentException("missing parameter: <date>")
-            val calender = redTeam.teamFor(date)
+            val calender = mediator.teamFor(date)
             val json = mapper.writeValueAsString(calender)
             call.respondText(json, ContentType.Application.Json)
         }
         post("red-team/{date}") {
-            val date =
-                LocalDate.parse(call.parameters["date"]) ?: throw IllegalArgumentException("missing parameter: <date>")
+            val date = LocalDate.parse(call.parameters["date"])
+                ?: throw IllegalArgumentException("missing parameter: <date>")
             val swapJson = call.receiveText()
             val swap = mapper.readValue<Swap>(swapJson)
+
             try {
-                redTeam.override(swap.from, swap.to, date)
+                mediator.override(swap.from, swap.to, date)
             } catch (e: IllegalArgumentException) {
                 call.respondText("""{"error": "${e.message}" }""", ContentType.Application.Json, HttpStatusCode.BadRequest)
+                logger.error("Error during overriding red-team: {}", e.message)
+                return@post
             }
-            val response = mapper.writeValueAsString(redTeam.teamFor(date))
+            val response = mapper.writeValueAsString(mediator.teamFor(date))
             call.respondText(response, ContentType.Application.Json)
         }
 

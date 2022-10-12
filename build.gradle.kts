@@ -1,6 +1,7 @@
 val ktor_version = "2.1.1"
 val logback_version = "1.4.0"
 val kotlin_version = "1.6.21"
+val mockkVersion = "1.13.2"
 
 plugins {
     kotlin("jvm") version "1.6.21"
@@ -33,6 +34,7 @@ dependencies {
     implementation("com.slack.api:slack-api-model-kotlin-extension:1.25.1")
     implementation("com.slack.api:slack-api-client-kotlin-extension:1.25.1")
 
+    testImplementation("io.mockk:mockk:${mockkVersion}")
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")

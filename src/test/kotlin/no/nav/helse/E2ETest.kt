@@ -8,6 +8,7 @@ import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.testing.*
+import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import kotlin.test.assertEquals
@@ -22,12 +23,15 @@ internal class E2ETest {
                 jackson()
             }
             configureRouting(
-                RedTeam(
-                    LocalDate.of(2022, 1, 1),
-                    Team(
-                        TeamDto("Speilvendt", listOf(MemberDto("Sondre", "slack1"), MemberDto("Jakob", "slack2"))),
-                        TeamDto("Spleiselaget", listOf(MemberDto("Christian", "slack3"))),
-                        TeamDto("Fag", listOf(MemberDto("Margrethe", "slack5")))
+                RedteamMediator(
+                    slackClient = mockk(),
+                    redTeam = RedTeam(
+                        LocalDate.of(2022, 1, 1),
+                        Team(
+                            TeamDto("Speilvendt", listOf(MemberDto("Sondre", "slack1"), MemberDto("Jakob", "slack2"))),
+                            TeamDto("Spleiselaget", listOf(MemberDto("Christian", "slack3"))),
+                            TeamDto("Fag", listOf(MemberDto("Margrethe", "slack5")))
+                        )
                     )
                 )
             )
@@ -41,7 +45,7 @@ internal class E2ETest {
 
         val redTeam = client.get("/red-team/2022-01-03").bodyAsText()
 
-        assertTrue( "Jakob" in parsedTeam(redTeam))
+        assertTrue("Jakob" in parsedTeam(redTeam))
     }
 
 
