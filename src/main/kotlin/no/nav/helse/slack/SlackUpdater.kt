@@ -3,6 +3,7 @@ package no.nav.helse.slack
 import no.nav.helse.model.RedTeam
 import no.nav.helse.model.Workday
 import org.slf4j.LoggerFactory
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -14,7 +15,9 @@ class SlackUpdater(
     val logger = LoggerFactory.getLogger("red-team-slack-updater")
     private val today get() = clock().toLocalDate()
     private val postTime = 8
+    private val tulleTime = 9
     private var locked = false
+    private var tulleLock = false
 
     fun handleOverride(overrideDate: LocalDate) {
         if (overrideDate == today) {
@@ -30,13 +33,30 @@ class SlackUpdater(
                 logger.info("Todays red team has been posted to slack")
                 slackClient.updateReadTeamGroup(redTeamForDay)
                 logger.info("Todays red team has been updated in the slack user group")
-                slackClient.tulleMedHege()
+
             } catch (e: Exception) {
                 logger.error("Error occurred attempting to use slack API", e)
             }
             locked = true
         } else if (clock().hour != postTime && locked) {
             locked = false
+        }
+        tulle()
+    }
+
+
+    private fun tulle() {
+
+        if (clock().hour == tulleTime && clock().dayOfWeek != DayOfWeek.SATURDAY && clock().dayOfWeek != DayOfWeek.SUNDAY && !tulleLock) {
+            try {
+                slackClient.tulleMedHege()
+                logger.info("Tulla med hege")
+            } catch (e: Exception) {
+                logger.error("Error occurred attempting to use slack API", e)
+            }
+            tulleLock = true
+        } else if (clock().hour != postTime && tulleLock) {
+            tulleLock = false
         }
     }
 }
