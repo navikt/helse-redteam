@@ -30,6 +30,7 @@ class SlackUpdater(
                 logger.info("Todays red team has been posted to slack")
                 slackClient.updateReadTeamGroup(redTeamForDay)
                 logger.info("Todays red team has been updated in the slack user group")
+                slackClient.tulleMedHege()
             } catch (e: Exception) {
                 logger.error("Error occurred attempting to use slack API", e)
             }

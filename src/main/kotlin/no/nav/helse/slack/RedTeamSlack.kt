@@ -21,6 +21,19 @@ class RedTeamSlack(private val token: String, private val slackChannel: String, 
                     " - <@${team.members[2].slackId}>\n" +
                     "Red-team kan administreres på <https://tbd.intern.nav.no/docs/redteam-wiki/red-team|tbd.intern.nav.no>")
         }
+
+        if (!response.isOk) {
+            throw RuntimeException("Error occured when posting to slack: ${response.errors}")
+        }
+    }
+
+    fun tulleMedHege() {
+        val response = client.methods(token).chatPostMessage { it
+            .channel(slackChannel)
+            .text(":wave: Morning :hehege: <@U01HXSKBDJ7>. Har du lest slack i 15 min i dag?\n\n" +
+            "Kan du fortelle mer om det?")
+        }
+
         if (!response.isOk) {
             throw RuntimeException("Error occured when posting to slack: ${response.errors}")
         }
