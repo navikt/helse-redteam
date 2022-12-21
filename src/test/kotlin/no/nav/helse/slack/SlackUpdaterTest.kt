@@ -19,7 +19,7 @@ internal class SlackUpdaterTest: AbstractRedTeamTest() {
         updater.update()
         updater.update()
 
-        verify(exactly = 1) { slackClient.updateReadTeamGroup(any()) }
+        verify(exactly = 1) { slackClient.updateRedTeamGroup(any()) }
         verify(exactly = 1) { slackClient.postRedTeam(any()) }
     }
 
@@ -30,7 +30,7 @@ internal class SlackUpdaterTest: AbstractRedTeamTest() {
 
         updater.update()
 
-        verify(exactly = 0) { slackClient.updateReadTeamGroup(any()) }
+        verify(exactly = 0) { slackClient.updateRedTeamGroup(any()) }
         verify(exactly = 0) { slackClient.postRedTeam(any()) }
     }
 
@@ -44,7 +44,7 @@ internal class SlackUpdaterTest: AbstractRedTeamTest() {
 
         updater.update()
 
-        verify(exactly = 1) { slackClient.updateReadTeamGroup(any()) }
+        verify(exactly = 1) { slackClient.updateRedTeamGroup(any()) }
         verify(exactly = 1) { slackClient.postRedTeam(any()) }
 
         every { clock.instant() } returns startDateAt(9).instant()
@@ -52,7 +52,7 @@ internal class SlackUpdaterTest: AbstractRedTeamTest() {
 
         updater.update()
 
-        verify(exactly = 1) { slackClient.updateReadTeamGroup(any()) }
+        verify(exactly = 1) { slackClient.updateRedTeamGroup(any()) }
         verify(exactly = 1) { slackClient.postRedTeam(any()) }
 
         every { clock.instant() } returns startDateAt(8).instant()
@@ -60,7 +60,7 @@ internal class SlackUpdaterTest: AbstractRedTeamTest() {
 
         updater.update()
 
-        verify(exactly = 2) { slackClient.updateReadTeamGroup(any()) }
+        verify(exactly = 2) { slackClient.updateRedTeamGroup(any()) }
         verify(exactly = 2) { slackClient.postRedTeam(any()) }
 
     }

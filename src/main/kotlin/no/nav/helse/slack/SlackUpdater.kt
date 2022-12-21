@@ -12,7 +12,7 @@ class SlackUpdater(
     private val slackClient: RedTeamSlack,
     private val redTeam: RedTeam
 ) {
-    val logger = LoggerFactory.getLogger("red-team-slack-updater")
+    private val logger = LoggerFactory.getLogger("red-team-slack-updater")
     private val today get() = clock().toLocalDate()
     private val postTime = 8
     private val tulleTime = 9
@@ -21,7 +21,7 @@ class SlackUpdater(
 
     fun handleOverride(overrideDate: LocalDate) {
         if (overrideDate == today) {
-            slackClient.updateReadTeamGroup(redTeam.teamFor(today) as Workday)
+            slackClient.updateRedTeamGroup(redTeam.teamFor(today) as Workday)
         }
     }
 
@@ -31,7 +31,7 @@ class SlackUpdater(
             try {
                 slackClient.postRedTeam(redTeamForDay)
                 logger.info("Todays red team has been posted to slack")
-                slackClient.updateReadTeamGroup(redTeamForDay)
+                slackClient.updateRedTeamGroup(redTeamForDay)
                 logger.info("Todays red team has been updated in the slack user group")
 
             } catch (e: Exception) {
@@ -55,7 +55,7 @@ class SlackUpdater(
                 logger.error("Error occurred attempting to use slack API", e)
             }
             tulleLock = true
-        } else if (clock().hour != postTime && tulleLock) {
+        } else if (clock().hour != tulleTime && tulleLock) {
             tulleLock = false
         }
     }

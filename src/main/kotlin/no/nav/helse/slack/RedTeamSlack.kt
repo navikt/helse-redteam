@@ -39,7 +39,7 @@ class RedTeamSlack(private val token: String, private val slackChannel: String, 
         }
     }
 
-    fun updateReadTeamGroup(team: Workday) {
+    fun updateRedTeamGroup(team: Workday) {
         val slackIDs = team.members.map { member -> member.slackId }
         val response = client.methods(token).usergroupsUsersUpdate { it.usergroup(userGroup).users(slackIDs) }
         if (!response.isOk) {
@@ -59,5 +59,5 @@ fun main() {
             TeamDto("Fag", listOf(MemberDto("Margrethe", "UMHUJNE5N")))
         )
     )
-    RedTeamSlack(token, "team-bømlo", "team-bømlo").updateReadTeamGroup((redTeam.teamFor(now()) as Workday))
+    RedTeamSlack(token, "team-bømlo", "team-bømlo").updateRedTeamGroup((redTeam.teamFor(now()) as Workday))
 }

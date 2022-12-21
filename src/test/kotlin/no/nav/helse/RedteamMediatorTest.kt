@@ -18,20 +18,20 @@ internal class RedteamMediatorTest: AbstractRedTeamTest() {
             redTeam = redTeam()
         )
         mediator.override("Sondre", "David", START_DATE)
-        verify { slackClient.updateReadTeamGroup(any()) }
+        verify { slackClient.updateRedTeamGroup(any()) }
     }
 
     @Test
     fun `not same day override does not trigger update to slackGroup`() {
         val slackClient = mockk<RedTeamSlack>()
-        every { slackClient.updateReadTeamGroup(any()) } returns Unit
+        every { slackClient.updateRedTeamGroup(any()) } returns Unit
 
         val mediator = RedteamMediator(
             slackUpdater = SlackUpdater( { START_DATE.atStartOfDay()}, slackClient, redTeam()),
             redTeam = redTeam()
         )
         mediator.override("David", "Sondre", START_DATE.plusDays(1))
-        verify(exactly = 0) { slackClient.updateReadTeamGroup(any()) }
+        verify(exactly = 0) { slackClient.updateRedTeamGroup(any()) }
     }
 }
 

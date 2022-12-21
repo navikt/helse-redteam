@@ -43,7 +43,7 @@ fun main() = runBlocking { start() }
 suspend fun start() {
     val logger = LoggerFactory.getLogger("red-team")
     val slackToken =
-        System.getenv("SLACK_TOKEN") ?: throw IllegalStateException("Cloud not find slack token in envvar: SLACK_TOKEN")
+        System.getenv("SLACK_TOKEN") ?: throw IllegalStateException("Could not find slack token in envvar: SLACK_TOKEN")
     val teamData = teamDataFromFile()
     val team = Team(teamData[0], teamData[1], teamData[2])
 
