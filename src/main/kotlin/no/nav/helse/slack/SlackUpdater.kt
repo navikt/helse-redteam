@@ -16,7 +16,7 @@ class SlackUpdater(
     private val today get() = clock().toLocalDate()
     private val postTime = 8
     private val tulleTime = 9
-    private var locked = false
+    private var nextDayToPost = today
     private var tulleLock = false
 
     fun handleOverride(overrideDate: LocalDate) {
@@ -27,19 +27,17 @@ class SlackUpdater(
 
     fun update() {
         val redTeamForDay = redTeam.teamFor(today)
-        if (clock().hour == postTime && (redTeamForDay is Workday) && !locked) {
+        if (nextDayToPost == today && clock().hour == postTime && (redTeamForDay is Workday)) {
             try {
                 slackClient.postRedTeam(redTeamForDay)
-                logger.info("Todays red team has been posted to slack")
+                logger.info("Today's red team has been posted to slack")
                 slackClient.updateRedTeamGroup(redTeamForDay)
-                logger.info("Todays red team has been updated in the slack user group")
+                logger.info("Today's red team has been updated in the slack user group")
 
+                nextDayToPost = today.plusDays(1)
             } catch (e: Exception) {
                 logger.error("Error occurred attempting to use slack API", e)
             }
-            locked = true
-        } else if (clock().hour != postTime && locked) {
-            locked = false
         }
         tulle()
     }
