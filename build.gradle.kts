@@ -1,5 +1,5 @@
 val ktor_version = "2.1.1"
-val logback_version = "1.4.0"
+val logback_version = "1.4.5"
 val kotlin_version = "1.6.21"
 val mockkVersion = "1.13.2"
 
@@ -21,6 +21,7 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
+    implementation("net.logstash.logback:logstash-logback-encoder:7.2")
     implementation("io.ktor:ktor-server-call-logging:$ktor_version")
 
     implementation("io.ktor:ktor-client-core:$ktor_version")
