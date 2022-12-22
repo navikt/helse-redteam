@@ -16,7 +16,9 @@ internal class SlackUpdaterTest: AbstractRedTeamTest() {
     @Test
     fun `updates user group and post message on slack in the morning on a workday`() {
         val slackClient = mockk<RedTeamSlack>(relaxUnitFun = true)
-        val updater = SlackUpdater({ START_DATE.atTime(8, 0) }, slackClient, redTeam())
+        var testklokke = testklokke(8, 26)
+        val updater = SlackUpdater({ LocalDateTime.now(testklokke) }, slackClient, redTeam())
+        testklokke = testklokke(8, 27)
 
         // Sjekk at det bare blir gjort en gang for dagen
         updater.update()
@@ -30,7 +32,9 @@ internal class SlackUpdaterTest: AbstractRedTeamTest() {
     @Test
     fun `does not update or post outside morning`() {
         val slackClient = mockk<RedTeamSlack>(relaxUnitFun = true)
-        val updater = SlackUpdater({ START_DATE.atTime(9, 0) }, slackClient, redTeam())
+        var testklokke = testklokke(8, 26)
+        val updater = SlackUpdater({ LocalDateTime.now(testklokke) }, slackClient, redTeam())
+        testklokke = testklokke(9, 26)
 
         updater.update()
 
@@ -41,8 +45,9 @@ internal class SlackUpdaterTest: AbstractRedTeamTest() {
     @Test
     fun `post and update next day (testing the date check)`() {
         val slackClient = mockk<RedTeamSlack>(relaxUnitFun = true)
-        var testklokke = testklokke(8, 26)
+        var testklokke = testklokke(8, 25)
         val updater = SlackUpdater({ LocalDateTime.now(testklokke) }, slackClient, redTeam())
+        testklokke = testklokke(8, 26)
 
         updater.update()
 

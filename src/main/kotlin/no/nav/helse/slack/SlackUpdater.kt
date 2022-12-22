@@ -16,7 +16,7 @@ class SlackUpdater(
     private val today get() = clock().toLocalDate()
     private val postTime = 8
     private val tulleTime = 9
-    private var nextDayToPost = today
+    private var nextDayToPost = today.plusDays(1)
     private var tulleLock = false
 
     fun handleOverride(overrideDate: LocalDate) {
