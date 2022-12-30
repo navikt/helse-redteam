@@ -27,11 +27,11 @@ class RedTeamSlack(private val token: String, private val slackChannel: String, 
         }
     }
 
-    fun tulleMedHege() {
+    fun tulleMedNoen() {
+        val message = tulleMessages.shuffled().first()
         val response = client.methods(token).chatPostMessage { it
             .channel(slackChannel)
-            .text(":wave: Morning :hehege: <@U01HXSKBDJ7>. Har du lest slack i 15 min i dag?\n\n" +
-            "Kan du fortelle mer om det?")
+            .text(message)
         }
 
         if (!response.isOk) {
@@ -61,3 +61,8 @@ fun main() {
     )
     RedTeamSlack(token, "team-bømlo", "team-bømlo").updateRedTeamGroup((redTeam.teamFor(now()) as Workday))
 }
+
+private val tulleMessages = listOf(
+    ":wave: Morning :hehege: <@U01HXSKBDJ7>. Har du lest slack i 15 min i dag?\n\n" +
+            "Kan du fortelle mer om det?"
+)

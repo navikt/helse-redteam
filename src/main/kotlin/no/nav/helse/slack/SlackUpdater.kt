@@ -45,10 +45,10 @@ class SlackUpdater(
 
     private fun tulle() {
 
-        if (clock().hour == tulleTime && clock().dayOfWeek != DayOfWeek.SATURDAY && clock().dayOfWeek != DayOfWeek.SUNDAY && !tulleLock) {
+        if (clock().hour == tulleTime && clock().dayOfWeek == DayOfWeek.FRIDAY && !tulleLock) {
             try {
-                slackClient.tulleMedHege()
-                logger.info("Tulla med hege")
+                slackClient.tulleMedNoen()
+                logger.info("Tulla litt")
             } catch (e: Exception) {
                 logger.error("Error occurred attempting to use slack API", e)
             }
