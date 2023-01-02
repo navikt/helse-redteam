@@ -1,5 +1,6 @@
 package no.nav.helse.slack
 
+import no.nav.helse.model.Day
 import no.nav.helse.model.RedTeam
 import no.nav.helse.model.Workday
 import org.slf4j.LoggerFactory
@@ -16,7 +17,9 @@ class SlackUpdater(
     private val today get() = clock().toLocalDate()
     private val postTime = 8
     private val tulleTime = 9
-    private var nextDayToPost = today.plusDays(1)
+    private var nextDayToPost = if (clock().hour < 8)
+        today else
+        today.plusDays(1)
     private var tulleLock = false
 
     fun handleOverride(overrideDate: LocalDate) {
@@ -27,7 +30,8 @@ class SlackUpdater(
 
     fun update() {
         val redTeamForDay = redTeam.teamFor(today)
-        if (nextDayToPost == today && clock().hour == postTime && (redTeamForDay is Workday)) {
+        if (skalPoste(redTeamForDay)) {
+            redTeamForDay as Workday
             try {
                 slackClient.postRedTeam(redTeamForDay)
                 logger.info("Today's red team has been posted to slack")
@@ -42,9 +46,23 @@ class SlackUpdater(
         tulle()
     }
 
+    private fun skalPoste(redTeamForDay: Day): Boolean {
+        if (nextDayToPost != today) {
+            logger.info("Poster ikke, dagens dato er $today, skal først poste $nextDayToPost")
+            return false
+        }
+        if (clock().hour != postTime) {
+            logger.info("Poster ikke, ${clock().hour} er utenfor tidsvindu (som er $postTime)")
+            return false
+        }
+        if (redTeamForDay !is Workday) {
+            logger.info("Poster ikke, $redTeamForDay != arbeidsdag")
+            return false
+        }
+        return true
+    }
 
     private fun tulle() {
-
         if (clock().hour == tulleTime && clock().dayOfWeek == DayOfWeek.FRIDAY && !tulleLock) {
             try {
                 slackClient.tulleMedNoen()

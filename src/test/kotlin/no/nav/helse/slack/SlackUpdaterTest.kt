@@ -34,7 +34,7 @@ internal class SlackUpdaterTest: AbstractRedTeamTest() {
         val slackClient = mockk<RedTeamSlack>(relaxUnitFun = true)
         var testklokke = testklokke(8, 26)
         val updater = SlackUpdater({ LocalDateTime.now(testklokke) }, slackClient, redTeam())
-        testklokke = testklokke(9, 26)
+        testklokke = testklokke(9, 27)
 
         updater.update()
 
@@ -45,27 +45,26 @@ internal class SlackUpdaterTest: AbstractRedTeamTest() {
     @Test
     fun `post and update next day (testing the date check)`() {
         val slackClient = mockk<RedTeamSlack>(relaxUnitFun = true)
-        var testklokke = testklokke(8, 25)
+        var testklokke = testklokke(7, 26)
         val updater = SlackUpdater({ LocalDateTime.now(testklokke) }, slackClient, redTeam())
-        testklokke = testklokke(8, 26)
 
         updater.update()
+        verify(exactly = 0) { slackClient.updateRedTeamGroup(any()) }
+        verify(exactly = 0) { slackClient.postRedTeam(any()) }
 
+        testklokke = testklokke(8, 26)
+        updater.update()
         verify(exactly = 1) { slackClient.updateRedTeamGroup(any()) }
         verify(exactly = 1) { slackClient.postRedTeam(any()) }
         clearAllMocks()
 
         testklokke = testklokke(9, 26)
-
         updater.update()
-
         verify(exactly = 0) { slackClient.updateRedTeamGroup(any()) }
         verify(exactly = 0) { slackClient.postRedTeam(any()) }
 
         testklokke = testklokke(8, 27)
-
         updater.update()
-
         verify(exactly = 1) { slackClient.updateRedTeamGroup(any()) }
         verify(exactly = 1) { slackClient.postRedTeam(any()) }
     }
