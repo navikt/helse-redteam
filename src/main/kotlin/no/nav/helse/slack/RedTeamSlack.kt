@@ -4,15 +4,16 @@ import com.slack.api.Slack
 import no.nav.helse.model.*
 import java.time.LocalDate
 import java.time.LocalDate.now
-import java.time.format.TextStyle
+import java.time.format.DateTimeFormatterBuilder
+import java.time.temporal.ChronoField
 import java.util.*
 
 class RedTeamSlack(private val token: String, private val slackChannel: String, private val userGroup: String) {
 
-    val client get() = Slack.getInstance()
+    private val client: Slack get() = Slack.getInstance()
 
     fun postRedTeam(team: Workday) {
-        val dateString = team.date.dayOfMonth.toString() + "." + team.date.month.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+        val dateString = team.date.format(formatter)
         val response = client.methods(token).chatPostMessage { it
             .channel(slackChannel)
             .text(":wave: :bomlo: Dagens red-team ($dateString)\n" +
@@ -46,10 +47,18 @@ class RedTeamSlack(private val token: String, private val slackChannel: String, 
             throw RuntimeException("Error occurred when updating group on slack: ${response.error}")
         }
     }
+
+    companion object {
+        private val formatter = DateTimeFormatterBuilder()
+            .appendText(ChronoField.DAY_OF_MONTH)
+            .appendLiteral(". ")
+            .appendText(ChronoField.MONTH_OF_YEAR)
+            .toFormatter(Locale.getDefault())
+    }
 }
 
+// For manuell slack-posting, aka. testing.
 fun main() {
-
     val token = System.getenv("SLACK_TOKEN")
     val redTeam = RedTeam(
         LocalDate.of(2022, 1, 1),

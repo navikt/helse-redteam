@@ -69,14 +69,12 @@ data class RedTeamCalendarDto(
     val teams: List<TeamDto>,
     val days: List<Day>
 ) {
-    fun json() = mapper.writeValueAsString(this)
+    fun json(): String = mapper.writeValueAsString(this)
 }
 
 interface Day {
-    fun json() = mapper.writeValueAsString(this)
+    fun json(): String = mapper.writeValueAsString(this)
 }
 
-data class Workday(val date: LocalDate, val members: List<TeamMember>): Day {
-}
-data class NonWorkday(val date: LocalDate, val name: String): Day {
-}
+data class Workday(val date: LocalDate, val members: List<TeamMember>): Day
+data class NonWorkday(val date: LocalDate, val name: String): Day
