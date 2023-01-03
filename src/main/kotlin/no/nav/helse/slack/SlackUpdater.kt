@@ -17,9 +17,9 @@ class SlackUpdater(
     private val today get() = clock().toLocalDate()
     private val postTime = 8
     private val tulleTime = 9
-    private var nextDayToPost = if (clock().hour < 8)
-        today else
-        today.plusDays(1)
+    private var lastPosted = if (clock().hour < 8)
+        today.minusDays(1) else
+        today
     private var tulleLock = false
 
     fun handleOverride(overrideDate: LocalDate) {
@@ -38,7 +38,7 @@ class SlackUpdater(
                 slackClient.updateRedTeamGroup(redTeamForDay)
                 logger.info("Today's red team has been updated in the slack user group")
 
-                nextDayToPost = today.plusDays(1)
+                lastPosted = today
             } catch (e: Exception) {
                 logger.error("Error occurred attempting to use slack API", e)
             }
@@ -47,8 +47,8 @@ class SlackUpdater(
     }
 
     private fun skalPoste(redTeamForDay: Day): Boolean {
-        if (nextDayToPost != today) {
-            logger.info("Poster ikke, dagens dato er $today, skal først poste $nextDayToPost")
+        if (lastPosted >= today) {
+            logger.info("Poster ikke, forrige gang: $lastPosted")
             return false
         }
         if (clock().hour != postTime) {

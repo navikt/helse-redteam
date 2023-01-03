@@ -1,5 +1,6 @@
 .idea
 .gradle
+/out
 build
 .DS_Store
 team-data.json
