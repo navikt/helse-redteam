@@ -14,7 +14,7 @@ internal class RedteamMediatorTest: AbstractRedTeamTest() {
         val slackClient = mockk<RedTeamSlack>(relaxUnitFun = true)
 
         val mediator = RedteamMediator(
-            slackUpdater = SlackUpdater( { START_DATE.atStartOfDay()}, slackClient, redTeam()),
+            slackUpdater = SlackUpdater(testklokke(START_DATE), slackClient, redTeam()),
             redTeam = redTeam()
         )
         mediator.override("Sondre", "David", START_DATE)
@@ -27,7 +27,7 @@ internal class RedteamMediatorTest: AbstractRedTeamTest() {
         every { slackClient.updateRedTeamGroup(any()) } returns Unit
 
         val mediator = RedteamMediator(
-            slackUpdater = SlackUpdater( { START_DATE.atStartOfDay()}, slackClient, redTeam()),
+            slackUpdater = SlackUpdater(testklokke(START_DATE), slackClient, redTeam()),
             redTeam = redTeam()
         )
         mediator.override("David", "Sondre", START_DATE.plusDays(1))

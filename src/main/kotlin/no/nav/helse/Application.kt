@@ -26,6 +26,7 @@ import no.nav.helse.slack.RedTeamSlack
 import no.nav.helse.slack.SlackUpdater
 import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
+import java.time.Clock
 import java.time.LocalDate
 import java.time.LocalDate.now
 import java.time.LocalDateTime
@@ -50,7 +51,7 @@ suspend fun start() {
     val redTeam = RedTeam(LocalDate.of(2022, 6, 1), team, holidays())
     val mediator = RedteamMediator(
         SlackUpdater(
-            { LocalDateTime.now() },
+            Clock.systemDefaultZone(),
             RedTeamSlack(slackToken, SLACK_CHANNEL, SLACK_USER_GROUP),
             redTeam
         ), redTeam
