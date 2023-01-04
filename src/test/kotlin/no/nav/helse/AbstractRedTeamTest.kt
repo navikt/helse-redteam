@@ -12,6 +12,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.temporal.ChronoField
+import java.time.temporal.TemporalAmount
 
 open class AbstractRedTeamTest {
 
@@ -39,8 +40,12 @@ open class AbstractRedTeamTest {
             this.instant = instant
         }
 
+        operator fun plusAssign(amount: TemporalAmount) {
+            instant = instant.plus(amount)
+        }
+
         fun nyttTidspunkt(hour: Long, date: Long) {
-            this.instant = tidspunkt(hour, date)
+            instant = tidspunkt(hour, date)
         }
 
         override fun instant() = instant

@@ -6,6 +6,7 @@ import io.mockk.verify
 import no.nav.helse.AbstractRedTeamTest
 import no.nav.helse.model.NonWorkday
 import org.junit.jupiter.api.Test
+import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 
@@ -16,7 +17,7 @@ internal class SlackUpdaterTest: AbstractRedTeamTest() {
         val slackClient = mockk<RedTeamSlack>(relaxUnitFun = true)
         val testklokke = MutableClock(tidspunkt(8, 26))
         val updater = SlackUpdater(testklokke, slackClient, redTeam())
-        testklokke.nyttTidspunkt(8, 27)
+        testklokke += Duration.ofDays(1)
 
         // Sjekk at det bare blir gjort en gang for dagen
         updater.update()
@@ -32,7 +33,7 @@ internal class SlackUpdaterTest: AbstractRedTeamTest() {
         val slackClient = mockk<RedTeamSlack>(relaxUnitFun = true)
         val testklokke = MutableClock(tidspunkt(8, 26))
         val updater = SlackUpdater(testklokke, slackClient, redTeam())
-        testklokke.nyttTidspunkt(9, 27)
+        testklokke += Duration.ofHours(1)
 
         updater.update()
 
@@ -50,13 +51,13 @@ internal class SlackUpdaterTest: AbstractRedTeamTest() {
         verify(exactly = 0) { slackClient.updateRedTeamGroup(any()) }
         verify(exactly = 0) { slackClient.postRedTeam(any()) }
 
-        testklokke.nyttTidspunkt(8, 26)
+        testklokke += Duration.ofHours(1)
         updater.update()
         verify(exactly = 1) { slackClient.updateRedTeamGroup(any()) }
         verify(exactly = 1) { slackClient.postRedTeam(any()) }
         clearAllMocks()
 
-        testklokke.nyttTidspunkt(9, 26)
+        testklokke += Duration.ofHours(1)
         updater.update()
         verify(exactly = 0) { slackClient.updateRedTeamGroup(any()) }
         verify(exactly = 0) { slackClient.postRedTeam(any()) }
