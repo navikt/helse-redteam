@@ -62,7 +62,7 @@ internal class SlackUpdaterTest: AbstractRedTeamTest() {
         verify(exactly = 0) { slackClient.updateRedTeamGroup(any()) }
         verify(exactly = 0) { slackClient.postRedTeam(any()) }
 
-        testklokke.nyttTidspunkt(8, 27)
+        testklokke.nyttTidspunkt(8, 27, 1)
         updater.update()
         verify(exactly = 1) { slackClient.updateRedTeamGroup(any()) }
         verify(exactly = 1) { slackClient.postRedTeam(any()) }

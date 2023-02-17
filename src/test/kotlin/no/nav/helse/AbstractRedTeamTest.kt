@@ -44,8 +44,8 @@ open class AbstractRedTeamTest {
             instant = instant.plus(amount)
         }
 
-        fun nyttTidspunkt(hour: Long, date: Long) {
-            instant = tidspunkt(hour, date)
+        fun nyttTidspunkt(hour: Long, date: Long, month: Long) {
+            instant = tidspunkt(hour, date, month)
         }
 
         override fun instant() = instant
@@ -54,10 +54,10 @@ open class AbstractRedTeamTest {
     }
 
     companion object {
-        fun tidspunkt(hour: Long, date: Long, month: Long? = null): Instant =
+        fun tidspunkt(hour: Long, date: Long, month: Long = 1): Instant =
             LocalDateTime.now().run {
                 with(ChronoField.YEAR, 2022)
-                    .with(ChronoField.MONTH_OF_YEAR, month ?: monthValue.toLong())
+                    .with(ChronoField.MONTH_OF_YEAR, month)
                     .with(ChronoField.DAY_OF_MONTH, date)
                     .with(ChronoField.HOUR_OF_DAY, hour)
                     .with(ChronoField.MINUTE_OF_HOUR, 0)
