@@ -16,11 +16,11 @@ class RedTeamSlack(private val token: String, private val slackChannel: String, 
         val dateString = team.date.format(formatter)
         val response = client.methods(token).chatPostMessage { it
             .channel(slackChannel)
-            .text(":wave: :bomlo: Dagens red-team ($dateString)\n" +
-                    " - <@${team.members[0].slackId}>\n" +
-                    " - <@${team.members[1].slackId}>\n" +
-                    " - <@${team.members[2].slackId}>\n" +
-                    "Red-team kan administreres på <https://tbd.intern.nav.no/docs/redteam-wiki/red-team|tbd.intern.nav.no>")
+            .text(":wave: :bomlo: Red team for $dateString:\n" +
+                    " - <@${team.members[0].slackId}> (${team.members[0].team})\n" +
+                    " - <@${team.members[1].slackId}> (${team.members[1].team})\n" +
+                    " - <@${team.members[2].slackId}> (${team.members[2].team})\n" +
+                    "Red team kan administreres på <https://tbd.intern.nav.no/docs/redteam-wiki/red-team|tbd.intern.nav.no>")
         }
 
         if (!response.isOk) {
