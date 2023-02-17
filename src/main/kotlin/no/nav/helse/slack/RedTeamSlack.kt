@@ -73,5 +73,9 @@ fun main() {
 
 private val tulleMessages = listOf(
     ":wave: Morning :hehege: <@U01HXSKBDJ7>. Har du lest slack i 15 min i dag?\n\n" +
-            "Kan du fortelle mer om det?"
+            "Kan du fortelle mer om det?",
+    ":wave: Morning :explodinghead: <@U5LJ6JHLL>. Kan ikke du starte dagen med en motiverende tale? Det tror jeg mange setter pris på!",
+    ":wave: Hallais :digimorty: <@U8G3WN6M6>. Alle vet du har et tørt ordspill på lur, kan du ikke dele ett?!",
+    ":wave: Morning :ffingerguns: <@U01DGUE8DLL>. Nå er det snart helg!!! Kan du komme med et par tips til hva dine kolleger kan gjøre i helgen?",
+    ":wave: G'day mate :pirate: <@UK6TD930C>. Er du en ja-kopp eller en nei-kopp i dag?"
 )
