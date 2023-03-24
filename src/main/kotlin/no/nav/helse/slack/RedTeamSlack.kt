@@ -77,5 +77,9 @@ private val tulleMessages = listOf(
     ":wave: Morning :explodinghead: <@U5LJ6JHLL>. Kan ikke du starte dagen med en motiverende tale? Det tror jeg mange setter pris på!",
     ":wave: Hallais :digimorty: <@U8G3WN6M6>. Alle vet du har et tørt ordspill på lur, kan du ikke dele ett?!",
     ":wave: Morning :ffingerguns: <@U01DGUE8DLL>. Nå er det snart helg!!! Kan du komme med et par tips til hva dine kolleger kan gjøre i helgen?",
-    ":wave: G'day mate :pirate: <@UK6TD930C>. Er du en ja-kopp eller en nei-kopp i dag?"
+    ":wave: G'day mate :pirate: <@UK6TD930C>. Er du en ja-kopp eller en nei-kopp i dag?",
+    ":wave: God morgen, <@U03KX96MT39> :excited:! Du som er så god i det meste, kan du lære oss noe kult?",
+    ":wave: Må itj fårrå nålles, <@UUQQ1EHBN> :happymarty:! Men del gjerne med oss dagens trønderord og hvorfor det er turan som tælle?",
+    ":wave: Hællæ, <@US0C415LZ> :christian-king:! På tide med noen Halden-fæcts, kan du nevne tre ting som er bedre i Halden?",
+    ":wave: Så var fredag igjen vettu, eller hur? Kan ikke <@UDWEJT5PW> informere oss om hvor mange skritt han gikk i går :walking-dogs:? Vi er så himla spent på denne gåmatta!"
 )
