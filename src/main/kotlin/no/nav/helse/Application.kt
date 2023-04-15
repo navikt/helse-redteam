@@ -80,8 +80,12 @@ suspend fun start() {
     }
 }
 
+fun ktor(mediator: RedteamMediator): ApplicationEngine = embeddedServer(CIO, applicationEngineEnvironment {
+    module { redTeamModule(mediator) }
+    connector { port = 8080 }
+}).start(wait = false)
 
-fun ktor(mediator: RedteamMediator) = embeddedServer(CIO, port = 8080, host = "0.0.0.0") {
+fun Application.redTeamModule(mediator: RedteamMediator) {
     configureRouting(mediator)
     install(ContentNegotiation) {
         json()
@@ -93,8 +97,7 @@ fun ktor(mediator: RedteamMediator) = embeddedServer(CIO, port = 8080, host = "0
             !call.request.path().startsWith("/isalive")
         }
     }
-}.start(wait = false)
-
+}
 
 fun Application.configureRouting(mediator: RedteamMediator) {
     val logger = LoggerFactory.getLogger("red-team-api")
