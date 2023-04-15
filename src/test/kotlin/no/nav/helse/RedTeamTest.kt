@@ -8,11 +8,14 @@ import kotlin.test.assertEquals
 
 internal class RedTeamTest {
 
-    private val team = Team(
-        TeamDto("Spleiselaget", genTeam("Sondre", "David", "Christian")),
-        TeamDto("Speilvendt", genTeam("Jakob", "Sindre")),
-        TeamDto("Fag", genTeam("Morten", "Cecilie"))
-    )
+    private val team: () -> Team
+        get() = {
+            Team(
+                TeamDto("Spleiselaget", genTeam("Sondre", "David", "Christian")),
+                TeamDto("Speilvendt", genTeam("Jakob", "Sindre")),
+                TeamDto("Fag", genTeam("Morten", "Cecilie"))
+            )
+        }
     private val startDato = LocalDate.of(2022, 1, 1)
 
     @Test
@@ -68,7 +71,7 @@ internal class RedTeamTest {
     }
 
 
-    fun Int.januar(dev1: String, dev2: String, fag: String) =
+    private fun Int.januar(dev1: String, dev2: String, fag: String) =
         Workday(
             LocalDate.of(2022, 1, this),
             listOf(
@@ -76,7 +79,7 @@ internal class RedTeamTest {
                 Team.TeamMember("Speilvendt", dev2, "slackid-$dev2"),
                 Team.TeamMember("Fag", fag, "slackid-$fag")).sortedBy { it.team })
 
-    fun Int.januar() =
+    private fun Int.januar() =
         LocalDate.of(2022, 1, this)
 
 }

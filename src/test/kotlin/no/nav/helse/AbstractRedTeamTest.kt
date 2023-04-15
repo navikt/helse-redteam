@@ -20,11 +20,13 @@ open class AbstractRedTeamTest {
 
     internal fun redTeam(extraNonWorkDays: List<NonWorkday> = emptyList()) = RedTeam(
         START_DATE,
-        Team(
-            TeamDto("Spleiselaget", genTeam("Sondre", "David", "Christian")),
-            TeamDto("Speilvendt",   genTeam("Jakob", "Sindre")),
-            TeamDto("Fag",          genTeam("Morten", "Cecilie"))
-        ),
+        {
+            Team(
+                TeamDto("Spleiselaget", genTeam("Sondre", "David", "Christian")),
+                TeamDto("Speilvendt",   genTeam("Jakob", "Sindre")),
+                TeamDto("Fag",          genTeam("Morten", "Cecilie"))
+            )
+        },
         extraNonWorkDays,
     )
 

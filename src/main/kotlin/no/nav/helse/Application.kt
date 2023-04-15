@@ -24,6 +24,7 @@ import no.nav.helse.model.Team
 import no.nav.helse.model.holidays
 import no.nav.helse.slack.RedTeamSlack
 import no.nav.helse.slack.SlackUpdater
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
 import java.time.Clock
@@ -45,10 +46,7 @@ suspend fun start() {
     val logger = LoggerFactory.getLogger("red-team")
     val slackToken =
         System.getenv("SLACK_TOKEN") ?: throw IllegalStateException("Could not find slack token in envvar: SLACK_TOKEN")
-    val teamData = teamDataFromFile()
-    val team = Team(teamData[0], teamData[1], teamData[2])
-
-    val redTeam = RedTeam(LocalDate.of(2022, 6, 1), team, holidays())
+    val redTeam = setUpRedTeam(logger)
     val mediator = RedteamMediator(
         SlackUpdater(
             Clock.systemDefaultZone(),
@@ -78,6 +76,15 @@ suspend fun start() {
         ktorServer.stop(gracePeriod, forcefulShutdownTimeout)
         logger.info("ktor shutdown complete: end of life. goodbye.")
     }
+}
+
+private fun setUpRedTeam(logger: Logger): RedTeam {
+    val team = {
+        val teamData = teamDataFromFile()
+        logger.info("file contents read")
+        Team(teamData[0], teamData[1], teamData[2])
+    }
+    return RedTeam(LocalDate.of(2022, 6, 1), team, holidays())
 }
 
 fun ktor(mediator: RedteamMediator): ApplicationEngine = embeddedServer(CIO, applicationEngineEnvironment {

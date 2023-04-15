@@ -62,11 +62,13 @@ fun main() {
     val token = System.getenv("SLACK_TOKEN")
     val redTeam = RedTeam(
         LocalDate.of(2022, 1, 1),
-        Team(
-            TeamDto("Speilvendt", listOf(MemberDto("Sondre", "UBCJCLFD5"))),
-            TeamDto("Spleiselaget", listOf(MemberDto("Christian", "U03KX96MT39"))),
-            TeamDto("Fag", listOf(MemberDto("Margrethe", "UMHUJNE5N")))
-        )
+        {
+            Team(
+                TeamDto("Speilvendt", listOf(MemberDto("Sondre", "UBCJCLFD5"))),
+                TeamDto("Spleiselaget", listOf(MemberDto("Christian", "U03KX96MT39"))),
+                TeamDto("Fag", listOf(MemberDto("Margrethe", "UMHUJNE5N")))
+            )
+        }
     )
     RedTeamSlack(token, "team-bømlo", "team-bømlo").updateRedTeamGroup((redTeam.teamFor(now()) as Workday))
 }

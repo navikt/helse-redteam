@@ -29,17 +29,17 @@ internal class E2ETest {
             install(ContentNegotiation) {
                 jackson()
             }
+            val getRedTeam = {
+                Team(
+                    TeamDto("Speilvendt", listOf(MemberDto("Sondre", "slack1"), MemberDto("Jakob", "slack2"))),
+                    TeamDto("Spleiselaget", listOf(MemberDto("Christian", "slack3"))),
+                    TeamDto("Fag", listOf(MemberDto("Margrethe", "slack5")))
+                )
+            }
             configureRouting(
                 RedteamMediator(
                     slackUpdater = slackUpdater,
-                    redTeam = RedTeam(
-                        LocalDate.of(2022, 1, 1),
-                        Team(
-                            TeamDto("Speilvendt", listOf(MemberDto("Sondre", "slack1"), MemberDto("Jakob", "slack2"))),
-                            TeamDto("Spleiselaget", listOf(MemberDto("Christian", "slack3"))),
-                            TeamDto("Fag", listOf(MemberDto("Margrethe", "slack5")))
-                        )
-                    )
+                    redTeam = RedTeam(LocalDate.of(2022, 1, 1), getRedTeam)
                 )
             )
         }
@@ -56,5 +56,5 @@ internal class E2ETest {
     }
 
 
-    fun parsedTeam(json: String) = jacksonObjectMapper().readTree(json)["members"].map { it["name"].asText() }
+    private fun parsedTeam(json: String) = jacksonObjectMapper().readTree(json)["members"].map { it["name"].asText() }
 }

@@ -6,12 +6,12 @@ import java.time.DayOfWeek.SATURDAY
 import java.time.DayOfWeek.SUNDAY
 import java.time.LocalDate
 
-
 class RedTeam(
     private var startDate: LocalDate,
-    private val team: Team,
+    private val getTeam: () -> Team,
     extraNonWorkDays: List<NonWorkday> = emptyList()
 ) {
+    private val team get() = getTeam()
     private val overrides = mutableMapOf<LocalDate, List<Pair<TeamMember, TeamMember>>>()
     private val weekend = listOf(SATURDAY, SUNDAY)
     private val holidays = extraNonWorkDays.associateBy { it.date }
