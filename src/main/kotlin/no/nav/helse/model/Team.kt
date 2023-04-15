@@ -12,7 +12,7 @@ data class TeamDto(
     }
 }
 
-class MemberDto(
+data class MemberDto(
     val name: String,
     val slackId: String,
 ) {
