@@ -58,13 +58,13 @@ internal class RedTeamTest {
     @Test
     fun `no red-team on weekends`() {
         val kalender = RedTeam(startDato, team)
-        assertEquals(NonWorkday(2.januar(), "SUNDAY"), kalender.teamFor(2.januar()))
+        assertEquals(NonWorkday(2.januar()), kalender.teamFor(2.januar()))
     }
 
     @Test
     fun `no red-team on holidays`() {
         val kalender = RedTeam(startDato, team, holidays())
-        assertEquals(NonWorkday(1.januar(), "1. nyttårsdag"), kalender.teamFor(1.januar()))
+        assertEquals(NonWorkday(1.januar()), kalender.teamFor(1.januar()))
     }
 
 

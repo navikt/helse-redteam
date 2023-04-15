@@ -18,7 +18,7 @@ class RedTeam(
 
     fun teamFor(date: LocalDate): Day {
         if (date in holidays) return holidays[date]!!
-        if (date.dayOfWeek in weekend) return NonWorkday(date, date.dayOfWeek.name)
+        if (date.dayOfWeek in weekend) return NonWorkday(date)
         return Workday(date, team.teamAt(datesTo(date)).applySwaps(date).sortedBy { it.team })
     }
 
@@ -77,4 +77,4 @@ interface Day {
 }
 
 data class Workday(val date: LocalDate, val members: List<TeamMember>): Day
-data class NonWorkday(val date: LocalDate, val name: String): Day
+data class NonWorkday(val date: LocalDate): Day

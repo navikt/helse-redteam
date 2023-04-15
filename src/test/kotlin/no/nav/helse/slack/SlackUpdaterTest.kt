@@ -76,7 +76,7 @@ internal class SlackUpdaterTest: AbstractRedTeamTest() {
         val updater = SlackUpdater(
             testklokke,
             slackClient,
-            redTeam(listOf(NonWorkday(LocalDate.of(2022, 12, 26), "2. juledag")))
+            redTeam(listOf(NonWorkday(LocalDate.of(2022, 12, 26))))
         )
 
         fun assertPoster(tidspunkt: Instant) {
