@@ -41,7 +41,30 @@ internal class RedTeamTest {
         kalender.override("Cecilie", "Morten", 3.januar())
         assertEquals(3.januar("Sondre", "Jakob", "Morten"), kalender.teamFor(3.januar()))
         kalender.override("Sondre", "David", 3.januar())
+        assertEquals(3.januar("David", "Jakob", "Morten"), kalender.teamFor(3.januar()))
         assertEquals(4.januar("David", "Sindre", "Cecilie"), kalender.teamFor(4.januar()))
+    }
+
+    @Test
+    fun `override combined with updated team`() {
+        val fagTeam = mutableListOf("Fag 1", "Fag 2", "Fag 3")
+        val redTeam = RedTeam(startDato, { Team(TeamDto("Fag", genTeam(*fagTeam.toTypedArray()))) })
+        val date = 4.januar()
+        assertEquals(
+            listOf(Team.TeamMember("Fag", "Fag 2", "slackid-Fag 2")),
+            (redTeam.teamFor(date) as Workday).members
+        )
+
+        redTeam.override(from = "Fag 2", to = "Fag 3", date)
+        fagTeam.add(0, "Ny fagperson")
+
+        // I skrivende stund feiler denne fordi overrides blir 'ugyldige' hvis rekkefølgen på teammedlemmene endres.
+        assertThrows<AssertionError> {
+            assertEquals(
+                listOf(Team.TeamMember("Fag", "Fag 3", "slackid-Fag 3")),
+                (redTeam.teamFor(date) as Workday).members
+            )
+        }
     }
 
     @Test
@@ -77,7 +100,8 @@ internal class RedTeamTest {
             listOf(
                 Team.TeamMember("Spleiselaget", dev1, "slackid-$dev1"),
                 Team.TeamMember("Speilvendt", dev2, "slackid-$dev2"),
-                Team.TeamMember("Fag", fag, "slackid-$fag")).sortedBy { it.team })
+                Team.TeamMember("Fag", fag, "slackid-$fag")
+            ).sortedBy { it.team })
 
     private fun Int.januar() =
         LocalDate.of(2022, 1, this)
