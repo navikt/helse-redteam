@@ -28,8 +28,21 @@ class RedTeamSlack(private val token: String, private val slackChannel: String, 
         }
     }
 
+    fun startMemeBallet() {
+        val person = tulleFolk.keys.shuffled().first()
+        val message = ":wave: Morning $person. Kan ikke du starte meme-ballet med noe lættis denne fredagen?"
+        val response = client.methods(token).chatPostMessage { it
+            .channel(slackChannel)
+            .text(message)
+        }
+        if (!response.isOk) {
+            throw RuntimeException("Error occured when posting to slack: ${response.errors}")
+        }
+    }
+
     fun tulleMedNoen() {
-        val message = tulleMessages.shuffled().first()
+        val person = tulleFolk.keys.shuffled().first()
+        val message = tulleMessages.shuffled().first()(person)
         val response = client.methods(token).chatPostMessage { it
             .channel(slackChannel)
             .text(message)
@@ -73,15 +86,45 @@ fun main() {
     RedTeamSlack(token, "team-bømlo", "team-bømlo").updateRedTeamGroup((redTeam.teamFor(now()) as Workday))
 }
 
-private val tulleMessages = listOf(
-    ":wave: Morning :hehege: <@U01HXSKBDJ7>. Har du lest slack i 15 min i dag?\n\n" +
-            "Kan du fortelle mer om det?",
-    ":wave: Morning :explodinghead: <@U5LJ6JHLL>. Kan ikke du starte dagen med en motiverende tale? Det tror jeg mange setter pris på!",
-    ":wave: Hallais :digimorty: <@U8G3WN6M6>. Alle vet du har et tørt ordspill på lur, kan du ikke dele ett?!",
-    ":wave: Morning :ffingerguns: <@U01DGUE8DLL>. Nå er det snart helg!!! Kan du komme med et par tips til hva dine kolleger kan gjøre i helgen?",
-    ":wave: G'day mate :pirate: <@UK6TD930C>. Er du en ja-kopp eller en nei-kopp i dag?",
-    ":wave: God morgen, <@U03KX96MT39> :excited:! Du som er så god i det meste, kan du lære oss noe kult?",
-    ":wave: Må itj fårrå nålles, <@UUQQ1EHBN> :happymarty:! Men del gjerne med oss dagens trønderord og hvorfor det er turan som tælle?",
-    ":wave: Hællæ, <@US0C415LZ> :christian-king:! På tide med noen Halden-fæcts, kan du nevne tre ting som er bedre i Halden?",
-    ":wave: Så var fredag igjen vettu, eller hur? Kan ikke <@UDWEJT5PW> informere oss om hvor mange skritt han gikk i går :walking-dogs:? Vi er så himla spent på denne gåmatta!"
+private val tulleFolk = mapOf(
+    "<@U5LJ6JHLL>" to "David",
+    "<@U01HXSKBDJ7>" to "Hege",
+    "<@U8G3WN6M6>" to "Tholander",
+    "<@U01DGUE8DLL>" to "Simen",
+    "<@UK6TD930C>" to "Jakopp",
+    "<@UUQQ1EHBN>" to "Marte",
+    "<@UEHPCUFCJ>" to "Maxi",
+    "<@US0C415LZ>" to "Christian",
+    "<@UDWEJT5PW>" to "Håkon",
+    "<@U029VUUS1CJ>" to "Eirik",
+    "<@U040GTABBSM>" to "Elias",
+    "<@U04RTT5Q80J>" to "Martin",
+    "<@U6VPRN57C>" to "Camilla",
+    "<@U03KX96MT39>" to "Helene",
+    "<@UEJHF6K5Z>" to "Sagen",
+    "<@U6QCP24SF>" to "Øyvind",
+    "<@UAHN8TBD3>" to "Solveig",
+    "<@U025P2PGW2W>" to "Øydis",
+    "<@U016CF417HQ>" to "Asma",
+    "<@U03UHBN7HU5>" to "Ingrid",
+    "<@UG411ENLQ>" to "Rita",
+    "<@UDFAST27K>" to "Cecilie",
+    "<@U04MBDYNGMU>" to "Isidora",
+    "<@UM6FRDCBU>" to "Aminet",
+    "<@UMHEW1BS8>" to "Emine",
+    "<UMHUJNE5N>" to "Netland",
+)
+
+private val tulleMessages: List<(person: String) -> String> = listOf(
+    {":wave: Morning :hehege: $it. Har du lest slack i 15 min i dag? Kan du fortelle mer om det?"},
+    {":wave: Morning :explodinghead: $it. Kan ikke du starte dagen med en motiverende tale? Det tror jeg mange setter pris på!"},
+    {":wave: Morning $it. Hva er din definisjon av en sak?"},
+    {":wave: Hallais :digimorty: $it. Alle vet du har et tørt ordspill på lur, kan du ikke dele ett?!"},
+    {":wave: Morning :ffingerguns: $it. Nå er det snart helg!!! Kan du komme med et par tips til hva dine kolleger kan gjøre i helgen?"},
+    {":wave: G'day mate :pirate: $it. Er du en ja-kopp eller en nei-kopp i dag?"},
+    {":wave: God morgen, $it :excited:! Du som er så god i det meste, kan du lære oss noe kult?"},
+    {":wave: Må itj fårrå nålles, $it :happymarty:! Men del gjerne med oss dagens trønderord og hvorfor det er turan som tælle?"},
+    {":wave: Heisann $it :maxi-jam:! Har du tenkt på noen spennende nøtter i det siste? :maxi-nut-cracker: :maxi-excited:"},
+    {":wave: Hællæ, $it :christian-king:! På tide med noen Halden-fæcts, kan du nevne tre ting som er bedre i Halden?"},
+    {":wave: Så var fredag igjen vettu, eller hur? Kan ikke $it informere oss om hvor mange skritt han gikk i går :walking-dogs:? Vi er så himla spent på denne gåmatta!"}
 )

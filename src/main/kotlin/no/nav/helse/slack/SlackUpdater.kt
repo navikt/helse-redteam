@@ -68,6 +68,7 @@ class SlackUpdater(
         if (now.hour == tulleTime && now.dayOfWeek == DayOfWeek.FRIDAY && !tulleLock) {
             try {
                 slackClient.tulleMedNoen()
+                slackClient.startMemeBallet()
                 logger.info("Tulla litt")
             } catch (e: Exception) {
                 logger.error("Error occurred attempting to use slack API", e)
