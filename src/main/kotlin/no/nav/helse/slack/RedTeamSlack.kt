@@ -106,7 +106,7 @@ private val tulleFolk = mapOf(
     "<@U025P2PGW2W>" to "Øydis",
     "<@UM6FRDCBU>" to "Aminet",
     "<@UMHEW1BS8>" to "Emine",
-    "<UMHUJNE5N>" to "MortenN"
+    "<@UMHUJNE5N>" to "MortenN"
 )
 
 private val tulleMessages: List<(person: String) -> String> = listOf(
