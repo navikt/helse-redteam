@@ -41,18 +41,16 @@ dependencies {
 
     testImplementation("io.mockk:mockk:${mockkVersion}")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+
+    testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 tasks {
-    compileKotlin {
-        kotlinOptions.jvmTarget = "17"
-    }
-
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "17"
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
     }
 
 

@@ -14,10 +14,10 @@ import no.nav.helse.model.RedTeam
 import no.nav.helse.model.Team
 import no.nav.helse.model.TeamDto
 import no.nav.helse.slack.SlackUpdater
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 internal class E2ETest {
 

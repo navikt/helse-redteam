@@ -3,8 +3,8 @@ package no.nav.helse
 import no.nav.helse.model.MemberDto
 import no.nav.helse.model.Team
 import no.nav.helse.model.TeamDto
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
 
 internal class TeamTest {
 
@@ -17,7 +17,6 @@ internal class TeamTest {
 
     @Test
     fun nextDay() {
-
         assertEquals(
             listOf("Sondre", "Jakob", "Morten"),
             team.teamAt(0).map { it.name }
