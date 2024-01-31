@@ -25,9 +25,11 @@ class SlackUpdater(
     private var tulleLock = false
 
     fun handleOverride(overrideDate: LocalDate) {
-        if (overrideDate == today) {
-            slackClient.updateRedTeamGroup(redTeam.teamFor(today) as Workday)
-        }
+        if (overrideDate != today) return
+        slackClient.updateRedTeamGroup(redTeam.teamFor(today) as Workday)
+        val redTeamForDay = redTeam.teamFor(today)
+        if (redTeamForDay !is Workday) return
+        slackClient.postRedTeamOverride(redTeamForDay)
     }
 
     fun update() {

@@ -27,6 +27,21 @@ class RedTeamSlack(private val token: String, private val slackChannel: String, 
             throw RuntimeException("Error occured when posting to slack: ${response.errors}")
         }
     }
+    fun postRedTeamOverride(team: Workday) {
+        val dateString = team.date.format(formatter)
+        val response = client.methods(token).chatPostMessage { it
+            .channel(slackChannel)
+            .text(":wave: :bomlo: Red team har blitt oppdatert for $dateString: :thanks: \n" +
+                    " - <@${team.members[0].slackId}> (${team.members[0].team})\n" +
+                    " - <@${team.members[1].slackId}> (${team.members[1].team})\n" +
+                    " - <@${team.members[2].slackId}> (${team.members[2].team})\n" +
+                    "Red team kan administreres på <https://tbd.intern.nav.no/docs/redteam-wiki/red-team|tbd.intern.nav.no>")
+        }
+
+        if (!response.isOk) {
+            throw RuntimeException("Error occured when posting to slack: ${response.errors}")
+        }
+    }
 
     fun startMemeBallet() {
         val person = tulleFolk.keys.shuffled().first()
