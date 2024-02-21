@@ -5,7 +5,7 @@ val kotlinVersion = "1.9.22"
 val mockkVersion = "1.13.8"
 val jacksonVersion = "2.16.1"
 val slackApiModelKotlinExtensionVersion = "1.36.1"
-val junitVersion = "5.10.1"
+val junitVersion = "5.10.2"
 
 plugins {
     kotlin("jvm") version "1.9.22"
