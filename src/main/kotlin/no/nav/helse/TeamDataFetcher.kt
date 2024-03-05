@@ -6,10 +6,10 @@ import no.nav.helse.model.TeamDto
 import java.io.File
 
 fun teamDataFromFile(): List<TeamDto> {
-    // Hvis appen ikke kjører på NAIS så bruker den test data
-    val teamJson = if (!System.getenv("NAIS_CLUSTER_NAME").isNullOrEmpty())
-        File("/var/run/configmaps/team-data.json").readText() else
-        object {}.javaClass.getResource("/test-team-data.json")?.readText()
+    val teamJson = if (viKjørerPåEtNaisCluster())
+        hentTeamdataFraConfigMap()
+    else
+        hentTeamdataFraLokaltFilsystem()
 
     val contents = jacksonObjectMapper().readTree(teamJson)
     return contents.map { file ->
@@ -24,3 +24,9 @@ fun teamDataFromFile(): List<TeamDto> {
         )
     }
 }
+
+private fun hentTeamdataFraLokaltFilsystem() = object {}.javaClass.getResource("/test-team-data.json")?.readText()
+
+private fun hentTeamdataFraConfigMap() = File("/var/run/configmaps/team-data.json").readText()
+
+private fun viKjørerPåEtNaisCluster() = !System.getenv("NAIS_CLUSTER_NAME").isNullOrEmpty()
