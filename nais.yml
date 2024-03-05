@@ -35,3 +35,9 @@ spec:
       external:
         - host: slack.com
         - host: api.slack.com
+  gcp:
+    buckets:
+      - name: red-team-bucket
+        lifecycleCondition:
+          numNewerVersions: 1
+          withState: ANY
