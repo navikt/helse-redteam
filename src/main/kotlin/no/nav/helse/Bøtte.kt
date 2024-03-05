@@ -12,20 +12,12 @@ interface Bøtte {
     fun lagreOverstyringer(overstyringsjson: String): Boolean { return false}
 }
 
-class GCPBøtte(): Bøtte {
+class GCPBøtte : Bøtte {
     companion object {
         private val bøttenavn: String = "tbd-red-team-bucket"
         private val logger: Logger = LoggerFactory.getLogger("red-team-bøtte")
     }
-    override fun hentOverstyringer(): String? {
-        val bucket = hentBøtte()
-
-        println("Leser ut alt i bøtta ${bøttenavn}")
-        bucket.list().iterateAll().forEach { blob ->
-            println("${blob.name} (content-type: ${blob.contentType}, size: ${blob.size})")
-        }
-        return null
-    }
+    override fun hentOverstyringer(): String = String(hentBøtte().get("overstyringer.json").getContent())
 
     override fun lagreOverstyringer(overstyringsjson: String): Boolean {
         logger.info("Lagrer overstyringer i bøtta")

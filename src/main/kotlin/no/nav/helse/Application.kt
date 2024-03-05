@@ -46,13 +46,15 @@ suspend fun start() {
     val logger = LoggerFactory.getLogger("red-team")
     val slackToken =
         System.getenv("SLACK_TOKEN") ?: throw IllegalStateException("Could not find slack token in envvar: SLACK_TOKEN")
+    val bøtte = GCPBøtte()
     val redTeam = setUpRedTeam(logger)
+    redTeam.byttUtOverstyringer(bøtte.hentOverstyringer())
     val mediator = RedteamMediator(
         SlackUpdater(
             Clock.systemDefaultZone(),
             RedTeamSlack(slackToken, SLACK_CHANNEL, SLACK_USER_GROUP),
             redTeam
-        ), redTeam, GCPBøtte()
+        ), redTeam, bøtte
     )
     val ktorServer = ktor(mediator)
     try {
