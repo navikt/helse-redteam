@@ -52,7 +52,7 @@ suspend fun start() {
             Clock.systemDefaultZone(),
             RedTeamSlack(slackToken, SLACK_CHANNEL, SLACK_USER_GROUP),
             redTeam
-        ), redTeam
+        ), redTeam, GCPBøtte()
     )
     val ktorServer = ktor(mediator)
     try {

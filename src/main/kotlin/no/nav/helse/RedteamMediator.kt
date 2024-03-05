@@ -8,7 +8,8 @@ import java.time.LocalDate
 
 class RedteamMediator(
     private val slackUpdater: SlackUpdater,
-    private val redTeam: RedTeam
+    private val redTeam: RedTeam,
+    private val bøtte: Bøtte = object : Bøtte {}
 ) {
 
     private val logger: Logger = LoggerFactory.getLogger("red-team-mediator")
@@ -16,6 +17,7 @@ class RedteamMediator(
 
     fun override(from: String, to: String, date: LocalDate) {
         redTeam.override(from, to, date)
+        bøtte.lagreOverstyringer(redTeam.overstyringerSomJson())
         slackUpdater.handleOverride(date)
         logger.info("Override on date: {} completed", date)
     }

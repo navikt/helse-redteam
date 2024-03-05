@@ -6,6 +6,7 @@ val mockkVersion = "1.13.9"
 val jacksonVersion = "2.16.1"
 val slackApiModelKotlinExtensionVersion = "1.36.1"
 val junitVersion = "5.10.2"
+val gcpBucketVersion = "1.36.0"
 
 plugins {
     kotlin("jvm") version "1.9.22"
@@ -38,6 +39,8 @@ dependencies {
 
     implementation("com.slack.api:slack-api-model-kotlin-extension:$slackApiModelKotlinExtensionVersion")
     implementation("com.slack.api:slack-api-client-kotlin-extension:$slackApiModelKotlinExtensionVersion")
+
+    implementation("com.google.cloud:google-cloud-storage:$gcpBucketVersion")
 
     testImplementation("io.mockk:mockk:${mockkVersion}")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
