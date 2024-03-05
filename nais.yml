@@ -37,7 +37,7 @@ spec:
         - host: api.slack.com
   gcp:
     buckets:
-      - name: red-team-bucket
+      - name: tbd-red-team-bucket
         lifecycleCondition:
           numNewerVersions: 1
           withState: ANY
