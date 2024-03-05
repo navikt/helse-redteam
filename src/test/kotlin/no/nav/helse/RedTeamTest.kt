@@ -93,6 +93,40 @@ internal class RedTeamTest {
         assertEquals(NonWorkday(1.januar()), kalender.teamFor(1.januar()))
     }
 
+    @Test
+    fun `skal kunne overstyre alt via én enkelt json fil`() {
+        val redTeam = RedTeam(startDato, team, holidays())
+        val team = redTeam.teamFor(LocalDate.of(2024, 1, 3))
+        assertEquals("David", (team as Workday).members.find { it.team == "Spleiselaget" }!!.name)
+
+        val overridesFraBøtta = """{"2024-01-03":[{"first":{"team":"Spleiselaget","name":"David","slackId":"slackid-David"},"second":{"team":"Spleiselaget","name":"Christian","slackId":"slackid-Christian"}}]}"""
+        redTeam.byttUtOverstyringer(overridesFraBøtta)
+
+        val overriddenTeam = redTeam.teamFor(LocalDate.of(2024, 1, 3))
+        assertEquals("Christian", (overriddenTeam as Workday).members.find { it.team == "Spleiselaget" }!!.name)
+    }
+
+    @Test
+    fun `skal kunne bli overstyrt av den jsonen som den selv produserer`() {
+        val overstyringsdag = LocalDate.of(2024, 1, 3)
+        val redTeamAlpha = RedTeam(startDato, team, holidays())
+        val teamAlpha = redTeamAlpha.teamFor(overstyringsdag) as Workday
+        assertEquals("David", teamAlpha.members.find { it.team == "Spleiselaget" }!!.name)
+
+        redTeamAlpha.override("David", "Christian", overstyringsdag)
+        val teamAlphaOverstyrt = redTeamAlpha.teamFor(overstyringsdag) as Workday
+        assertEquals("Christian", teamAlphaOverstyrt.members.find { it.team == "Spleiselaget" }!!.name)
+
+        val redTeamBeta = RedTeam(startDato, team, holidays())
+        val teamBeta = redTeamBeta.teamFor(overstyringsdag) as Workday
+        assertEquals("David", teamBeta.members.find { it.team == "Spleiselaget" }!!.name)
+
+        // HER SKJER DET VIKTIGE
+        redTeamBeta.byttUtOverstyringer(redTeamAlpha.overstyringerSomJson())
+
+        val teamBetaOverstyrt = redTeamBeta.teamFor(overstyringsdag) as Workday
+        assertEquals("Christian", teamBetaOverstyrt.members.find { it.team == "Spleiselaget" }!!.name)
+    }
 
     private fun Int.januar(dev1: String, dev2: String, fag: String) =
         Workday(

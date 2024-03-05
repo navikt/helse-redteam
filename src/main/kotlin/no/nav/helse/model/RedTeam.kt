@@ -1,5 +1,7 @@
 package no.nav.helse.model
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.helse.model.Team.*
 import no.nav.helse.mapper
 import java.time.DayOfWeek.SATURDAY
@@ -60,7 +62,30 @@ class RedTeam(
 
     private fun List<TeamMember>.tryReplaceWith(swap: Pair<TeamMember, TeamMember>) =
         map { if(swap.first.name == it.name ) swap.second else it }
+
+    fun overstyringerSomJson() = jacksonObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(overrides)
+    fun byttUtOverstyringer(overridesFraBøtta: String) {
+        val nyeOverstyringer = jacksonObjectMapper().readTree(overridesFraBøtta)
+        val ersatz = nyeOverstyringer.fieldNames().asSequence().map {
+                LocalDate.parse(it) to nyeOverstyringer[it].somOverstyringer()
+        }.toMap()
+        overrides.clear()
+        overrides.putAll(ersatz)
+    }
+    private fun JsonNode.somOverstyringer():List<Pair<TeamMember, TeamMember>> {
+        if (!this.isArray) return emptyList()
+        return this.map {
+            it.somOverstyringspar()
+        }
+    }
+    private fun JsonNode.somOverstyringspar(): Pair<TeamMember, TeamMember> {
+        return Pair(this["first"].somTeamSwap(), this["second"].somTeamSwap())
+    }
+
+    private fun JsonNode.somTeamSwap(): TeamMember =
+        TeamMember(team = this["team"].asText(), name = this["name"].asText(), slackId = this["slackId"].asText())
 }
+
 
 data class Swap(val from: String, val to: String)
 
