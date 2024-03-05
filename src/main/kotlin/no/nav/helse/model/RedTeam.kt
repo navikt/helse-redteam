@@ -7,7 +7,7 @@ import java.time.DayOfWeek.SUNDAY
 import java.time.LocalDate
 
 class RedTeam(
-    private var startDate: LocalDate,
+    /** brukes _kun_ til å generere utkast til red-team. Sikrer en slags determinisme */ private var seedDate: LocalDate,
     private val getTeam: () -> Team,
     extraNonWorkDays: List<NonWorkday> = emptyList()
 ) {
@@ -19,7 +19,7 @@ class RedTeam(
     fun teamFor(date: LocalDate): Day {
         if (date in holidays) return holidays[date]!!
         if (date.dayOfWeek in weekend) return NonWorkday(date)
-        return Workday(date, team.teamAt(datesTo(date)).applySwaps(date).sortedBy { it.team })
+        return Workday(date, team.teamAt(antallArbeidsdagerFraSeed(date)).applySwaps(date).sortedBy { it.team })
     }
 
     fun override(from: String, to: String, date: LocalDate) {
@@ -51,8 +51,8 @@ class RedTeam(
         { "from: $from in swap(from: $from, to: $to) is not red-team at date: $date" }
     }
 
-    private fun datesTo(date: LocalDate) =
-        startDate.datesUntil(date).filter { it.dayOfWeek !in weekend }.filter { it !in holidays }.count().toInt()
+    private fun antallArbeidsdagerFraSeed(date: LocalDate) =
+        seedDate.datesUntil(date).filter { it.dayOfWeek !in weekend }.filter { it !in holidays }.count().toInt()
 
 
     private fun List<TeamMember>.applySwaps(date: LocalDate) =
