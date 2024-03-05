@@ -14,12 +14,12 @@ class RedteamMediator(
 
     private val logger: Logger = LoggerFactory.getLogger("red-team-mediator")
 
-
     fun override(from: String, to: String, date: LocalDate) {
+        logger.info("Override from $from to $to on date: {} started", date)
         redTeam.override(from, to, date)
         bøtte.lagreOverstyringer(redTeam.overstyringerSomJson())
         slackUpdater.handleOverride(date)
-        logger.info("Override on date: {} completed", date)
+        logger.info("Override from $from to $to on date: {} completed", date)
     }
 
     fun update() {
