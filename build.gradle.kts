@@ -1,4 +1,4 @@
-val ktorVersion = "2.3.7"
+val ktorVersion = "2.3.8"
 val logbackVersion = "1.4.14"
 val logbackEncoderVersion = "7.4"
 val kotlinVersion = "1.9.22"
@@ -6,7 +6,7 @@ val mockkVersion = "1.13.9"
 val jacksonVersion = "2.16.1"
 val slackApiModelKotlinExtensionVersion = "1.36.1"
 val junitVersion = "5.10.2"
-val gcpBucketVersion = "1.36.0"
+val gcpBucketVersion = "2.35.0"
 
 plugins {
     kotlin("jvm") version "1.9.22"
@@ -80,7 +80,7 @@ tasks {
             configurations.runtimeClasspath.get()
                 .filter { it.name != "app.jar" }
                 .forEach {
-                    val file = File("$buildDir/libs/${it.name}")
+                    val file = File("${layout.buildDirectory.get()}/libs/${it.name}")
                     if (!file.exists())
                         it.copyTo(file)
                 }
