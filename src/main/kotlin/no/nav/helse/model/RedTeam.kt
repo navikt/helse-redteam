@@ -49,8 +49,6 @@ class RedTeam(
 
     private fun validateDate(date: LocalDate, from: String, to: String) {
         require(teamFor(date) is Workday) { "Trying to override red team for a non-workday: $date" }
-        require(from in (teamFor(date) as Workday).members.map { it.name })
-        { "from: $from in swap(from: $from, to: $to) is not red-team at date: $date" }
     }
 
     private fun antallArbeidsdagerFraSeed(date: LocalDate) =
