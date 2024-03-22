@@ -58,13 +58,10 @@ internal class RedTeamTest {
         redTeam.override(from = "Fag 2", to = "Fag 3", date)
         fagTeam.add(0, "Ny fagperson")
 
-        // I skrivende stund feiler denne fordi overrides blir 'ugyldige' hvis rekkefølgen på teammedlemmene endres.
-        assertThrows<AssertionError> {
-            assertEquals(
-                listOf(Team.TeamMember("Fag", "Fag 3", "slackid-Fag 3")),
-                (redTeam.teamFor(date) as Workday).members
-            )
-        }
+        assertEquals(
+            listOf(Team.TeamMember("Fag", "Fag 3", "slackid-Fag 3")),
+            (redTeam.teamFor(date) as Workday).members
+        )
     }
 
     @Test

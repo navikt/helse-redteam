@@ -64,8 +64,12 @@ class RedTeam(
         seedDate.datesUntil(date).filter { it.dayOfWeek !in weekend }.filter { it !in holidays }.count().toInt()
 
 
-    private fun List<TeamMember>.applySwaps(date: LocalDate) =
-        overrides.getOrElse(date) { emptyList() }.fold(this) { acc, swap ->  acc.tryReplaceWith(swap) }
+    private fun List<TeamMember>.applySwaps(date: LocalDate): List<TeamMember> {
+        val ersatz = faktiskRedTeam[date] ?: emptyList()
+        return this.map { gammeltMedlem ->
+            ersatz.lastOrNull { it.team == gammeltMedlem.team } ?: gammeltMedlem
+        }
+    }
 
     private fun List<TeamMember>.tryReplaceWith(swap: Pair<TeamMember, TeamMember>) =
         map { if(swap.first.name == it.name ) swap.second else it }
