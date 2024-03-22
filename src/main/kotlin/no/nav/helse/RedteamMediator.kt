@@ -16,9 +16,8 @@ class RedteamMediator(
 
     fun override(from: String, to: String, date: LocalDate) {
         logger.info("Override from $from to $to on date: {} started", date)
-        redTeam.override(from, to, date)
-        bøtte.lagreOverstyringer(redTeam.gamleOverstyringerSomJson())
-        bøtte.lagreNyeOverstyringer(redTeam.nyeOverstyringerSomJson())
+        redTeam.override(to, date)
+        bøtte.lagreDagbestemmelser(redTeam.dagbestemmelserSomJson())
         slackUpdater.handleOverride(date)
         logger.info("Override from $from to $to on date: {} completed", date)
     }

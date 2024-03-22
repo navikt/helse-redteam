@@ -35,13 +35,10 @@ class Team(private vararg val groups: TeamDto) {
             TeamMember(group.name, member.name, member.slackId)
         }
 
-    internal fun swap(from: String, to: String): Pair<TeamMember, TeamMember> {
-        val fromGroup = groups.find { group -> from in group.members.names() } ?: throw IllegalArgumentException("from: $from does not exist in a group")
-        val toGroup = groups.find { group -> from in group.members.names() } ?: throw IllegalArgumentException("to: $from does not exist in a group")
-        require( fromGroup == toGroup) { "Invalid swap: $from and $to not in same group" }
-        val fromMember = fromGroup.memberFor(from) ?: throw IllegalArgumentException("from: $from does not exist in group: $fromGroup")
-        val toMember = toGroup.memberFor(to) ?: throw IllegalArgumentException("to: $from does not exist in group: $toGroup")
-        return Pair(fromMember, toMember)
+    internal fun somTeamMember(navn: String): TeamMember {
+        val toGroup = groups.find { group -> navn in group.members.names() } ?: throw IllegalArgumentException("to: $navn does not exist in a group")
+        val toMember = toGroup.memberFor(navn) ?: throw IllegalArgumentException("to: $navn does not exist in group: $toGroup")
+        return toMember
     }
     fun groups() = groups.toList()
     fun minLength() = groups.minOf { it.members.size }

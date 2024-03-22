@@ -9,8 +9,7 @@ import java.nio.ByteBuffer
 /** vet hvordan man henter ut og lagrer ned red-team-greier fra gcp */
 interface Bøtte {
     fun hentOverstyringer(): String? = null
-    fun lagreOverstyringer(overstyringsjson: String): Boolean { return false }
-    fun lagreNyeOverstyringer(overstyringsjson: String): Boolean { return false }
+    fun lagreDagbestemmelser(overstyringsjson: String): Boolean { return false }
 }
 
 class GCPBøtte : Bøtte {
@@ -20,11 +19,7 @@ class GCPBøtte : Bøtte {
     }
     override fun hentOverstyringer(): String = String(hentBøtte().get("dagbestemmelser.json").getContent())
 
-    override fun lagreOverstyringer(overstyringsjson: String): Boolean {
-        logger.info("Lagrer overstyringer i bøtta")
-        return lagre(overstyringsjson, "overstyringer.json")
-    }
-    override fun lagreNyeOverstyringer(overstyringsjson: String): Boolean {
+    override fun lagreDagbestemmelser(overstyringsjson: String): Boolean {
         logger.info("Lagrer overstyringer i bøtta")
         return lagre(overstyringsjson, "dagbestemmelser.json")
     }

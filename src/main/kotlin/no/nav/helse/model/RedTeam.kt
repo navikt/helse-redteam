@@ -14,22 +14,20 @@ class RedTeam(
     extraNonWorkDays: List<NonWorkday> = emptyList()
 ) {
     private val team get() = getTeam()
-    private val overrides = mutableMapOf<LocalDate, List<Pair<TeamMember, TeamMember>>>()
-    // dette skal være en list over de team-medlemmene som har redteam-ansvar på en bestemt dag. Det bør være _tre_ per dag. List vil nok ikke inneholde de som er algoritmisk bestemt
-    private val faktiskRedTeam = mutableMapOf<LocalDate, MutableList<TeamMember>>()
+    private val dagbestemmelser = mutableMapOf<LocalDate, MutableList<TeamMember>>()
     private val weekend = listOf(SATURDAY, SUNDAY)
     private val holidays = extraNonWorkDays.associateBy { it.date }
 
     fun teamFor(date: LocalDate): Day {
         if (date in holidays) return holidays[date]!!
         if (date.dayOfWeek in weekend) return NonWorkday(date)
-        return Workday(date, team.teamAt(antallArbeidsdagerFraSeed(date)).applySwaps(date).sortedBy { it.team })
+        return Workday(date, team.teamAt(antallArbeidsdagerFraSeed(date)).leggPåDagbestemmelser(date).sortedBy { it.team })
     }
 
-    fun override(from: String, to: String, date: LocalDate) {
+    fun override(to: String, date: LocalDate) {
         validateDate(date)
-        val (fromMember, toMember) = team.swap(from, to)
-        addSwap(date, fromMember, toMember)
+        val toMember= team.somTeamMember(to)
+        bestemDag(date, toMember)
     }
 
     fun redTeamCalendar(span: Pair<LocalDate, LocalDate>): RedTeamCalendarDto {
@@ -38,17 +36,8 @@ class RedTeam(
         return RedTeamCalendarDto( team.groups(), redTeams)
     }
 
-    private fun addSwap(date: LocalDate, from: TeamMember, to: TeamMember) {
-        overrides.compute(date) { _, value ->
-            return@compute value?.plus(Pair(from, to)) ?: mutableListOf(
-                Pair(
-                    from,
-                    to
-                )
-            )
-        }
-
-        faktiskRedTeam.getOrPut(date) {
+    private fun bestemDag(date: LocalDate, to: TeamMember) {
+        dagbestemmelser.getOrPut(date) {
             mutableListOf()
         }.apply {
             removeIf { it.team == to.team }
@@ -64,26 +53,25 @@ class RedTeam(
         seedDate.datesUntil(date).filter { it.dayOfWeek !in weekend }.filter { it !in holidays }.count().toInt()
 
 
-    private fun List<TeamMember>.applySwaps(date: LocalDate): List<TeamMember> {
-        val ersatz = faktiskRedTeam[date] ?: emptyList()
+    private fun List<TeamMember>.leggPåDagbestemmelser(date: LocalDate): List<TeamMember> {
+        val ersatz = dagbestemmelser[date] ?: emptyList()
         return this.map { gammeltMedlem ->
             ersatz.lastOrNull { it.team == gammeltMedlem.team } ?: gammeltMedlem
         }
     }
 
-    fun gamleOverstyringerSomJson() = jacksonObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(overrides)
-    fun nyeOverstyringerSomJson() = jacksonObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(faktiskRedTeam)
-    fun byttUtOverstyringer(overridesFraBøtta: String) {
+    fun dagbestemmelserSomJson() = jacksonObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(dagbestemmelser)
+    fun byttUtDagbestemmelserFraFastlager(overridesFraBøtta: String) {
         val nyeOverstyringer = jacksonObjectMapper().readTree(overridesFraBøtta)
         val ersatz = nyeOverstyringer.fieldNames().asSequence().map {
-                LocalDate.parse(it) to nyeOverstyringer[it].somDagBestemmelser()
+                LocalDate.parse(it) to nyeOverstyringer[it].somDagbestemmelser()
         }.toMap()
 
-        faktiskRedTeam.clear()
-        faktiskRedTeam.putAll(ersatz)
+        dagbestemmelser.clear()
+        dagbestemmelser.putAll(ersatz)
     }
 
-    private fun JsonNode.somDagBestemmelser(): MutableList<TeamMember> {
+    private fun JsonNode.somDagbestemmelser(): MutableList<TeamMember> {
         if (!this.isArray) return mutableListOf()
         return this.map {
             TeamMember(team = it["team"].asText(), name = it["name"].asText(), slackId = it["slackId"].asText())
@@ -107,8 +95,3 @@ interface Day {
 
 data class Workday(val date: LocalDate, val members: List<TeamMember>): Day
 data class NonWorkday(val date: LocalDate): Day
-
-fun Map<LocalDate, List<Pair<TeamMember, TeamMember>>>.sistePerDag(): Map<LocalDate, MutableList<TeamMember>> =
-    this.keys.associateWith { dag ->
-        this[dag]!!.groupBy { it.second.team }.values.map { it.last().second }.toMutableList()
-    }

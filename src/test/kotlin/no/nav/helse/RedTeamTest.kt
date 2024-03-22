@@ -3,7 +3,6 @@ package no.nav.helse
 import no.nav.helse.model.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
 
 internal class RedTeamTest {
@@ -36,11 +35,11 @@ internal class RedTeamTest {
     @Test
     fun override() {
         val kalender = RedTeam(startDato, team)
-        kalender.override("Morten", "Cecilie", 3.januar())
+        kalender.override("Cecilie", 3.januar())
         assertEquals(3.januar("Sondre", "Jakob", "Cecilie"), kalender.teamFor(3.januar()))
-        kalender.override("Cecilie", "Morten", 3.januar())
+        kalender.override("Morten", 3.januar())
         assertEquals(3.januar("Sondre", "Jakob", "Morten"), kalender.teamFor(3.januar()))
-        kalender.override("Sondre", "David", 3.januar())
+        kalender.override("David", 3.januar())
         assertEquals(3.januar("David", "Jakob", "Morten"), kalender.teamFor(3.januar()))
         assertEquals(4.januar("David", "Sindre", "Cecilie"), kalender.teamFor(4.januar()))
     }
@@ -55,20 +54,13 @@ internal class RedTeamTest {
             (redTeam.teamFor(date) as Workday).members
         )
 
-        redTeam.override(from = "Fag 2", to = "Fag 3", date)
+        redTeam.override(to = "Fag 3", date)
         fagTeam.add(0, "Ny fagperson")
 
         assertEquals(
             listOf(Team.TeamMember("Fag", "Fag 3", "slackid-Fag 3")),
             (redTeam.teamFor(date) as Workday).members
         )
-    }
-
-    @Test
-    fun `cannot override members not in the same group`() {
-        val kalender = RedTeam(startDato, team)
-        assertThrows<IllegalArgumentException> { kalender.override("Morten", "Sondre", 3.januar()) }
-        kalender.teamFor(3.januar())
     }
 
     @Test
@@ -90,7 +82,7 @@ internal class RedTeamTest {
         assertEquals("David", (team as Workday).members.find { it.team == "Spleiselaget" }!!.name)
 
         val overridesFraBøtta = """{"2024-01-03":[{"team":"Spleiselaget","name":"Christian","slackId":"slackid-Christian"}]}"""
-        redTeam.byttUtOverstyringer(overridesFraBøtta)
+        redTeam.byttUtDagbestemmelserFraFastlager(overridesFraBøtta)
 
         val overriddenTeam = redTeam.teamFor(LocalDate.of(2024, 1, 3))
         assertEquals("Christian", (overriddenTeam as Workday).members.find { it.team == "Spleiselaget" }!!.name)
@@ -103,7 +95,7 @@ internal class RedTeamTest {
         val teamAlpha = redTeamAlpha.teamFor(overstyringsdag) as Workday
         assertEquals("David", teamAlpha.members.find { it.team == "Spleiselaget" }!!.name)
 
-        redTeamAlpha.override("David", "Christian", overstyringsdag)
+        redTeamAlpha.override("Christian", overstyringsdag)
         val teamAlphaOverstyrt = redTeamAlpha.teamFor(overstyringsdag) as Workday
         assertEquals("Christian", teamAlphaOverstyrt.members.find { it.team == "Spleiselaget" }!!.name)
 
@@ -112,33 +104,12 @@ internal class RedTeamTest {
         assertEquals("David", teamBeta.members.find { it.team == "Spleiselaget" }!!.name)
 
         // HER SKJER DET VIKTIGE
-        redTeamBeta.byttUtOverstyringer(redTeamAlpha.nyeOverstyringerSomJson())
+        redTeamBeta.byttUtDagbestemmelserFraFastlager(redTeamAlpha.dagbestemmelserSomJson())
 
-        println(redTeamAlpha.nyeOverstyringerSomJson())
+        println(redTeamAlpha.dagbestemmelserSomJson())
 
         val teamBetaOverstyrt = redTeamBeta.teamFor(overstyringsdag) as Workday
         assertEquals("Christian", teamBetaOverstyrt.members.find { it.team == "Spleiselaget" }!!.name)
-    }
-
-    @Test
-    fun `siste per dag`() {
-        val a_a = Team.TeamMember("a-team", "a-name", "a-slack")
-        val a_b = Team.TeamMember("a-team", "b-name", "b-slack")
-        val a_c = Team.TeamMember("a-team", "c-name", "c-slack")
-
-        val b_a = Team.TeamMember("b-team", "a-name", "a-slack")
-        val b_b = Team.TeamMember("b-team", "b-name", "b-slack")
-        val b_c = Team.TeamMember("b-team", "c-name", "c-slack")
-
-        val map:Map<LocalDate, List<Pair<Team.TeamMember, Team.TeamMember>>> = mapOf(
-            1.januar() to listOf(a_a to a_b, a_b to a_c, b_b to b_a, b_a to b_c),
-            2.januar() to listOf(a_a to a_b, a_b to a_c, a_b to a_a),
-        )
-        val actual = map.sistePerDag()
-        assertEquals(mapOf(
-            1.januar() to listOf(a_c, b_c),
-            2.januar() to listOf(a_a),
-        ), actual)
     }
 
     private fun Int.januar(dev1: String, dev2: String, fag: String) =
