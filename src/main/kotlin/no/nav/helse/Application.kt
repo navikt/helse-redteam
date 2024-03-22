@@ -24,7 +24,6 @@ import no.nav.helse.model.Team
 import no.nav.helse.model.holidays
 import no.nav.helse.slack.RedTeamSlack
 import no.nav.helse.slack.SlackUpdater
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
 import java.time.Clock
@@ -47,7 +46,7 @@ suspend fun start() {
     val slackToken =
         System.getenv("SLACK_TOKEN") ?: throw IllegalStateException("Could not find slack token in envvar: SLACK_TOKEN")
     val bøtte = GCPBøtte()
-    val redTeam = setUpRedTeam(logger)
+    val redTeam = setUpRedTeam()
     redTeam.byttUtOverstyringer(bøtte.hentOverstyringer())
     val mediator = RedteamMediator(
         SlackUpdater(
@@ -80,10 +79,9 @@ suspend fun start() {
     }
 }
 
-private fun setUpRedTeam(logger: Logger): RedTeam {
+private fun setUpRedTeam(): RedTeam {
     val team = {
         val teamData = teamDataFromFile()
-        logger.info("file contents read")
         Team(teamData[0], teamData[1], teamData[2])
     }
     return RedTeam(LocalDate.of(2022, 6, 1), team, holidays())
