@@ -121,6 +121,27 @@ internal class RedTeamTest {
         assertEquals("Christian", teamBetaOverstyrt.members.find { it.team == "Spleiselaget" }!!.name)
     }
 
+    @Test
+    fun `siste per dag`() {
+        val a_a = Team.TeamMember("a-team", "a-name", "a-slack")
+        val a_b = Team.TeamMember("a-team", "b-name", "b-slack")
+        val a_c = Team.TeamMember("a-team", "c-name", "c-slack")
+
+        val b_a = Team.TeamMember("b-team", "a-name", "a-slack")
+        val b_b = Team.TeamMember("b-team", "b-name", "b-slack")
+        val b_c = Team.TeamMember("b-team", "c-name", "c-slack")
+
+        val map:Map<LocalDate, List<Pair<Team.TeamMember, Team.TeamMember>>> = mapOf(
+            1.januar() to listOf(a_a to a_b, a_b to a_c, b_b to b_a, b_a to b_c),
+            2.januar() to listOf(a_a to a_b, a_b to a_c, a_b to a_a),
+        )
+        val actual = map.sistePerDag()
+        assertEquals(mapOf(
+            1.januar() to listOf(a_c, b_c),
+            2.januar() to listOf(a_a),
+        ), actual)
+    }
+
     private fun Int.januar(dev1: String, dev2: String, fag: String) =
         Workday(
             LocalDate.of(2022, 1, this),

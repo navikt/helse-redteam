@@ -15,6 +15,8 @@ class RedTeam(
 ) {
     private val team get() = getTeam()
     private val overrides = mutableMapOf<LocalDate, List<Pair<TeamMember, TeamMember>>>()
+    // dette skal være en list over de team-medlemmene som har redteam-ansvar på en bestemt dag. Det bør være _tre_ per dag. List vil nok ikke inneholde de som er algoritmisk bestemt
+    private val faktiskRedTeam = mutableMapOf<LocalDate, List<TeamMember>>()
     private val weekend = listOf(SATURDAY, SUNDAY)
     private val holidays = extraNonWorkDays.associateBy { it.date }
 
@@ -69,7 +71,11 @@ class RedTeam(
         }.toMap()
         overrides.clear()
         overrides.putAll(ersatz)
+
+        faktiskRedTeam.clear()
+        faktiskRedTeam.putAll(ersatz.sistePerDag())
     }
+
     private fun JsonNode.somOverstyringer():List<Pair<TeamMember, TeamMember>> {
         if (!this.isArray) return emptyList()
         return this.map {
@@ -101,3 +107,8 @@ interface Day {
 
 data class Workday(val date: LocalDate, val members: List<TeamMember>): Day
 data class NonWorkday(val date: LocalDate): Day
+
+fun Map<LocalDate, List<Pair<TeamMember, TeamMember>>>.sistePerDag(): Map<LocalDate, List<TeamMember>> =
+    this.keys.associateWith { dag ->
+        this[dag]!!.groupBy { it.second.team }.values.map { it.last().second }
+    }
