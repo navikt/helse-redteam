@@ -76,35 +76,23 @@ class RedTeam(
     fun byttUtOverstyringer(overridesFraBøtta: String) {
         val nyeOverstyringer = jacksonObjectMapper().readTree(overridesFraBøtta)
         val ersatz = nyeOverstyringer.fieldNames().asSequence().map {
-                LocalDate.parse(it) to nyeOverstyringer[it].somOverstyringer()
+                LocalDate.parse(it) to nyeOverstyringer[it].somDagBestemmelser()
         }.toMap()
-        overrides.clear()
-        overrides.putAll(ersatz)
 
         faktiskRedTeam.clear()
-        faktiskRedTeam.putAll(ersatz.sistePerDag())
+        faktiskRedTeam.putAll(ersatz)
     }
 
-    @Deprecated("denne byttes")
-    private fun JsonNode.somOverstyringer():List<Pair<TeamMember, TeamMember>> {
-        if (!this.isArray) return emptyList()
+    private fun JsonNode.somDagBestemmelser(): MutableList<TeamMember> {
+        if (!this.isArray) return mutableListOf()
         return this.map {
-            it.somOverstyringspar()
-        }
+            TeamMember(team = it["team"].asText(), name = it["name"].asText(), slackId = it["slackId"].asText())
+        }.toMutableList()
     }
-    @Deprecated("denne byttes")
-    private fun JsonNode.somOverstyringspar(): Pair<TeamMember, TeamMember> {
-        return Pair(this["first"].somTeamSwap(), this["second"].somTeamSwap())
-    }
-
-    @Deprecated("denne byttes")
-    private fun JsonNode.somTeamSwap(): TeamMember =
-        TeamMember(team = this["team"].asText(), name = this["name"].asText(), slackId = this["slackId"].asText())
 }
 
 
 data class Swap(val from: String, val to: String)
-
 
 data class RedTeamCalendarDto(
     val teams: List<TeamDto>,

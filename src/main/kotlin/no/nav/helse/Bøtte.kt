@@ -18,7 +18,7 @@ class GCPBøtte : Bøtte {
         private val bøttenavn: String = "tbd-red-team-bucket"
         private val logger: Logger = LoggerFactory.getLogger("red-team-bøtte")
     }
-    override fun hentOverstyringer(): String = String(hentBøtte().get("overstyringer.json").getContent())
+    override fun hentOverstyringer(): String = String(hentBøtte().get("dagbestemmelser.json").getContent())
 
     override fun lagreOverstyringer(overstyringsjson: String): Boolean {
         logger.info("Lagrer overstyringer i bøtta")

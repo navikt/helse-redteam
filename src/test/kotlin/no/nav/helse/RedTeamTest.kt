@@ -89,7 +89,7 @@ internal class RedTeamTest {
         val team = redTeam.teamFor(LocalDate.of(2024, 1, 3))
         assertEquals("David", (team as Workday).members.find { it.team == "Spleiselaget" }!!.name)
 
-        val overridesFraBøtta = """{"2024-01-03":[{"first":{"team":"Spleiselaget","name":"David","slackId":"slackid-David"},"second":{"team":"Spleiselaget","name":"Christian","slackId":"slackid-Christian"}}]}"""
+        val overridesFraBøtta = """{"2024-01-03":[{"team":"Spleiselaget","name":"Christian","slackId":"slackid-Christian"}]}"""
         redTeam.byttUtOverstyringer(overridesFraBøtta)
 
         val overriddenTeam = redTeam.teamFor(LocalDate.of(2024, 1, 3))
@@ -112,7 +112,7 @@ internal class RedTeamTest {
         assertEquals("David", teamBeta.members.find { it.team == "Spleiselaget" }!!.name)
 
         // HER SKJER DET VIKTIGE
-        redTeamBeta.byttUtOverstyringer(redTeamAlpha.gamleOverstyringerSomJson())
+        redTeamBeta.byttUtOverstyringer(redTeamAlpha.nyeOverstyringerSomJson())
 
         println(redTeamAlpha.nyeOverstyringerSomJson())
 
