@@ -9,7 +9,8 @@ import java.nio.ByteBuffer
 /** vet hvordan man henter ut og lagrer ned red-team-greier fra gcp */
 interface Bøtte {
     fun hentOverstyringer(): String? = null
-    fun lagreOverstyringer(overstyringsjson: String): Boolean { return false}
+    fun lagreOverstyringer(overstyringsjson: String): Boolean { return false }
+    fun lagreNyeOverstyringer(overstyringsjson: String): Boolean { return false }
 }
 
 class GCPBøtte : Bøtte {
@@ -21,13 +22,21 @@ class GCPBøtte : Bøtte {
 
     override fun lagreOverstyringer(overstyringsjson: String): Boolean {
         logger.info("Lagrer overstyringer i bøtta")
+        return lagre(overstyringsjson, "overstyringer.json")
+    }
+    override fun lagreNyeOverstyringer(overstyringsjson: String): Boolean {
+        logger.info("Lagrer overstyringer i bøtta")
+        return lagre(overstyringsjson, "dagbestemmelser.json")
+    }
+
+    private fun lagre(tekst: String, filnavn: String): Boolean {
         val bøtte = hentBøtte()
-        val blob = bøtte.get("overstyringer.json")
+        val blob = bøtte.get(filnavn)
         if (blob == null) {
-            bøtte.create("overstyringer.json", overstyringsjson.encodeToByteArray(), "application/json")
+            bøtte.create(filnavn, tekst.encodeToByteArray(), "application/json")
         } else {
             val writer = blob.writer()
-            writer.write(ByteBuffer.wrap(overstyringsjson.encodeToByteArray()))
+            writer.write(ByteBuffer.wrap(tekst.encodeToByteArray()))
             writer.close()
         }
         return true

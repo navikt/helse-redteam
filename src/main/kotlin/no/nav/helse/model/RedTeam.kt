@@ -27,7 +27,7 @@ class RedTeam(
     }
 
     fun override(from: String, to: String, date: LocalDate) {
-        validateDate(date, from, to)
+        validateDate(date)
         val (fromMember, toMember) = team.swap(from, to)
         addSwap(date, fromMember, toMember)
     }
@@ -56,7 +56,7 @@ class RedTeam(
         }
     }
 
-    private fun validateDate(date: LocalDate, from: String, to: String) {
+    private fun validateDate(date: LocalDate) {
         require(teamFor(date) is Workday) { "Trying to override red team for a non-workday: $date" }
     }
 
@@ -71,10 +71,8 @@ class RedTeam(
         }
     }
 
-    private fun List<TeamMember>.tryReplaceWith(swap: Pair<TeamMember, TeamMember>) =
-        map { if(swap.first.name == it.name ) swap.second else it }
-
-    fun overstyringerSomJson() = jacksonObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(overrides)
+    fun gamleOverstyringerSomJson() = jacksonObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(overrides)
+    fun nyeOverstyringerSomJson() = jacksonObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(faktiskRedTeam)
     fun byttUtOverstyringer(overridesFraBøtta: String) {
         val nyeOverstyringer = jacksonObjectMapper().readTree(overridesFraBøtta)
         val ersatz = nyeOverstyringer.fieldNames().asSequence().map {
@@ -87,16 +85,19 @@ class RedTeam(
         faktiskRedTeam.putAll(ersatz.sistePerDag())
     }
 
+    @Deprecated("denne byttes")
     private fun JsonNode.somOverstyringer():List<Pair<TeamMember, TeamMember>> {
         if (!this.isArray) return emptyList()
         return this.map {
             it.somOverstyringspar()
         }
     }
+    @Deprecated("denne byttes")
     private fun JsonNode.somOverstyringspar(): Pair<TeamMember, TeamMember> {
         return Pair(this["first"].somTeamSwap(), this["second"].somTeamSwap())
     }
 
+    @Deprecated("denne byttes")
     private fun JsonNode.somTeamSwap(): TeamMember =
         TeamMember(team = this["team"].asText(), name = this["name"].asText(), slackId = this["slackId"].asText())
 }

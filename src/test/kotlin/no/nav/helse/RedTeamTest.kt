@@ -112,7 +112,9 @@ internal class RedTeamTest {
         assertEquals("David", teamBeta.members.find { it.team == "Spleiselaget" }!!.name)
 
         // HER SKJER DET VIKTIGE
-        redTeamBeta.byttUtOverstyringer(redTeamAlpha.overstyringerSomJson())
+        redTeamBeta.byttUtOverstyringer(redTeamAlpha.gamleOverstyringerSomJson())
+
+        println(redTeamAlpha.nyeOverstyringerSomJson())
 
         val teamBetaOverstyrt = redTeamBeta.teamFor(overstyringsdag) as Workday
         assertEquals("Christian", teamBetaOverstyrt.members.find { it.team == "Spleiselaget" }!!.name)
