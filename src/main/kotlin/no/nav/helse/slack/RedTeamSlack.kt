@@ -43,26 +43,17 @@ class RedTeamSlack(private val token: String, private val slackChannel: String, 
         }
     }
 
-    fun startMemeBallet() {
-        val person = tulleFolk.keys.shuffled().first()
-        val message = ":wave: Morning $person. Kan ikke du starte meme-ballet med noe lættis denne fredagen?"
-        val response = client.methods(token).chatPostMessage { it
-            .channel(slackChannel)
-            .text(message)
-        }
-        if (!response.isOk) {
-            throw RuntimeException("Error occured when posting to slack: ${response.errors}")
-        }
+    fun tullOgFjas() {
+        val kandidater = tulleFolk.keys.shuffled().take(2)
+        siNoeTull(tulleMessages.shuffled().first()(kandidater.last()))
+        siNoeTull(":wave: Morning ${kandidater.first()}. Kan ikke du starte meme-ballet med noe lættis denne fredagen?")
     }
 
-    fun tulleMedNoen() {
-        val person = tulleFolk.keys.shuffled().first()
-        val message = tulleMessages.shuffled().first()(person)
+    private fun siNoeTull(fjas: String) {
         val response = client.methods(token).chatPostMessage { it
             .channel(slackChannel)
-            .text(message)
+            .text(fjas)
         }
-
         if (!response.isOk) {
             throw RuntimeException("Error occured when posting to slack: ${response.errors}")
         }
