@@ -8,6 +8,7 @@ import java.time.Clock
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 class SlackUpdater(
     private val clock: Clock,
@@ -18,7 +19,7 @@ class SlackUpdater(
     private val now get() = LocalDateTime.now(clock)
     private val today get() = now.toLocalDate()
     private val postTime = 8
-    private val tulleTime = 9
+    private val tulletidsrommet = LocalTime.of(8, 30)..LocalTime.of(9, 30)
     private var lastPosted = if (now.hour < 8)
         today.minusDays(1) else
         today
@@ -66,8 +67,10 @@ class SlackUpdater(
         return true
     }
 
+    private fun erITulletidsrommet() = now.dayOfWeek == DayOfWeek.FRIDAY && now.toLocalTime() in tulletidsrommet
+
     private fun tulle() {
-        if (now.hour == tulleTime && now.dayOfWeek == DayOfWeek.FRIDAY && !tulleLock) {
+        if (erITulletidsrommet() && !tulleLock) {
             try {
                 slackClient.tullOgFjas()
                 logger.info("Tulla litt")
@@ -75,7 +78,7 @@ class SlackUpdater(
                 logger.error("Error occurred attempting to use slack API", e)
             }
             tulleLock = true
-        } else if (now.hour != tulleTime && tulleLock) {
+        } else if (erITulletidsrommet() && tulleLock) {
             tulleLock = false
         }
     }
