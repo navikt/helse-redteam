@@ -78,7 +78,7 @@ class SlackUpdater(
                 logger.error("Error occurred attempting to use slack API", e)
             }
             tulleLock = true
-        } else if (erITulletidsrommet() && tulleLock) {
+        } else if (!erITulletidsrommet() && tulleLock) {
             tulleLock = false
         }
     }
