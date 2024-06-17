@@ -20,7 +20,7 @@ class RedTeamSlack(private val token: String, private val slackChannel: String, 
                     " - <@${team.members[0].slackId}> (${team.members[0].team})\n" +
                     " - <@${team.members[1].slackId}> (${team.members[1].team})\n" +
                     " - <@${team.members[2].slackId}> (${team.members[2].team})\n" +
-                    "Red team kan administreres på <https://tbd.intern.nav.no/docs/redteam-wiki/red-team|tbd.intern.nav.no>")
+                    "Red team kan administreres på <https://tbd.ansatt.nav.no/docs/redteam-wiki/red-team|tbd.ansatt.nav.no>")
         }
 
         if (!response.isOk) {
@@ -35,7 +35,7 @@ class RedTeamSlack(private val token: String, private val slackChannel: String, 
                     " - <@${team.members[0].slackId}> (${team.members[0].team})\n" +
                     " - <@${team.members[1].slackId}> (${team.members[1].team})\n" +
                     " - <@${team.members[2].slackId}> (${team.members[2].team})\n" +
-                    "Red team kan administreres på <https://tbd.intern.nav.no/docs/redteam-wiki/red-team|tbd.intern.nav.no>")
+                    "Red team kan administreres på <https://tbd.ansatt.nav.no/docs/redteam-wiki/red-team|tbd.ansatt.nav.no>")
         }
 
         if (!response.isOk) {
