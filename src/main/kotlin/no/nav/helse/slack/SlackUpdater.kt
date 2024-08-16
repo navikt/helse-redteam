@@ -74,10 +74,10 @@ class SlackUpdater(
             try {
                 slackClient.tullOgFjas()
                 logger.info("Tulla litt")
+                tulleLock = true
             } catch (e: Exception) {
                 logger.error("Error occurred attempting to use slack API", e)
             }
-            tulleLock = true
         } else if (!erITulletidsrommet() && tulleLock) {
             tulleLock = false
         }
