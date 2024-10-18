@@ -107,14 +107,12 @@ private val tulleFolk = mapOf(
     "<@U04RTT5Q80J>" to "Martin",
     "<@U6VPRN57C>" to "Camilla",
     "<@U05D2LNF9HB>" to "Amalie",
-    "<@UCKU5BJBW>" to "Kjetil",
     "<@U05KPGBFB51>" to "Trine",
     "<@U016FGR81CN>" to "Jonas",
     "<@U6QCP24SF>" to "Øyvind",
     "<@UAHN8TBD3>" to "Solveig",
     "<@U025P2PGW2W>" to "Øydis",
     "<@UM6FRDCBU>" to "Aminet",
-    "<@UMHEW1BS8>" to "Emine",
     "<@UMHUJNE5N>" to "MortenN"
 )
 
