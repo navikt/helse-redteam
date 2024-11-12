@@ -9,7 +9,7 @@ import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import io.ktor.server.engine.*
-import io.ktor.server.plugins.callloging.*
+import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -87,10 +87,17 @@ private fun setUpRedTeam(): RedTeam {
     return RedTeam(LocalDate.of(2022, 6, 1), team, holidays())
 }
 
-fun ktor(mediator: RedteamMediator): ApplicationEngine = embeddedServer(CIO, applicationEngineEnvironment {
-    module { redTeamModule(mediator) }
-    connector { port = 8080 }
-}).start(wait = false)
+fun ktor(mediator: RedteamMediator) =
+    embeddedServer(
+        factory = CIO,
+        environment = applicationEnvironment {},
+        configure = {
+            connector {
+                port = 8080
+            }
+        }
+    ) { redTeamModule(mediator) }
+        .start(wait = false)
 
 fun Application.redTeamModule(mediator: RedteamMediator) {
     configureRouting(mediator)
