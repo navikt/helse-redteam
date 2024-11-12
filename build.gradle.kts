@@ -5,7 +5,7 @@ val kotlinVersion = "1.9.22"
 val mockkVersion = "1.13.9"
 val jacksonVersion = "2.16.1"
 val slackApiModelKotlinExtensionVersion = "1.36.1"
-val junitVersion = "5.10.2"
+val junitJupiterVersion = "5.11.3"
 val gcpBucketVersion = "2.35.0"
 
 plugins {
@@ -45,7 +45,7 @@ dependencies {
     testImplementation("io.mockk:mockk:${mockkVersion}")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
 
-    testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
