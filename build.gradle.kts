@@ -1,5 +1,5 @@
 val ktorVersion = "3.0.1"
-val logbackVersion = "1.4.14"
+val logbackClassicVersion = "1.5.12"
 val logbackEncoderVersion = "8.0"
 val mockkVersion = "1.13.9"
 val jacksonVersion = "2.18.1"
@@ -24,7 +24,7 @@ dependencies {
     implementation("io.ktor:ktor-server-cio:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-    implementation("ch.qos.logback:logback-classic:$logbackVersion")
+    implementation("ch.qos.logback:logback-classic:$logbackClassicVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logbackEncoderVersion")
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
 
