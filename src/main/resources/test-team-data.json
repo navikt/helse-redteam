@@ -1,14 +1,14 @@
 [
   { "name": "Speilvendt", "members": [
-    { "name": "Sondre", "slackId": "SLACKID123" },
-    { "name": "Christian", "slackId": "SLACKID234" }
+    { "name": "Gamling", "slackId": "SLACKID123" },
+    { "name": "Háma", "slackId": "SLACKID234" }
   ]},
   { "name": "Fag", "members": [
-    { "name": "Camilla", "slackId": "SLACKID345" },
-    { "name": "Morten", "slackId":  "SLACKID456" }
+    { "name": "Éowyn", "slackId": "SLACKID345" },
+    { "name": "Éomer", "slackId":  "SLACKID456" }
   ]},
   { "name": "Spleiselaget", "members": [
-    { "name": "David", "slackId":  "SLACKID567" },
-    { "name": "Hege", "slackId":  "SLACKID678" }
+    { "name": "Théoden", "slackId":  "SLACKID678" },
+    { "name": "Sauron", "slackId":  "OND_SLACK" }
   ]}
 ]

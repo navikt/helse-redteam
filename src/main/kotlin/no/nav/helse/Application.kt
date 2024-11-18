@@ -80,8 +80,9 @@ suspend fun start() {
 }
 
 private fun setUpRedTeam(): RedTeam {
+    val eksluderingsliste = if(now().isBefore(LocalDate.of(2025, 3, 1))) listOf("UUQQ1EHBN") else emptyList()
     val team = {
-        val teamData = teamDataFromFile()
+        val teamData = teamDataFromFile(eksluderingsliste)
         Team(teamData[0], teamData[1], teamData[2])
     }
     return RedTeam(LocalDate.of(2022, 6, 1), team, holidays())

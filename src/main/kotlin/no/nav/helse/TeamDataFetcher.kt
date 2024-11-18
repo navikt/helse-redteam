@@ -5,7 +5,7 @@ import no.nav.helse.model.MemberDto
 import no.nav.helse.model.TeamDto
 import java.io.File
 
-fun teamDataFromFile(): List<TeamDto> {
+fun teamDataFromFile(ikkeTaMed: List<String> = emptyList()): List<TeamDto> {
     val teamJson = if (viKjørerPåEtNaisCluster())
         hentTeamdataFraConfigMap()
     else
@@ -20,7 +20,7 @@ fun teamDataFromFile(): List<TeamDto> {
                     it["name"].asText(),
                     it["slackId"].asText()
                 )
-            }
+            }.filterNot { it.slackId in ikkeTaMed}
         )
     }
 }
