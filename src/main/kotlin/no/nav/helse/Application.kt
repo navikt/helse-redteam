@@ -121,7 +121,7 @@ fun Application.configureRouting(mediator: RedteamMediator) {
             call.respondText("TBD red-team")
         }
         get("red-team") {
-            val calendar = mediator.redTeamCalendar(now() to now().plusDays(30)).json()
+            val calendar = mediator.redTeamCalendar(now() to now().plusDays(14)).json()
             call.respondText(calendar, ContentType.Application.Json)
         }
         get("red-team/{date}") {
