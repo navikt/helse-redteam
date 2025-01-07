@@ -17,9 +17,9 @@ class RedTeamSlack(private val token: String, private val slackChannel: String, 
         val response = client.methods(token).chatPostMessage { it
             .channel(slackChannel)
             .text(":wave: :bomlo: Red team for $dateString:\n" +
-                    " - ${team.teams[0].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }} (${team.teams[0].team})\n" +
-                    " - ${team.teams[1].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }} (${team.teams[1].team})\n" +
-                    " - ${team.teams[2].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }} (${team.teams[2].team})\n" +
+                    " - ${team.teams[0].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }.joinToString()} (${team.teams[0].team})\n" +
+                    " - ${team.teams[1].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }.joinToString()} (${team.teams[1].team})\n" +
+                    " - ${team.teams[2].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }.joinToString()} (${team.teams[2].team})\n" +
                     "Red team kan administreres på <https://tbd.ansatt.nav.no/docs/redteam-wiki/red-team|tbd.ansatt.nav.no>")
         }
 
@@ -32,9 +32,9 @@ class RedTeamSlack(private val token: String, private val slackChannel: String, 
         val response = client.methods(token).chatPostMessage { it
             .channel(slackChannel)
             .text(":wave: :bomlo: Red team har blitt oppdatert for $dateString: :thanks: \n" +
-                    " - ${team.teams[0].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }} (${team.teams[0].team})\n" +
-                    " - ${team.teams[1].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }} (${team.teams[1].team})\n" +
-                    " - ${team.teams[2].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }} (${team.teams[2].team})\n" +
+                    " - ${team.teams[0].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }.joinToString()} (${team.teams[0].team})\n" +
+                    " - ${team.teams[1].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }.joinToString()} (${team.teams[1].team})\n" +
+                    " - ${team.teams[2].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }.joinToString()} (${team.teams[2].team})\n" +
                     "Red team kan administreres på <https://tbd.ansatt.nav.no/docs/redteam-wiki/red-team|tbd.ansatt.nav.no>")
         }
 
