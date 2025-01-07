@@ -14,15 +14,15 @@ import no.nav.helse.model.RedTeam
 import no.nav.helse.model.Teams
 import no.nav.helse.model.TeamDto
 import no.nav.helse.slack.SlackUpdater
+import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
 internal class E2ETest {
 
     @Test
-    fun `red team member can be overriden`() = testApplication {
+    fun `red team members can be overriden`() = testApplication {
         val slackUpdater: SlackUpdater = mockk(relaxed = true)
 
         application {
@@ -31,8 +31,8 @@ internal class E2ETest {
             }
             val getRedTeam = {
                 Teams(
-                    TeamDto("Speilvendt", listOf(MemberDto("Sondre", "slack1"), MemberDto("Jakob", "slack2"))),
-                    TeamDto("Spleiselaget", listOf(MemberDto("Christian", "slack3"))),
+                    TeamDto("Speilvendt", listOf(MemberDto("Elias", "slack1"), MemberDto("Jakob", "slack2"))),
+                    TeamDto("Spleiselaget", listOf(MemberDto("Håkon", "slack3"), MemberDto("Amalie", "slack3"))),
                     TeamDto("Fag", listOf(MemberDto("Margrethe", "slack5")))
                 )
             }
@@ -44,15 +44,51 @@ internal class E2ETest {
             )
         }
 
-        val response = client.post("/red-team/2022-01-03") {
+        val response = client.post("/red-team") {
             contentType(ContentType.Application.Json)
-            setBody("""{ "from": "Sondre", "to": "Jakob" }""")
+            setBody(jsonBody)
         }
         assertEquals(HttpStatusCode.OK, response.status)
 
-        val redTeam = client.get("/red-team/2022-01-03").bodyAsText()
+        val redTeam = client.get("/red-team").bodyAsText()
 
-        val redTeamMembers = jacksonObjectMapper().readTree(redTeam)["teams"].flatMap { it["redteamMembers"]}.map { it["name"].asText() }
-        assertTrue(redTeamMembers.contains("Jakob"))
+        val redteamForDato = jacksonObjectMapper().readTree(redTeam)["days"].single { it["date"].asText() == "2025-01-07" }["teams"].flatMap { it["redteamMembers"] }.map { it["name"].asText() }
+        assertEquals(setOf("Margrethe", "Håkon", "Amalie", "Elias"), redteamForDato.toSet())
+
+        val redteamForDato2 = jacksonObjectMapper().readTree(redTeam)["days"].single { it["date"].asText() == "2025-01-08" }["teams"].flatMap { it["redteamMembers"] }.map { it["name"].asText() }
+        assertEquals(setOf("Margrethe", "Håkon", "Jakob"), redteamForDato2.toSet())
     }
+
+    @Language("JSON")
+    val jsonBody = """
+        [
+          {
+            "date": "2025-01-07",
+            "team": "Spleiselaget",
+            "redteamMembers": [
+              "Håkon",
+              "Amalie"
+            ]
+          },
+          {
+            "date": "2025-01-07",
+            "team": "Fag",
+            "redteamMembers": ["Margrethe"]
+          },
+          {
+            "date": "2025-01-07",
+            "team": "Speilvendt",
+            "redteamMembers": [
+              "Elias"
+            ]
+          },
+        {
+          "date": "2025-01-08",
+          "team": "Spleiselaget",
+          "redteamMembers": [
+            "Håkon"
+          ]
+        }
+        ]
+        """.trimIndent()
 }

@@ -39,10 +39,12 @@ class Teams(private vararg val groups: TeamDto) {
             DayTeam(group.name, listOf(RedTeamMember(member.name, member.slackId, group.name)))
         }
 
-    internal fun somRedTeamMember(navn: String): RedTeamMember {
-        val toGroup = groups.find { group -> navn in group.members.names() } ?: throw IllegalArgumentException("to: $navn does not exist in a group")
-        val toMember = toGroup.memberFor(navn) ?: throw IllegalArgumentException("to: $navn does not exist in group: $toGroup")
-        return toMember
+    internal fun somRedTeamMembers(navn: List<String>): List<RedTeamMember> {
+        return navn.map {
+            val toGroup = groups.find { group -> it in group.members.names() } ?: throw IllegalArgumentException("to: $navn does not exist in a group")
+            val toMember = toGroup.memberFor(it) ?: throw IllegalArgumentException("to: $navn does not exist in group: $toGroup")
+            toMember
+        }
     }
     fun groups() = groups.toList()
     fun minLength() = groups.minOf { it.members.size }

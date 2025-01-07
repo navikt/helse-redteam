@@ -24,10 +24,10 @@ class RedTeam(
         return Workday(date, team.teamAt(antallArbeidsdagerFraSeed(date)).leggPåDagbestemmelser(date).sortedBy { it.team })
     }
 
-    fun override(to: String, date: LocalDate) {
+    fun override(redteamNavn: List<String>, teamnavn: String, date: LocalDate) {
         validateDate(date)
-        val toMember = team.somRedTeamMember(to)
-        bestemDag(date, toMember)
+        val redteamMembers = team.somRedTeamMembers(redteamNavn)
+        bestemDag(date, teamnavn, redteamMembers)
     }
 
     fun redTeamCalendar(span: Pair<LocalDate, LocalDate>): RedTeamCalendarDto {
@@ -36,12 +36,12 @@ class RedTeam(
         return RedTeamCalendarDto( team.groups(), redTeams)
     }
 
-    private fun bestemDag(date: LocalDate, to: RedTeamMember) {
+    private fun bestemDag(date: LocalDate, teamnavn: String, redteamMembers: List<RedTeamMember>) {
         dagbestemmelser.getOrPut(date) {
             mutableListOf()
         }.apply {
-            removeIf { it.team == to.team } // TODO: Funksjonen må støtte flere personer
-            add(to)
+            removeIf { it.team == teamnavn }
+            addAll(redteamMembers)
         }
     }
 
@@ -81,8 +81,7 @@ class RedTeam(
     }
 }
 
-
-data class Swap(val from: String, val to: String)
+data class Overstyring(val date: LocalDate, val team: String, val redteamMembers: List<String>)
 
 data class RedTeamCalendarDto(
     val teams: List<TeamDto>,

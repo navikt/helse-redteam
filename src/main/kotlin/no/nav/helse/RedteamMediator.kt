@@ -1,5 +1,6 @@
 package no.nav.helse
 
+import no.nav.helse.model.Overstyring
 import no.nav.helse.model.RedTeam
 import no.nav.helse.slack.SlackUpdater
 import org.slf4j.Logger
@@ -14,12 +15,15 @@ class RedteamMediator(
 
     private val logger: Logger = LoggerFactory.getLogger("red-team-mediator")
 
-    fun override(from: String, to: String, date: LocalDate) {
-        logger.info("Override from $from to $to on date: {} started", date)
-        redTeam.override(to, date)
+    fun override(overstyringer: List<Overstyring>) {
+        logger.info("Overriding the following overstyringer: $overstyringer")
+        overstyringer.forEach { overstyring ->
+            val dato = overstyring.date
+            redTeam.override(overstyring.redteamMembers, overstyring.team, dato)
+            slackUpdater.handleOverride(dato)
+        }
         bøtte.lagreDagbestemmelser(redTeam.dagbestemmelserSomJson())
-        slackUpdater.handleOverride(date)
-        logger.info("Override from $from to $to on date: {} completed", date)
+        logger.info("Completed override of the following overstyringer: $overstyringer")
     }
 
     fun update() {

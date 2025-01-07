@@ -35,11 +35,11 @@ internal class RedTeamsTest {
     @Test
     fun override() {
         val kalender = RedTeam(startDato, team)
-        kalender.override("Cecilie", 3.januar())
+        kalender.override(listOf("Cecilie"), "Fag", 3.januar())
         assertEquals(3.januar("Sondre", "Jakob", "Cecilie"), kalender.teamFor(3.januar()))
-        kalender.override("Morten", 3.januar())
+        kalender.override(listOf("Morten"), "Fag", 3.januar())
         assertEquals(3.januar("Sondre", "Jakob", "Morten"), kalender.teamFor(3.januar()))
-        kalender.override("David", 3.januar())
+        kalender.override(listOf("David"), "Spleiselaget", 3.januar())
         assertEquals(3.januar("David", "Jakob", "Morten"), kalender.teamFor(3.januar()))
         assertEquals(4.januar("David", "Sindre", "Cecilie"), kalender.teamFor(4.januar()))
     }
@@ -62,7 +62,7 @@ internal class RedTeamsTest {
             (redTeam.teamFor(date) as Workday)
         )
 
-        redTeam.override(to = "Askeladden", date)
+        redTeam.override(listOf("Askeladden"), "Fag", date)
         members.add(0, "Ny fagperson")
 
         assertEquals(
@@ -111,7 +111,7 @@ internal class RedTeamsTest {
         val teamAlpha = redTeamAlpha.teamFor(overstyringsdag) as Workday
         assertEquals(listOf("David"), teamAlpha.teams.find { it.team == "Spleiselaget" }!!.redteamMembers.map { it.name })
 
-        redTeamAlpha.override("Christian", overstyringsdag)
+        redTeamAlpha.override(listOf("Christian"), "Spleiselaget", overstyringsdag)
         val teamAlphaOverstyrt = redTeamAlpha.teamFor(overstyringsdag) as Workday
         assertEquals(listOf("Christian"), teamAlphaOverstyrt.teams.find { it.team == "Spleiselaget" }!!.redteamMembers.map { it.name })
 

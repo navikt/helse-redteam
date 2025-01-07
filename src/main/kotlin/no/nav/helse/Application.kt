@@ -18,10 +18,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import no.nav.helse.model.RedTeam
-import no.nav.helse.model.Swap
-import no.nav.helse.model.Teams
-import no.nav.helse.model.holidays
+import no.nav.helse.model.*
 import no.nav.helse.slack.RedTeamSlack
 import no.nav.helse.slack.SlackUpdater
 import org.slf4j.LoggerFactory
@@ -130,14 +127,12 @@ fun Application.configureRouting(mediator: RedteamMediator) {
             val day = mediator.teamFor(date).json()
             call.respondText(day, ContentType.Application.Json)
         }
-        post("red-team/{date}") {
-            val date = LocalDate.parse(call.parameters["date"])
-                ?: throw IllegalArgumentException("missing parameter: <date>")
-            val swapJson = call.receiveText()
-            val swap = mapper.readValue<Swap>(swapJson)
+        post("red-team") {
+            val overstyringerJson = call.receiveText()
+            val overstyringer = mapper.readValue<List<Overstyring>>(overstyringerJson)
 
             try {
-                mediator.override(swap.from, swap.to, date)
+                mediator.override(overstyringer)
             } catch (e: IllegalArgumentException) {
                 call.respondText(
                     """{"error": "${e.message}" }""",
@@ -147,8 +142,7 @@ fun Application.configureRouting(mediator: RedteamMediator) {
                 logger.error("Error during overriding red-team: {}", e.message)
                 return@post
             }
-            val response = mediator.teamFor(date).json()
-            call.respondText(response, ContentType.Application.Json)
+            call.respondText("OK")
         }
 
         get("isalive") {

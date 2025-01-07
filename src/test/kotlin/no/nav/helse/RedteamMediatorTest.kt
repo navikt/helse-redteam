@@ -3,6 +3,7 @@ package no.nav.helse
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import no.nav.helse.model.Overstyring
 import no.nav.helse.slack.RedTeamSlack
 import no.nav.helse.slack.SlackUpdater
 import org.junit.jupiter.api.Test
@@ -17,7 +18,7 @@ internal class RedteamMediatorTest: AbstractRedTeamTest() {
             slackUpdater = SlackUpdater(testklokke(START_DATE), slackClient, redTeam()),
             redTeam = redTeam()
         )
-        mediator.override("Sondre", "David", START_DATE)
+        mediator.override(listOf(Overstyring(START_DATE, "Spleiselaget", listOf("Sondre"))))
         verify { slackClient.updateRedTeamGroup(any()) }
     }
 
@@ -30,7 +31,7 @@ internal class RedteamMediatorTest: AbstractRedTeamTest() {
             slackUpdater = SlackUpdater(testklokke(START_DATE), slackClient, redTeam()),
             redTeam = redTeam()
         )
-        mediator.override("David", "Sondre", START_DATE.plusDays(1))
+        mediator.override(listOf(Overstyring(START_DATE.plusDays(1), "Spleiselaget", listOf("Sondre"))))
         verify(exactly = 0) { slackClient.updateRedTeamGroup(any()) }
     }
 }
