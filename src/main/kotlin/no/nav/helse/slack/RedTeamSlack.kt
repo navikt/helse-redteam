@@ -17,9 +17,9 @@ class RedTeamSlack(private val token: String, private val slackChannel: String, 
         val response = client.methods(token).chatPostMessage { it
             .channel(slackChannel)
             .text(":wave: :bomlo: Red team for $dateString:\n" +
-                    " - <@${team.members[0].slackId}> (${team.members[0].team})\n" +
-                    " - <@${team.members[1].slackId}> (${team.members[1].team})\n" +
-                    " - <@${team.members[2].slackId}> (${team.members[2].team})\n" +
+                    " - ${team.teams[0].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }} (${team.teams[0].team})\n" +
+                    " - ${team.teams[1].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }} (${team.teams[1].team})\n" +
+                    " - ${team.teams[2].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }} (${team.teams[2].team})\n" +
                     "Red team kan administreres på <https://tbd.ansatt.nav.no/docs/redteam-wiki/red-team|tbd.ansatt.nav.no>")
         }
 
@@ -32,9 +32,9 @@ class RedTeamSlack(private val token: String, private val slackChannel: String, 
         val response = client.methods(token).chatPostMessage { it
             .channel(slackChannel)
             .text(":wave: :bomlo: Red team har blitt oppdatert for $dateString: :thanks: \n" +
-                    " - <@${team.members[0].slackId}> (${team.members[0].team})\n" +
-                    " - <@${team.members[1].slackId}> (${team.members[1].team})\n" +
-                    " - <@${team.members[2].slackId}> (${team.members[2].team})\n" +
+                    " - ${team.teams[0].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }} (${team.teams[0].team})\n" +
+                    " - ${team.teams[1].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }} (${team.teams[1].team})\n" +
+                    " - ${team.teams[2].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }} (${team.teams[2].team})\n" +
                     "Red team kan administreres på <https://tbd.ansatt.nav.no/docs/redteam-wiki/red-team|tbd.ansatt.nav.no>")
         }
 
@@ -60,7 +60,7 @@ class RedTeamSlack(private val token: String, private val slackChannel: String, 
     }
 
     fun updateRedTeamGroup(team: Workday) {
-        val slackIDs = team.members.map { member -> member.slackId }
+        val slackIDs = team.teams.flatMap { it.redteamMembers }.map { it.slackId }
         val response = client.methods(token).usergroupsUsersUpdate { it.usergroup(userGroup).users(slackIDs) }
         if (!response.isOk) {
             throw RuntimeException("Error occurred when updating group on slack: ${response.error}")
@@ -82,7 +82,7 @@ fun main() {
     val redTeam = RedTeam(
         LocalDate.of(2022, 1, 1),
         {
-            Team(
+            Teams(
                 TeamDto("Speilvendt", listOf(MemberDto("Sondre", "UBCJCLFD5"))),
                 TeamDto("Spleiselaget", listOf(MemberDto("Christian", "U03KX96MT39"))),
                 TeamDto("Fag", listOf(MemberDto("Margrethe", "UMHUJNE5N")))

@@ -3,7 +3,7 @@ package no.nav.helse
 import no.nav.helse.model.MemberDto
 import no.nav.helse.model.NonWorkday
 import no.nav.helse.model.RedTeam
-import no.nav.helse.model.Team
+import no.nav.helse.model.Teams
 import no.nav.helse.model.TeamDto
 import java.time.Clock
 import java.time.Instant
@@ -21,7 +21,7 @@ open class AbstractRedTeamTest {
     internal fun redTeam(extraNonWorkDays: List<NonWorkday> = emptyList()) = RedTeam(
         START_DATE,
         {
-            Team(
+            Teams(
                 TeamDto("Spleiselaget", genTeam("Sondre", "David", "Christian")),
                 TeamDto("Speilvendt",   genTeam("Jakob", "Sindre")),
                 TeamDto("Fag",          genTeam("Morten", "Cecilie"))

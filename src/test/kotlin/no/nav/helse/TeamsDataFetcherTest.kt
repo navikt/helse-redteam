@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-class TeamDataFetcherTest {
+class TeamsDataFetcherTest {
 
     @Test
     fun `det skal være mulig å ekskludere folk`() {

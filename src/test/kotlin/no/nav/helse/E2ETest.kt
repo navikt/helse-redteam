@@ -11,7 +11,7 @@ import io.ktor.server.testing.*
 import io.mockk.mockk
 import no.nav.helse.model.MemberDto
 import no.nav.helse.model.RedTeam
-import no.nav.helse.model.Team
+import no.nav.helse.model.Teams
 import no.nav.helse.model.TeamDto
 import no.nav.helse.slack.SlackUpdater
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -30,7 +30,7 @@ internal class E2ETest {
                 jackson()
             }
             val getRedTeam = {
-                Team(
+                Teams(
                     TeamDto("Speilvendt", listOf(MemberDto("Sondre", "slack1"), MemberDto("Jakob", "slack2"))),
                     TeamDto("Spleiselaget", listOf(MemberDto("Christian", "slack3"))),
                     TeamDto("Fag", listOf(MemberDto("Margrethe", "slack5")))
@@ -52,9 +52,7 @@ internal class E2ETest {
 
         val redTeam = client.get("/red-team/2022-01-03").bodyAsText()
 
-        assertTrue("Jakob" in parsedTeam(redTeam))
+        val redTeamMembers = jacksonObjectMapper().readTree(redTeam)["teams"].flatMap { it["redteamMembers"]}.map { it["name"].asText() }
+        assertTrue(redTeamMembers.contains("Jakob"))
     }
-
-
-    private fun parsedTeam(json: String) = jacksonObjectMapper().readTree(json)["members"].map { it["name"].asText() }
 }

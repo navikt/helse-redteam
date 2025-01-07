@@ -1,15 +1,15 @@
 package no.nav.helse
 
 import no.nav.helse.model.MemberDto
-import no.nav.helse.model.Team
+import no.nav.helse.model.Teams
 import no.nav.helse.model.TeamDto
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-internal class TeamTest {
+internal class TeamsTest {
 
 
-    val team = Team(
+    val team = Teams(
         TeamDto("Spleiselaget", genTeam("Sondre", "David", "Christian")),
         TeamDto("Speilvendt", genTeam("Jakob", "Sindre")),
         TeamDto("Fag", genTeam("Morten", "Cecilie"))
@@ -19,15 +19,15 @@ internal class TeamTest {
     fun nextDay() {
         assertEquals(
             listOf("Sondre", "Jakob", "Morten"),
-            team.teamAt(0).map { it.name }
+            team.teamAt(0).map { it.redteamMembers.single().name }
         )
         assertEquals(
             listOf("David", "Sindre", "Cecilie"),
-            team.teamAt(1).map { it.name }
+            team.teamAt(1).map { it.redteamMembers.single().name }
         )
         assertEquals(
             listOf("Christian", "Jakob", "Morten"),
-            team.teamAt(2).map { it.name }
+            team.teamAt(2).map { it.redteamMembers.single().name }
         )
     }
 

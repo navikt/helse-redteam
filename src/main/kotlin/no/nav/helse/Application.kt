@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.model.RedTeam
 import no.nav.helse.model.Swap
-import no.nav.helse.model.Team
+import no.nav.helse.model.Teams
 import no.nav.helse.model.holidays
 import no.nav.helse.slack.RedTeamSlack
 import no.nav.helse.slack.SlackUpdater
@@ -81,11 +81,11 @@ suspend fun start() {
 
 private fun setUpRedTeam(): RedTeam {
     val eksluderingsliste = if(now().isBefore(LocalDate.of(2025, 3, 1))) listOf("UUQQ1EHBN") else emptyList()
-    val team = {
+    val teams = {
         val teamData = teamDataFromFile(eksluderingsliste)
-        Team(teamData[0], teamData[1], teamData[2])
+        Teams(teamData[0], teamData[1], teamData[2])
     }
-    return RedTeam(LocalDate.of(2022, 6, 1), team, holidays())
+    return RedTeam(LocalDate.of(2022, 6, 1), teams, holidays())
 }
 
 fun ktor(mediator: RedteamMediator) =

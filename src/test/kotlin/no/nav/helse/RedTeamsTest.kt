@@ -5,11 +5,11 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
-internal class RedTeamTest {
+internal class RedTeamsTest {
 
-    private val team: () -> Team
+    private val team: () -> Teams
         get() = {
-            Team(
+            Teams(
                 TeamDto("Spleiselaget", genTeam("Sondre", "David", "Christian")),
                 TeamDto("Speilvendt", genTeam("Jakob", "Sindre")),
                 TeamDto("Fag", genTeam("Morten", "Cecilie"))
@@ -46,20 +46,36 @@ internal class RedTeamTest {
 
     @Test
     fun `override combined with updated team`() {
-        val fagTeam = mutableListOf("Fag 1", "Fag 2", "Fag 3")
-        val redTeam = RedTeam(startDato, { Team(TeamDto("Fag", genTeam(*fagTeam.toTypedArray()))) })
+        val members = mutableListOf("Per", "Pål", "Askeladden")
+        val redTeam = RedTeam(startDato, { Teams(TeamDto("Fag", genTeam(*members.toTypedArray()))) })
         val date = 4.januar()
         assertEquals(
-            listOf(Team.TeamMember("Fag", "Fag 2", "slackid-Fag 2")),
-            (redTeam.teamFor(date) as Workday).members
+            Workday(
+                4.januar(),
+                listOf(
+                    Teams.DayTeam(
+                        team = "Fag",
+                        redteamMembers = listOf(Teams.RedTeamMember("Pål", "slackid-Pål", "Fag"))
+                    )
+                )
+            ),
+            (redTeam.teamFor(date) as Workday)
         )
 
-        redTeam.override(to = "Fag 3", date)
-        fagTeam.add(0, "Ny fagperson")
+        redTeam.override(to = "Askeladden", date)
+        members.add(0, "Ny fagperson")
 
         assertEquals(
-            listOf(Team.TeamMember("Fag", "Fag 3", "slackid-Fag 3")),
-            (redTeam.teamFor(date) as Workday).members
+            Workday(
+                4.januar(),
+                listOf(
+                    Teams.DayTeam(
+                        team = "Fag",
+                        redteamMembers = listOf(Teams.RedTeamMember("Askeladden", "slackid-Askeladden", "Fag"))
+                    )
+                )
+            ),
+            (redTeam.teamFor(date) as Workday)
         )
     }
 
@@ -79,13 +95,13 @@ internal class RedTeamTest {
     fun `skal kunne overstyre alt via én enkelt json fil`() {
         val redTeam = RedTeam(startDato, team, holidays())
         val team = redTeam.teamFor(LocalDate.of(2024, 1, 3))
-        assertEquals("David", (team as Workday).members.find { it.team == "Spleiselaget" }!!.name)
+        assertEquals(listOf("David"), (team as Workday).teams.find { it.team == "Spleiselaget" }!!.redteamMembers.map { it.name })
 
         val overridesFraBøtta = """{"2024-01-03":[{"team":"Spleiselaget","name":"Christian","slackId":"slackid-Christian"}]}"""
         redTeam.byttUtDagbestemmelserFraFastlager(overridesFraBøtta)
 
         val overriddenTeam = redTeam.teamFor(LocalDate.of(2024, 1, 3))
-        assertEquals("Christian", (overriddenTeam as Workday).members.find { it.team == "Spleiselaget" }!!.name)
+        assertEquals(listOf("Christian"), (overriddenTeam as Workday).teams.find { it.team == "Spleiselaget" }!!.redteamMembers.map { it.name })
     }
 
     @Test
@@ -93,15 +109,16 @@ internal class RedTeamTest {
         val overstyringsdag = LocalDate.of(2024, 1, 3)
         val redTeamAlpha = RedTeam(startDato, team, holidays())
         val teamAlpha = redTeamAlpha.teamFor(overstyringsdag) as Workday
-        assertEquals("David", teamAlpha.members.find { it.team == "Spleiselaget" }!!.name)
+        assertEquals(listOf("David"), teamAlpha.teams.find { it.team == "Spleiselaget" }!!.redteamMembers.map { it.name })
 
         redTeamAlpha.override("Christian", overstyringsdag)
         val teamAlphaOverstyrt = redTeamAlpha.teamFor(overstyringsdag) as Workday
-        assertEquals("Christian", teamAlphaOverstyrt.members.find { it.team == "Spleiselaget" }!!.name)
+        assertEquals(listOf("Christian"), teamAlphaOverstyrt.teams.find { it.team == "Spleiselaget" }!!.redteamMembers.map { it.name })
+
 
         val redTeamBeta = RedTeam(startDato, team, holidays())
         val teamBeta = redTeamBeta.teamFor(overstyringsdag) as Workday
-        assertEquals("David", teamBeta.members.find { it.team == "Spleiselaget" }!!.name)
+        assertEquals(listOf("David"), teamBeta.teams.find { it.team == "Spleiselaget" }!!.redteamMembers.map { it.name })
 
         // HER SKJER DET VIKTIGE
         redTeamBeta.byttUtDagbestemmelserFraFastlager(redTeamAlpha.dagbestemmelserSomJson())
@@ -109,17 +126,28 @@ internal class RedTeamTest {
         println(redTeamAlpha.dagbestemmelserSomJson())
 
         val teamBetaOverstyrt = redTeamBeta.teamFor(overstyringsdag) as Workday
-        assertEquals("Christian", teamBetaOverstyrt.members.find { it.team == "Spleiselaget" }!!.name)
+        assertEquals(listOf("Christian"), teamBetaOverstyrt.teams.find { it.team == "Spleiselaget" }!!.redteamMembers.map { it.name })
+
     }
 
     private fun Int.januar(dev1: String, dev2: String, fag: String) =
         Workday(
-            LocalDate.of(2022, 1, this),
-            listOf(
-                Team.TeamMember("Spleiselaget", dev1, "slackid-$dev1"),
-                Team.TeamMember("Speilvendt", dev2, "slackid-$dev2"),
-                Team.TeamMember("Fag", fag, "slackid-$fag")
-            ).sortedBy { it.team })
+            date = LocalDate.of(2022, 1, this),
+            teams = listOf(
+                Teams.DayTeam(
+                    team = "Spleiselaget",
+                    redteamMembers = listOf(Teams.RedTeamMember(name = dev1, slackId = "slackid-$dev1", team = "Spleiselaget"))
+                ),
+                Teams.DayTeam(
+                    team = "Speilvendt",
+                    redteamMembers = listOf(Teams.RedTeamMember(name = dev2, slackId = "slackid-$dev2", team = "Speilvendt"))
+                ),
+                Teams.DayTeam(
+                    team = "Fag",
+                    redteamMembers = listOf(Teams.RedTeamMember(name = fag, slackId = "slackid-$fag", team = "Fag"))
+                )
+            ).sortedBy { it.team }
+        )
 
     private fun Int.januar() =
         LocalDate.of(2022, 1, this)

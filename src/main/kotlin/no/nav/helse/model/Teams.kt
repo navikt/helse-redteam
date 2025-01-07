@@ -6,9 +6,9 @@ data class TeamDto(
     val name: String,
     val members: List<MemberDto>
 ) {
-    internal fun memberFor(name: String): Team.TeamMember? {
+    internal fun memberFor(name: String): Teams.RedTeamMember? {
         val member = members.find { name == it.name } ?: return null
-        return Team.TeamMember(this.name, member.name, member.slackId)
+        return Teams.RedTeamMember(member.name, member.slackId, this.name)
     }
 }
 
@@ -21,21 +21,25 @@ data class MemberDto(
     }
 }
 
-class Team(private vararg val groups: TeamDto) {
-
-    data class TeamMember(
+class Teams(private vararg val groups: TeamDto) {
+    data class DayTeam(
         val team: String,
-        val name: String,
-        val slackId: String
+        val redteamMembers: List<RedTeamMember>
     )
 
-    internal fun teamAt(count: Int): List<TeamMember> =
+    data class RedTeamMember(
+        val name: String,
+        val slackId: String,
+        val team: String,
+    )
+
+    internal fun teamAt(count: Int): List<DayTeam> =
         groups.map { group ->
             val member = group.members[count % group.members.size]
-            TeamMember(group.name, member.name, member.slackId)
+            DayTeam(group.name, listOf(RedTeamMember(member.name, member.slackId, group.name)))
         }
 
-    internal fun somTeamMember(navn: String): TeamMember {
+    internal fun somRedTeamMember(navn: String): RedTeamMember {
         val toGroup = groups.find { group -> navn in group.members.names() } ?: throw IllegalArgumentException("to: $navn does not exist in a group")
         val toMember = toGroup.memberFor(navn) ?: throw IllegalArgumentException("to: $navn does not exist in group: $toGroup")
         return toMember
