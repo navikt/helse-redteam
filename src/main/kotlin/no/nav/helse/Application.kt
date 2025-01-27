@@ -111,19 +111,19 @@ fun Application.redTeamModule(mediator: RedteamMediator) {
     }
 }
 
-fun Application.configureRouting(mediator: RedteamMediator) {
+fun Application.configureRouting(mediator: RedteamMediator, startdate: LocalDate = now()) {
     val logger = LoggerFactory.getLogger("red-team-api")
     routing {
         get("/") {
             call.respondText("TBD red-team")
         }
         get("red-team") {
-            val calendar = mediator.redTeamCalendar(now() to now().plusDays(14)).json()
+            val calendar = mediator.redTeamCalendar(startdate to startdate.plusDays(14)).json()
             call.respondText(calendar, ContentType.Application.Json)
         }
         get("red-team/{date}") {
             val date =
-                LocalDate.parse(call.parameters["date"]) ?: throw IllegalArgumentException("missing parameter: <date>")
+                LocalDate.parse(call.parameters["date"] ?: throw IllegalArgumentException("missing parameter: <date>"))
             val day = mediator.teamFor(date).json()
             call.respondText(day, ContentType.Application.Json)
         }

@@ -40,7 +40,8 @@ internal class E2ETest {
                 RedteamMediator(
                     slackUpdater = slackUpdater,
                     redTeam = RedTeam(LocalDate.of(2022, 1, 1), getRedTeam)
-                )
+                ),
+                startdate = LocalDate.of(2025, 1, 7),
             )
         }
 
