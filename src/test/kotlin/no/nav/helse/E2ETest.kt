@@ -77,7 +77,9 @@ internal class E2ETest {
           {
             "date": "2025-01-07",
             "team": "Fag",
-            "redteamMembers": ["Margrethe"]
+            "redteamMembers": [
+              "Margrethe"
+            ]
           },
           {
             "date": "2025-01-07",
@@ -86,13 +88,13 @@ internal class E2ETest {
               "Elias"
             ]
           },
-        {
-          "date": "2025-01-08",
-          "team": "Spleiselaget",
-          "redteamMembers": [
-            "Håkon"
-          ]
-        }
+          {
+            "date": "2025-01-08",
+            "team": "Spleiselaget",
+            "redteamMembers": [
+              "Håkon"
+            ]
+          }
         ]
         """.trimIndent()
 }
