@@ -7,7 +7,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
 
-class RedteamMediator(
+open class RedteamMediator(
     private val slackUpdater: SlackUpdater,
     private val redTeam: RedTeam,
     private val bøtte: Bøtte = object : Bøtte {}
@@ -32,6 +32,6 @@ class RedteamMediator(
 
     fun teamFor(date: LocalDate) = redTeam.teamFor(date)
 
-    fun redTeamCalendar(span: Pair<LocalDate, LocalDate>) = redTeam.redTeamCalendar(span)
+    open fun redTeamCalendar(span: Pair<LocalDate, LocalDate>) = redTeam.redTeamCalendar(span)
 
 }

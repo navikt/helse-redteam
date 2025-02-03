@@ -9,40 +9,43 @@ import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.testing.*
 import io.mockk.mockk
+import java.time.LocalDate
 import no.nav.helse.model.MemberDto
 import no.nav.helse.model.RedTeam
-import no.nav.helse.model.Teams
 import no.nav.helse.model.TeamDto
+import no.nav.helse.model.Teams
 import no.nav.helse.slack.SlackUpdater
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
 
 internal class E2ETest {
 
     @Test
     fun `red team members can be overriden`() = testApplication {
         val slackUpdater: SlackUpdater = mockk(relaxed = true)
+        val getRedTeam = {
+            Teams(
+                TeamDto("Speilvendt", listOf(MemberDto("Elias", "slack1"), MemberDto("Jakob", "slack2"))),
+                TeamDto("Spleiselaget", listOf(MemberDto("Håkon", "slack3"), MemberDto("Amalie", "slack3"))),
+                TeamDto("Fag", listOf(MemberDto("Margrethe", "slack5")))
+            )
+        }
+
+        val startdate = LocalDate.of(2025, 1, 7)
+        val mediator = object : RedteamMediator(
+            slackUpdater = slackUpdater,
+            redTeam = RedTeam(LocalDate.of(2022, 1, 1), getRedTeam)
+        ) {
+            override fun redTeamCalendar(span: Pair<LocalDate, LocalDate>) =
+                super.redTeamCalendar(startdate to startdate.plusDays(14))
+        }
 
         application {
             install(ContentNegotiation) {
                 jackson()
             }
-            val getRedTeam = {
-                Teams(
-                    TeamDto("Speilvendt", listOf(MemberDto("Elias", "slack1"), MemberDto("Jakob", "slack2"))),
-                    TeamDto("Spleiselaget", listOf(MemberDto("Håkon", "slack3"), MemberDto("Amalie", "slack3"))),
-                    TeamDto("Fag", listOf(MemberDto("Margrethe", "slack5")))
-                )
-            }
-            configureRouting(
-                RedteamMediator(
-                    slackUpdater = slackUpdater,
-                    redTeam = RedTeam(LocalDate.of(2022, 1, 1), getRedTeam)
-                ),
-                startdate = LocalDate.of(2025, 1, 7),
-            )
+            configureRouting(mediator)
         }
 
         val response = client.post("/red-team") {
