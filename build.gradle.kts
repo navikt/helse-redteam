@@ -1,14 +1,14 @@
-val ktorVersion = "3.0.1"
-val logbackClassicVersion = "1.5.12"
+val ktorVersion = "3.1.0"
+val logbackClassicVersion = "1.5.16"
 val logbackEncoderVersion = "8.0"
-val mockkVersion = "1.13.9"
-val jacksonVersion = "2.18.1"
-val slackApiModelKotlinExtensionVersion = "1.36.1"
-val junitJupiterVersion = "5.11.3"
-val gcpBucketVersion = "2.35.0"
+val mockkVersion = "1.13.16"
+val jacksonVersion = "2.18.2"
+val slackApiModelKotlinExtensionVersion = "1.45.2"
+val junitJupiterVersion = "5.11.4"
+val gcpBucketVersion = "2.48.2"
 
 plugins {
-    kotlin("jvm") version "2.0.21"
+    kotlin("jvm") version "2.1.10"
 }
 
 group = "no.nav.helse"
