@@ -5,7 +5,7 @@ val mockkVersion = "1.13.16"
 val jacksonVersion = "2.18.2"
 val slackApiModelKotlinExtensionVersion = "1.45.2"
 val junitJupiterVersion = "5.11.4"
-val gcpBucketVersion = "2.48.2"
+val gcpBucketVersion = "2.48.3"
 
 plugins {
     kotlin("jvm") version "2.1.10"
@@ -42,7 +42,14 @@ dependencies {
     implementation("com.google.cloud:google-cloud-storage:$gcpBucketVersion")
 
     testImplementation("io.mockk:mockk:${mockkVersion}")
-    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
+    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion") {
+        constraints {
+            implementation("commons-codec:commons-codec") {
+                version { require("1.13") }
+                because("io.ktor:ktor-server-test-host:3.1.0 drar inn sårbar versjon 1.11")
+            }
+        }
+    }
 
     testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
