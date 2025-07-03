@@ -76,10 +76,21 @@ suspend fun start() {
     }
 }
 
+internal fun folkSomErIPermisjon(): List<String> {
+    val folkSomErIPermisjon = mutableListOf<String>()
+
+    val erMaxiTilbake = now().isBefore(LocalDate.of(2025, 10, 15))
+    if(erMaxiTilbake) folkSomErIPermisjon.add("UEHPCUFCJ")
+
+    val erChristianTilbake = now().isBefore(LocalDate.of(2025, 10, 21))
+    if(erChristianTilbake) folkSomErIPermisjon.add("US0C415LZ")
+
+    return folkSomErIPermisjon.toList()
+}
+
 private fun setUpRedTeam(): RedTeam {
-    val eksluderingsliste = if(now().isBefore(LocalDate.of(2025, 3, 1))) listOf("UUQQ1EHBN") else emptyList()
     val teams = {
-        val teamData = teamDataFromFile(eksluderingsliste)
+        val teamData = teamDataFromFile(folkSomErIPermisjon())
         Teams(teamData[0], teamData[1], teamData[2])
     }
     return RedTeam(LocalDate.of(2022, 6, 1), teams, holidays())

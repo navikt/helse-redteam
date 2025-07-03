@@ -7,6 +7,7 @@ import java.time.LocalDate.now
 import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.ChronoField
 import java.util.*
+import no.nav.helse.folkSomErIPermisjon
 
 class RedTeamSlack(private val token: String, private val slackChannel: String, private val userGroup: String) {
 
@@ -44,9 +45,9 @@ class RedTeamSlack(private val token: String, private val slackChannel: String, 
     }
 
     fun tullOgFjas() {
-        val kandidater = tulleFolk.keys.shuffled().take(2)
-        siNoeTull(tulleMessages.shuffled().first()(kandidater.last()))
-        siNoeTull(":wave: Morning ${kandidater.first()}. Kan ikke du starte meme-ballet med noe lættis denne fredagen?")
+        val kandidater = tulleFolk.keys.toList().filter { it !in folkSomErIPermisjon() }.shuffled().take(2)
+        siNoeTull(tulleMessages.shuffled().first()("<@${kandidater.last()}>"))
+        siNoeTull(":wave: Morning <@${kandidater.first()}>. Kan ikke du starte meme-ballet med noe lættis denne fredagen?")
     }
 
     private fun siNoeTull(fjas: String) {
@@ -93,33 +94,34 @@ fun main() {
 }
 
 private val tulleFolk = mapOf(
-    "<@U5LJ6JHLL>" to "David",
-    "<@U01HXSKBDJ7>" to "Hege",
-    "<@UUQQ1EHBN>" to "Marte",
-    "<@UEHPCUFCJ>" to "Maxi",
-    "<@UDWEJT5PW>" to "Håkon",
-    "<@U05D2LNF9HB>" to "Amalie",
-    "<@U070RMKTUT1>" to "Sivert",
-    "<@U080GJLQDRP>" to "Linus",
-    "<@U07GULSBV60>" to "Vemund",
-    "<@U03K4U0DKBK>" to "Christina",
-    "<@U04MBDYNGMU>" to "Isidora",
+    "U5LJ6JHLL" to "David",
+    "UUQQ1EHBN" to "Marte",
+    "UEHPCUFCJ" to "Maxi",
+    "UDWEJT5PW" to "Håkon",
+    "U05D2LNF9HB" to "Amalie",
+    "U070RMKTUT1" to "Sivert",
+    "U080GJLQDRP" to "Linus",
+    "U07GULSBV60" to "Vemund",
+    "U03K4U0DKBK" to "Christina",
+    "U04MBDYNGMU" to "Isidora",
+    "U01CX9M44MS" to "Marte HJ",
+    "U02JGGV0TE0" to "Øystein",
 
-    "<@U6VPRN57C>" to "Camilla",
-    "<@UK6TD930C>" to "Jakopp",
-    "<@US0C415LZ>" to "Christian",
-    "<@U029VUUS1CJ>" to "Eirik",
-    "<@U040GTABBSM>" to "Elias",
-    "<@U04RTT5Q80J>" to "Martin",
-    "<@U05KPGBFB51>" to "Trine",
-    "<@U081G7W7259>" to "Svein",
-    "<@U6QCP24SF>" to "Øyvind",
-    "<@UAHN8TBD3>" to "Solveig",
-    "<@U025P2PGW2W>" to "Øydis",
-    "<@UMHUJNE5N>" to "MortenN",
+    "U6VPRN57C" to "Camilla",
+    "UK6TD930C" to "Jakopp",
+    "US0C415LZ" to "Christian",
+    "U029VUUS1CJ" to "Eirik",
+    "U040GTABBSM" to "Elias",
+    "U04RTT5Q80J" to "Martin",
+    "U05KPGBFB51" to "Trine",
+    "U081G7W7259" to "Svein",
+    "UAHN8TBD3" to "Solveig",
+    "U025P2PGW2W" to "Øydis",
+    "UMHUJNE5N" to "MortenN",
+    "U090WPQKHC0" to "Håvard"
 )
 
-private val tulleMessages: List<(person: String) -> String> = listOf(
+internal val tulleMessages: List<(person: String) -> String> = listOf(
     {":wave: Morning :hehege: $it. Har du lest slack i 15 min i dag? Kan du fortelle mer om det?"},
     {":wave: Morning :explodinghead: $it. Kan ikke du starte dagen med en motiverende tale? Det tror jeg mange setter pris på!"},
     {":wave: Morning $it. Hva er din definisjon av en sak?"},
