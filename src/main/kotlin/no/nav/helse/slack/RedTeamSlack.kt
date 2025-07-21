@@ -21,7 +21,7 @@ class RedTeamSlack(private val token: String, private val slackChannel: String, 
                     " - ${team.teams[0].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }.joinToString()} (${team.teams[0].team})\n" +
                     " - ${team.teams[1].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }.joinToString()} (${team.teams[1].team})\n" +
                     " - ${team.teams[2].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }.joinToString()} (${team.teams[2].team})\n" +
-                    "Red team kan administreres på <https://tbd.ansatt.nav.no/docs/redteam-wiki/red-team|tbd.ansatt.nav.no>")
+                    "Red team kan administreres på <https://tbd.ansatt.nav.no|tbd.ansatt.nav.no>")
         }
 
         if (!response.isOk) {
@@ -36,7 +36,7 @@ class RedTeamSlack(private val token: String, private val slackChannel: String, 
                     " - ${team.teams[0].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }.joinToString()} (${team.teams[0].team})\n" +
                     " - ${team.teams[1].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }.joinToString()} (${team.teams[1].team})\n" +
                     " - ${team.teams[2].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }.joinToString()} (${team.teams[2].team})\n" +
-                    "Red team kan administreres på <https://tbd.ansatt.nav.no/docs/redteam-wiki/red-team|tbd.ansatt.nav.no>")
+                    "Red team kan administreres på <https://tbd.ansatt.nav.no|tbd.ansatt.nav.no>")
         }
 
         if (!response.isOk) {

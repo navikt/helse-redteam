@@ -3,8 +3,6 @@
 Applikasjonen red team holder styr på red team-ordningen i team Bømlo og sørger for at 
 mennesker som enten er i rotasjonen eller er brukere av red team er godt opplyst om hvem som er på vakt når.
 
-Øvrig dokumentasjon ligger på https://tbd.ansatt.nav.no/docs/redteam-wiki/.
-
 #### Inkluderer
 - [x] Oversikt og overstyring av red team via tbd-siden.
 - [x] Persistens av overstyring av red team
