@@ -8,7 +8,7 @@ val junitJupiterVersion = "5.12.1"
 val gcpBucketVersion = "2.50.0"
 
 plugins {
-    kotlin("jvm") version "2.2.10"
+    kotlin("jvm") version "2.2.21"
 }
 
 group = "no.nav.helse"
