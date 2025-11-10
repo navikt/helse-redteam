@@ -126,7 +126,7 @@ internal val tulleMessages: List<(person: String) -> String> = listOf(
     {":wave: Morning :explodinghead: $it. Kan ikke du starte dagen med en motiverende tale? Det tror jeg mange setter pris på!"},
     {":wave: Morning $it. Hva er din definisjon av en sak?"},
     {":wave: Morning $it. Når synes du det er nytt skjæringstidspunkt og vi trenger ny inntektsmelding? :thinking-ass:"},
-    {":wave: Morning $it. Hvordan går det med dine nyttårsforsetter? :pepe-giggle:"},
+    {":wave: Morning $it. Hvordan går det med dine nyttårsforsetter? :pepe-giggles:"},
     {":wave: Morning :ffingerguns: $it. Nå er det snart helg!!! Kan du komme med et par tips til hva dine kolleger kan gjøre i helgen?"},
     {":wave: G'day mate :pirate: $it. Er du en ja-kopp eller en nei-kopp i dag?"},
     {":wave: God morgen, $it :excited:! Du som er så god i det meste, kan du lære oss noe kult?"},
