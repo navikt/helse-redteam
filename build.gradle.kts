@@ -1,6 +1,6 @@
 val ktorVersion = "3.2.3"
 val logbackClassicVersion = "1.5.18"
-val logbackEncoderVersion = "8.0"
+val logbackEncoderVersion = "9.0"
 val mockkVersion = "1.13.17"
 val jacksonVersion = "2.18.3"
 val slackApiModelKotlinExtensionVersion = "1.45.3"
