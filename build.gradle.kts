@@ -3,7 +3,7 @@ val logbackClassicVersion = "1.5.18"
 val logbackEncoderVersion = "8.0"
 val mockkVersion = "1.13.17"
 val jacksonVersion = "2.18.3"
-val slackApiModelKotlinExtensionVersion = "1.45.3"
+val slackApiModelKotlinExtensionVersion = "1.46.0"
 val junitJupiterVersion = "5.12.1"
 val gcpBucketVersion = "2.50.0"
 
