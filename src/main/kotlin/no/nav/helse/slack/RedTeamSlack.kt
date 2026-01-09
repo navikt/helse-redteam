@@ -94,7 +94,6 @@ fun main() {
 }
 
 private val tulleFolk = mapOf(
-    "U5LJ6JHLL" to "David",
     "UUQQ1EHBN" to "Marte",
     "UEHPCUFCJ" to "Maxi",
     "UDWEJT5PW" to "Håkon",
@@ -103,13 +102,13 @@ private val tulleFolk = mapOf(
     "U080GJLQDRP" to "Linus",
     "U07GULSBV60" to "Vemund",
     "U03K4U0DKBK" to "Christina",
-    "U04MBDYNGMU" to "Isidora",
     "U01CX9M44MS" to "Marte HJ",
     "U02JGGV0TE0" to "Øystein",
 
     "U6VPRN57C" to "Camilla",
     "UK6TD930C" to "Jakopp",
     "US0C415LZ" to "Christian",
+    "U04MBDYNGMU" to "Isidora",
     "U029VUUS1CJ" to "Eirik",
     "U040GTABBSM" to "Elias",
     "U04RTT5Q80J" to "Martin",
