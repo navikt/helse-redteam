@@ -1,11 +1,11 @@
-val ktorVersion = "3.2.3"
+val ktorVersion = "3.3.3"
 val logbackClassicVersion = "1.5.18"
-val logbackEncoderVersion = "8.0"
+val logbackEncoderVersion = "9.0"
 val mockkVersion = "1.13.17"
-val jacksonVersion = "2.18.3"
-val slackApiModelKotlinExtensionVersion = "1.45.3"
+val jacksonVersion = "2.20.1"
+val slackApiModelKotlinExtensionVersion = "1.46.0"
 val junitJupiterVersion = "5.12.1"
-val gcpBucketVersion = "2.50.0"
+val gcpBucketVersion = "2.60.0"
 
 plugins {
     kotlin("jvm") version "2.2.21"
