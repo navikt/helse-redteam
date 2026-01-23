@@ -1,5 +1,5 @@
 val ktorVersion = "3.3.3"
-val logbackClassicVersion = "1.5.18"
+val logbackClassicVersion = "1.5.25"
 val logbackEncoderVersion = "9.0"
 val mockkVersion = "1.13.17"
 val jacksonVersion = "2.20.1"
