@@ -29,7 +29,7 @@ import java.time.LocalDate.now
 import java.time.LocalDateTime
 import kotlin.time.Duration.Companion.minutes
 
-private const val SLACK_CHANNEL = "team-bømlo"
+private const val SLACK_CHANNEL = "team-sas"
 private const val SLACK_USER_GROUP = "S010U3KQ8LQ"
 
 internal val mapper = jacksonObjectMapper()

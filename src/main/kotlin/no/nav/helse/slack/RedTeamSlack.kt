@@ -90,7 +90,7 @@ fun main() {
             )
         }
     )
-    RedTeamSlack(token, "team-bømlo", "team-bømlo").updateRedTeamGroup((redTeam.teamFor(now()) as Workday))
+    RedTeamSlack(token, "team-sas", "team-sas").updateRedTeamGroup((redTeam.teamFor(now()) as Workday))
 }
 
 private val tulleFolk = mapOf(
