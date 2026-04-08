@@ -17,7 +17,7 @@ class RedTeamSlack(private val token: String, private val slackChannel: String, 
         val dateString = team.date.format(formatter)
         val response = client.methods(token).chatPostMessage { it
             .channel(slackChannel)
-            .text(":wave: :bomlo: Red team for $dateString:\n" +
+            .text(":wave: :small_airplane: Red team for $dateString:\n" +
                     " - ${team.teams[0].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }.joinToString()} (${team.teams[0].team})\n" +
                     " - ${team.teams[1].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }.joinToString()} (${team.teams[1].team})\n" +
                     " - ${team.teams[2].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }.joinToString()} (${team.teams[2].team})\n" +
@@ -32,7 +32,7 @@ class RedTeamSlack(private val token: String, private val slackChannel: String, 
         val dateString = team.date.format(formatter)
         val response = client.methods(token).chatPostMessage { it
             .channel(slackChannel)
-            .text(":wave: :bomlo: Red team har blitt oppdatert for $dateString: :thanks: \n" +
+            .text(":wave: :small_airplane: Red team har blitt oppdatert for $dateString: :thanks: \n" +
                     " - ${team.teams[0].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }.joinToString()} (${team.teams[0].team})\n" +
                     " - ${team.teams[1].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }.joinToString()} (${team.teams[1].team})\n" +
                     " - ${team.teams[2].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }.joinToString()} (${team.teams[2].team})\n" +
