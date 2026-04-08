@@ -15,12 +15,13 @@ class RedTeamSlack(private val token: String, private val slackChannel: String, 
 
     fun postRedTeam(team: Workday) {
         val dateString = team.date.format(formatter)
+        val teamLines = team.teams.joinToString("") { dayTeam ->
+            " - ${dayTeam.redteamMembers.map { "<@${it.slackId}> " }.joinToString()} (${dayTeam.team})\n"
+        }
         val response = client.methods(token).chatPostMessage { it
             .channel(slackChannel)
             .text(":wave: :small_airplane: Red team for $dateString:\n" +
-                    " - ${team.teams[0].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }.joinToString()} (${team.teams[0].team})\n" +
-                    " - ${team.teams[1].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }.joinToString()} (${team.teams[1].team})\n" +
-                    " - ${team.teams[2].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }.joinToString()} (${team.teams[2].team})\n" +
+                    teamLines +
                     "Red team kan administreres på <https://tbd.ansatt.nav.no|tbd.ansatt.nav.no>")
         }
 
@@ -30,12 +31,13 @@ class RedTeamSlack(private val token: String, private val slackChannel: String, 
     }
     fun postRedTeamOverride(team: Workday) {
         val dateString = team.date.format(formatter)
+        val teamLines = team.teams.joinToString("") { dayTeam ->
+            " - ${dayTeam.redteamMembers.map { "<@${it.slackId}> " }.joinToString()} (${dayTeam.team})\n"
+        }
         val response = client.methods(token).chatPostMessage { it
             .channel(slackChannel)
             .text(":wave: :small_airplane: Red team har blitt oppdatert for $dateString: :thanks: \n" +
-                    " - ${team.teams[0].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }.joinToString()} (${team.teams[0].team})\n" +
-                    " - ${team.teams[1].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }.joinToString()} (${team.teams[1].team})\n" +
-                    " - ${team.teams[2].redteamMembers.map { redteamMember -> "<@${redteamMember.slackId}> " }.joinToString()} (${team.teams[2].team})\n" +
+                    teamLines +
                     "Red team kan administreres på <https://tbd.ansatt.nav.no|tbd.ansatt.nav.no>")
         }
 
