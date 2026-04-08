@@ -26,8 +26,7 @@ internal class E2ETest {
         val slackUpdater: SlackUpdater = mockk(relaxed = true)
         val getRedTeam = {
             Teams(
-                TeamDto("Speilvendt", listOf(MemberDto("Elias", "slack1"), MemberDto("Jakob", "slack2"))),
-                TeamDto("Spleiselaget", listOf(MemberDto("Håkon", "slack3"), MemberDto("Amalie", "slack3"))),
+                TeamDto("Utvikling", listOf(MemberDto("Elias", "slack1"), MemberDto("Jakob", "slack2"), MemberDto("Håkon", "slack3"), MemberDto("Amalie", "slack4"))),
                 TeamDto("Fag", listOf(MemberDto("Margrethe", "slack5")))
             )
         }
@@ -60,7 +59,7 @@ internal class E2ETest {
         assertEquals(setOf("Margrethe", "Håkon", "Amalie", "Elias"), redteamForDato.toSet())
 
         val redteamForDato2 = jacksonObjectMapper().readTree(redTeam)["days"].single { it["date"].asText() == "2025-01-08" }["teams"].flatMap { it["redteamMembers"] }.map { it["name"].asText() }
-        assertEquals(setOf("Margrethe", "Håkon", "Jakob"), redteamForDato2.toSet())
+        assertEquals(setOf("Margrethe", "Håkon"), redteamForDato2.toSet())
     }
 
     @Language("JSON")
@@ -68,10 +67,11 @@ internal class E2ETest {
         [
           {
             "date": "2025-01-07",
-            "team": "Spleiselaget",
+            "team": "Utvikling",
             "redteamMembers": [
               "Håkon",
-              "Amalie"
+              "Amalie",
+              "Elias"
             ]
           },
           {
@@ -82,15 +82,8 @@ internal class E2ETest {
             ]
           },
           {
-            "date": "2025-01-07",
-            "team": "Speilvendt",
-            "redteamMembers": [
-              "Elias"
-            ]
-          },
-          {
             "date": "2025-01-08",
-            "team": "Spleiselaget",
+            "team": "Utvikling",
             "redteamMembers": [
               "Håkon"
             ]

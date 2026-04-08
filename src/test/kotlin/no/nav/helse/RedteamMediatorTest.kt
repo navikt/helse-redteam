@@ -18,7 +18,7 @@ internal class RedteamMediatorTest: AbstractRedTeamTest() {
             slackUpdater = SlackUpdater(testklokke(START_DATE), slackClient, redTeam()),
             redTeam = redTeam()
         )
-        mediator.override(listOf(Overstyring(START_DATE, "Spleiselaget", listOf("Sondre"))))
+        mediator.override(listOf(Overstyring(START_DATE, "Utvikling", listOf("Sondre"))))
         verify { slackClient.updateRedTeamGroup(any()) }
     }
 
@@ -31,7 +31,7 @@ internal class RedteamMediatorTest: AbstractRedTeamTest() {
             slackUpdater = SlackUpdater(testklokke(START_DATE), slackClient, redTeam()),
             redTeam = redTeam()
         )
-        mediator.override(listOf(Overstyring(START_DATE.plusDays(1), "Spleiselaget", listOf("Sondre"))))
+        mediator.override(listOf(Overstyring(START_DATE.plusDays(1), "Utvikling", listOf("Sondre"))))
         verify(exactly = 0) { slackClient.updateRedTeamGroup(any()) }
     }
 }

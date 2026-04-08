@@ -10,23 +10,22 @@ internal class TeamsTest {
 
 
     val team = Teams(
-        TeamDto("Spleiselaget", genTeam("Sondre", "David", "Christian")),
-        TeamDto("Speilvendt", genTeam("Jakob", "Sindre")),
+        TeamDto("Utvikling", genTeam("Sondre", "David", "Christian")),
         TeamDto("Fag", genTeam("Morten", "Cecilie"))
     )
 
     @Test
     fun nextDay() {
         assertEquals(
-            listOf("Sondre", "Jakob", "Morten"),
+            listOf("Sondre", "Morten"),
             team.teamAt(0).map { it.redteamMembers.single().name }
         )
         assertEquals(
-            listOf("David", "Sindre", "Cecilie"),
+            listOf("David", "Cecilie"),
             team.teamAt(1).map { it.redteamMembers.single().name }
         )
         assertEquals(
-            listOf("Christian", "Jakob", "Morten"),
+            listOf("Christian", "Morten"),
             team.teamAt(2).map { it.redteamMembers.single().name }
         )
     }

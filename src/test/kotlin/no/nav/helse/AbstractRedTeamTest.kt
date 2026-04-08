@@ -22,9 +22,8 @@ open class AbstractRedTeamTest {
         START_DATE,
         {
             Teams(
-                TeamDto("Spleiselaget", genTeam("Sondre", "David", "Christian")),
-                TeamDto("Speilvendt",   genTeam("Jakob", "Sindre")),
-                TeamDto("Fag",          genTeam("Morten", "Cecilie"))
+                TeamDto("Utvikling", genTeam("Sondre", "David", "Christian")),
+                TeamDto("Fag",       genTeam("Morten", "Cecilie"))
             )
         },
         extraNonWorkDays,

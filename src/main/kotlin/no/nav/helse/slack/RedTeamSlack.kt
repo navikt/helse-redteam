@@ -84,8 +84,7 @@ fun main() {
         LocalDate.of(2022, 1, 1),
         {
             Teams(
-                TeamDto("Speilvendt", listOf(MemberDto("Sondre", "UBCJCLFD5"))),
-                TeamDto("Spleiselaget", listOf(MemberDto("Christian", "U03KX96MT39"))),
+                TeamDto("Utvikling", listOf(MemberDto("Sondre", "UBCJCLFD5"), MemberDto("Christian", "U03KX96MT39"))),
                 TeamDto("Fag", listOf(MemberDto("Margrethe", "UMHUJNE5N")))
             )
         }
