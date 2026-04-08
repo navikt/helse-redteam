@@ -91,7 +91,7 @@ internal fun folkSomErIPermisjon(): List<String> {
 private fun setUpRedTeam(): RedTeam {
     val teams = {
         val teamData = teamDataFromFile(folkSomErIPermisjon())
-        Teams(teamData[0], teamData[1], teamData[2])
+        Teams(*teamData.toTypedArray())
     }
     return RedTeam(LocalDate.of(2022, 6, 1), teams, holidays())
 }
