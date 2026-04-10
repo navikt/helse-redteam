@@ -98,11 +98,8 @@ private val tulleFolk = mapOf(
     "UUQQ1EHBN" to "Marte",
     "UEHPCUFCJ" to "Maxi",
     "UDWEJT5PW" to "Håkon",
-    "U05D2LNF9HB" to "Amalie",
     "U070RMKTUT1" to "Sivert",
     "U080GJLQDRP" to "Linus",
-    "U07GULSBV60" to "Vemund",
-    "U03K4U0DKBK" to "Christina",
     "U01CX9M44MS" to "Marte HJ",
     "U02JGGV0TE0" to "Øystein",
 
@@ -118,7 +115,6 @@ private val tulleFolk = mapOf(
     "UAHN8TBD3" to "Solveig",
     "U025P2PGW2W" to "Øydis",
     "UMHUJNE5N" to "MortenN",
-    "U090WPQKHC0" to "Håvard"
 )
 
 internal val tulleMessages: List<(person: String) -> String> = listOf(
