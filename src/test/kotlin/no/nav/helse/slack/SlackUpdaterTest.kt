@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
+import kotlin.test.assertEquals
+import no.nav.helse.model.Workday
+import no.nav.helse.slack.RedTeamSlack.Companion.toPostText
 
 internal class SlackUpdaterTest: AbstractRedTeamTest() {
 
@@ -103,6 +106,20 @@ internal class SlackUpdaterTest: AbstractRedTeamTest() {
         assertPosterIkke(tidspunkt(8, 26, 12)) // 2. juledag
 
         assertPoster(tidspunkt(8, 27, 12))
+    }
+
+    @Test
+    fun `lager riktig tekst for posting til slack`() {
+        val etRedTeam = redTeam()
+        etRedTeam.override(listOf("David", "Sondre"), "Utvikling", LocalDate.now())
+        val workday = etRedTeam.teamFor(LocalDate.now()) as Workday
+        assertEquals(
+            """
+                | - <@slackid-Morten> (Fag)
+                | - <@slackid-David>, <@slackid-Sondre> (Utvikling)
+                |
+            """.trimMargin(), workday.toPostText()
+        )
     }
 
 }
