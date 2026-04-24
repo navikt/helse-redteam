@@ -79,7 +79,7 @@ class RedTeamSlack(private val token: String, private val slackChannel: String, 
 
 // For manuell slack-posting, aka. testing.
 fun main() {
-    val token = System.getenv("SLACK_TOKEN")
+    val token = System.getenv("SLACK_BOT_USER_OAUTH_TOKEN")
     val redTeam = RedTeam(
         LocalDate.of(2022, 1, 1),
         {

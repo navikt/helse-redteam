@@ -41,7 +41,7 @@ fun main() = runBlocking { start() }
 suspend fun start() {
     val logger = LoggerFactory.getLogger("red-team")
     val slackToken =
-        System.getenv("SLACK_TOKEN") ?: throw IllegalStateException("Could not find slack token in envvar: SLACK_TOKEN")
+        System.getenv("SLACK_BOT_USER_OAUTH_TOKEN") ?: error("Could not find slack token in envvar: SLACK_BOT_USER_OAUTH_TOKEN")
     val bøtte = GCPBøtte()
     val redTeam = setUpRedTeam()
     redTeam.byttUtDagbestemmelserFraFastlager(bøtte.hentOverstyringer())
