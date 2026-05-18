@@ -1,13 +1,11 @@
 package no.nav.helse.slack
 
 import com.slack.api.Slack
-import no.nav.helse.model.*
-import java.time.LocalDate
-import java.time.LocalDate.now
 import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.ChronoField
 import java.util.*
-import no.nav.helse.folkSomErIPermisjon
+import no.nav.helse.model.Workday
+import no.nav.helse.teamDataFromFile
 
 class RedTeamSlack(private val token: String, private val slackChannel: String, private val userGroup: String) {
 
@@ -41,7 +39,7 @@ class RedTeamSlack(private val token: String, private val slackChannel: String, 
     }
 
     fun tullOgFjas() {
-        val kandidater = tulleFolk.keys.toList().filter { it !in folkSomErIPermisjon() }.shuffled().take(2)
+        val kandidater = tulleFolk.keys.toList().shuffled().take(2)
         siNoeTull(tulleMessages.shuffled().first()("<@${kandidater.last()}>"))
         siNoeTull(":wave: Morning <@${kandidater.first()}>. Kan ikke du starte meme-ballet med noe lættis denne fredagen?")
     }
@@ -77,43 +75,10 @@ class RedTeamSlack(private val token: String, private val slackChannel: String, 
     }
 }
 
-// For manuell slack-posting, aka. testing.
-fun main() {
-    val token = System.getenv("SLACK_BOT_USER_OAUTH_TOKEN")
-    val redTeam = RedTeam(
-        LocalDate.of(2022, 1, 1),
-        {
-            Teams(
-                TeamDto("Utvikling", listOf(MemberDto("Sondre", "UBCJCLFD5"), MemberDto("Christian", "U03KX96MT39"))),
-                TeamDto("Fag", listOf(MemberDto("Margrethe", "UMHUJNE5N")))
-            )
-        }
-    )
-    RedTeamSlack(token, "team-sas", "team-sas").updateRedTeamGroup((redTeam.teamFor(now()) as Workday))
-}
-
-private val tulleFolk = mapOf(
-    "UUQQ1EHBN" to "Marte",
-    "UEHPCUFCJ" to "Maxi",
-    "UDWEJT5PW" to "Håkon",
-    "U070RMKTUT1" to "Sivert",
-    "U080GJLQDRP" to "Linus",
-    "U01CX9M44MS" to "Marte HJ",
-    "U02JGGV0TE0" to "Øystein",
-
-    "U6VPRN57C" to "Camilla",
-    "UK6TD930C" to "Jakopp",
-    "US0C415LZ" to "Christian",
-    "U04MBDYNGMU" to "Isidora",
-    "U029VUUS1CJ" to "Eirik",
-    "U040GTABBSM" to "Elias",
-    "U04RTT5Q80J" to "Martin",
-    "U05KPGBFB51" to "Trine",
-    "U081G7W7259" to "Svein",
-    "UAHN8TBD3" to "Solveig",
-    "U025P2PGW2W" to "Øydis",
-    "UMHUJNE5N" to "MortenN",
-)
+private val tulleFolk =
+    teamDataFromFile()
+        .flatMap { it.members }
+        .associate { it.slackId to it.name }
 
 internal val tulleMessages: List<(person: String) -> String> = listOf(
     {":wave: Morning :hehege: $it. Har du lest slack i 15 min i dag? Kan du fortelle mer om det?"},
@@ -127,5 +92,4 @@ internal val tulleMessages: List<(person: String) -> String> = listOf(
     {":wave: Må itj fårrå nålles, $it :happymarty:! Men del gjerne med oss dagens trønderord og hvorfor det er turan som tælle?"},
     {":wave: Heisann $it :maxi-jam:! Har du tenkt på noen spennende nøtter i det siste? :maxi-nut-cracker: :maxi-excited:"},
     {":wave: Hællæ, $it :christian-king:! På tide med noen Halden-fæcts, kan du nevne tre ting som er bedre i Halden?"},
-    {":wave: Så var fredag igjen vettu, eller hur? Kan ikke $it informere oss om hvor mange skritt han gikk i går :walking-dogs:? Vi er så himla spent på denne gåmatta!"}
 )

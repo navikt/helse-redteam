@@ -4,30 +4,40 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import io.ktor.server.application.*
-import io.ktor.server.cio.*
-import io.ktor.server.engine.*
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
+import io.ktor.server.cio.CIO
+import io.ktor.server.engine.applicationEnvironment
+import io.ktor.server.engine.connector
+import io.ktor.server.engine.embeddedServer
 import io.ktor.server.plugins.calllogging.CallLogging
-import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import no.nav.helse.model.*
-import no.nav.helse.slack.RedTeamSlack
-import no.nav.helse.slack.SlackUpdater
-import org.slf4j.LoggerFactory
-import org.slf4j.event.Level
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.request.path
+import io.ktor.server.request.receiveText
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.get
+import io.ktor.server.routing.post
+import io.ktor.server.routing.routing
 import java.time.Clock
 import java.time.LocalDate
 import java.time.LocalDate.now
 import java.time.LocalDateTime
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import no.nav.helse.model.Overstyring
+import no.nav.helse.model.RedTeam
+import no.nav.helse.model.Teams
+import no.nav.helse.model.holidays
+import no.nav.helse.slack.RedTeamSlack
+import no.nav.helse.slack.SlackUpdater
+import org.slf4j.LoggerFactory
+import org.slf4j.event.Level
 
 private const val SLACK_CHANNEL = "team-sas"
 private const val SLACK_USER_GROUP = "S010U3KQ8LQ"
@@ -76,21 +86,9 @@ suspend fun start() {
     }
 }
 
-internal fun folkSomErIPermisjon(): List<String> {
-    val folkSomErIPermisjon = mutableListOf<String>()
-
-    val erMaxiTilbake = now().isBefore(LocalDate.of(2025, 10, 15))
-    if(erMaxiTilbake) folkSomErIPermisjon.add("UEHPCUFCJ")
-
-    val erChristianTilbake = now().isBefore(LocalDate.of(2025, 10, 21))
-    if(erChristianTilbake) folkSomErIPermisjon.add("US0C415LZ")
-
-    return folkSomErIPermisjon.toList()
-}
-
 private fun setUpRedTeam(): RedTeam {
     val teams = {
-        val teamData = teamDataFromFile(folkSomErIPermisjon())
+        val teamData = teamDataFromFile()
         Teams(*teamData.toTypedArray())
     }
     return RedTeam(LocalDate.of(2022, 6, 1), teams, holidays())
