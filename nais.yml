@@ -25,7 +25,7 @@ spec:
   envFrom:
     - secret: slack-bot-user
   filesFrom:
-    - configmap: red-team-data
+    - configmap: red-team-data-v2
       mountPath: /var/run/configmaps
   accessPolicy:
     inbound:
