@@ -3,15 +3,15 @@ package no.nav.helse.slack
 import io.mockk.clearAllMocks
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.helse.AbstractRedTeamTest
-import no.nav.helse.model.NonWorkday
-import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 import kotlin.test.assertEquals
+import no.nav.helse.AbstractRedTeamTest
+import no.nav.helse.model.NonWorkday
 import no.nav.helse.model.Workday
 import no.nav.helse.slack.RedTeamSlack.Companion.toPostText
+import org.junit.jupiter.api.Test
 
 internal class SlackUpdaterTest: AbstractRedTeamTest() {
 
@@ -110,16 +110,26 @@ internal class SlackUpdaterTest: AbstractRedTeamTest() {
 
     @Test
     fun `lager riktig tekst for posting til slack`() {
+        val dato = START_DATE.plusDays(2)
         val etRedTeam = redTeam()
-        etRedTeam.override(listOf("David", "Sondre"), "Utvikling", LocalDate.now())
-        val workday = etRedTeam.teamFor(LocalDate.now()) as Workday
-        assertEquals(
-            """
+
+        val førOverride = """
+                | - <@slackid-Morten> (Fag)
+                | - <@slackid-Christian> (Utvikling)
+                |
+            """.trimMargin()
+        assertEquals(førOverride, (etRedTeam.teamFor(dato) as Workday).toPostText())
+
+        val etterOverride = """
                 | - <@slackid-Morten> (Fag)
                 | - <@slackid-David>, <@slackid-Sondre> (Utvikling)
                 |
-            """.trimMargin(), workday.toPostText()
-        )
+            """.trimMargin()
+
+        etRedTeam.override(listOf("David", "Sondre"), "Utvikling", dato)
+
+        val workday = etRedTeam.teamFor(dato) as Workday
+        assertEquals(etterOverride, workday.toPostText())
     }
 
 }
