@@ -24,7 +24,7 @@ slack-api-model-kotlinExtension = { module = "com.slack.api:slack-api-model-kotl
 
 google-cloud-storage = "com.google.cloud:google-cloud-storage:2.60.0"
 
-mockk = "io.mockk:mockk:1.13.17"
+mockk = "io.mockk:mockk:1.14.11"
 
 [bundles]
 ktor-client = [
