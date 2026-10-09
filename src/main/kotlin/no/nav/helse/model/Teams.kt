@@ -4,7 +4,7 @@ import no.nav.helse.model.MemberDto.Companion.names
 
 data class TeamDto(
     val name: String,
-    val members: List<MemberDto>
+    val members: List<MemberDto>,
 ) {
     internal fun memberFor(name: String): Teams.RedTeamMember? {
         val member = members.find { name == it.name } ?: return null
@@ -21,10 +21,12 @@ data class MemberDto(
     }
 }
 
-class Teams(private vararg val groups: TeamDto) {
+class Teams(
+    private vararg val groups: TeamDto,
+) {
     data class DayTeam(
         val team: String,
-        val redteamMembers: List<RedTeamMember>
+        val redteamMembers: List<RedTeamMember>,
     )
 
     data class RedTeamMember(
@@ -39,15 +41,16 @@ class Teams(private vararg val groups: TeamDto) {
             DayTeam(group.name, listOf(RedTeamMember(member.name, member.slackId, group.name)))
         }
 
-    internal fun somRedTeamMembers(navn: List<String>): List<RedTeamMember> {
-        return navn.map {
+    internal fun somRedTeamMembers(navn: List<String>): List<RedTeamMember> =
+        navn.map {
             val toGroup = groups.find { group -> it in group.members.names() } ?: throw IllegalArgumentException("to: $navn does not exist in a group")
             val toMember = toGroup.memberFor(it) ?: throw IllegalArgumentException("to: $navn does not exist in group: $toGroup")
             toMember
         }
-    }
+
     fun groups() = groups.toList()
+
     fun minLength() = groups.minOf { it.members.size }
+
     fun maxLength() = groups.maxOf { it.members.size }
 }
-

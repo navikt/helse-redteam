@@ -21,11 +21,6 @@ import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
-import java.time.Clock
-import java.time.LocalDate
-import java.time.LocalDate.now
-import java.time.LocalDateTime
-import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -38,13 +33,19 @@ import no.nav.helse.slack.RedTeamSlack
 import no.nav.helse.slack.SlackUpdater
 import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
+import java.time.Clock
+import java.time.LocalDate
+import java.time.LocalDate.now
+import java.time.LocalDateTime
+import kotlin.time.Duration.Companion.minutes
 
 private const val SLACK_CHANNEL = "team-sas"
 private const val SLACK_USER_GROUP = "S010U3KQ8LQ"
 
-internal val mapper = jacksonObjectMapper()
-    .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-    .registerModule(JavaTimeModule())
+internal val mapper =
+    jacksonObjectMapper()
+        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        .registerModule(JavaTimeModule())
 
 fun main() = runBlocking { start() }
 
@@ -55,13 +56,16 @@ suspend fun start() {
     val bøtte = GCPBøtte()
     val redTeam = setUpRedTeam()
     redTeam.byttUtDagbestemmelserFraFastlager(bøtte.hentOverstyringer())
-    val mediator = RedteamMediator(
-        SlackUpdater(
-            Clock.systemDefaultZone(),
-            RedTeamSlack(slackToken, SLACK_CHANNEL, SLACK_USER_GROUP),
-            redTeam
-        ), redTeam, bøtte
-    )
+    val mediator =
+        RedteamMediator(
+            SlackUpdater(
+                Clock.systemDefaultZone(),
+                RedTeamSlack(slackToken, SLACK_CHANNEL, SLACK_USER_GROUP),
+                redTeam,
+            ),
+            redTeam,
+            bøtte,
+        )
     val ktorServer = ktor(mediator)
     try {
         coroutineScope {
@@ -102,7 +106,7 @@ fun ktor(mediator: RedteamMediator) =
             connector {
                 port = 8080
             }
-        }
+        },
     ) { redTeamModule(mediator) }
         .start(wait = false)
 
@@ -146,7 +150,7 @@ fun Application.configureRouting(mediator: RedteamMediator) {
                 call.respondText(
                     """{"error": "${e.message}" }""",
                     ContentType.Application.Json,
-                    HttpStatusCode.BadRequest
+                    HttpStatusCode.BadRequest,
                 )
                 logger.error("Error during overriding red-team: {}", e.message)
                 return@post

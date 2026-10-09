@@ -9,7 +9,6 @@ import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.testing.*
 import io.mockk.mockk
-import java.time.LocalDate
 import no.nav.helse.model.MemberDto
 import no.nav.helse.model.RedTeam
 import no.nav.helse.model.TeamDto
@@ -18,52 +17,65 @@ import no.nav.helse.slack.SlackUpdater
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 internal class E2ETest {
-
     @Test
-    fun `red team members can be overriden`() = testApplication {
-        val slackUpdater: SlackUpdater = mockk(relaxed = true)
-        val getRedTeam = {
-            Teams(
-                TeamDto("Utvikling", listOf(MemberDto("Elias", "slack1"), MemberDto("Jakob", "slack2"), MemberDto("Håkon", "slack3"), MemberDto("Amalie", "slack4"))),
-                TeamDto("Fag", listOf(MemberDto("Margrethe", "slack5")))
-            )
-        }
-
-        val startdate = LocalDate.of(2025, 1, 7)
-        val mediator = object : RedteamMediator(
-            slackUpdater = slackUpdater,
-            redTeam = RedTeam(LocalDate.of(2022, 1, 1), getRedTeam)
-        ) {
-            override fun redTeamCalendar(span: Pair<LocalDate, LocalDate>) =
-                super.redTeamCalendar(startdate to startdate.plusDays(14))
-        }
-
-        application {
-            install(ContentNegotiation) {
-                jackson()
+    fun `red team members can be overriden`() =
+        testApplication {
+            val slackUpdater: SlackUpdater = mockk(relaxed = true)
+            val getRedTeam = {
+                Teams(
+                    TeamDto("Utvikling", listOf(MemberDto("Elias", "slack1"), MemberDto("Jakob", "slack2"), MemberDto("Håkon", "slack3"), MemberDto("Amalie", "slack4"))),
+                    TeamDto("Fag", listOf(MemberDto("Margrethe", "slack5"))),
+                )
             }
-            configureRouting(mediator)
+
+            val startdate = LocalDate.of(2025, 1, 7)
+            val mediator =
+                object : RedteamMediator(
+                    slackUpdater = slackUpdater,
+                    redTeam = RedTeam(LocalDate.of(2022, 1, 1), getRedTeam),
+                ) {
+                    override fun redTeamCalendar(span: Pair<LocalDate, LocalDate>) = super.redTeamCalendar(startdate to startdate.plusDays(14))
+                }
+
+            application {
+                install(ContentNegotiation) {
+                    jackson()
+                }
+                configureRouting(mediator)
+            }
+
+            val response =
+                client.post("/red-team") {
+                    contentType(ContentType.Application.Json)
+                    setBody(jsonBody)
+                }
+            assertEquals(HttpStatusCode.OK, response.status)
+
+            val redTeam = client.get("/red-team").bodyAsText()
+
+            val redteamForDato =
+                jacksonObjectMapper()
+                    .readTree(redTeam)["days"]
+                    .single { it["date"].asText() == "2025-01-07" }["teams"]
+                    .flatMap { it["redteamMembers"] }
+                    .map { it["name"].asText() }
+            assertEquals(setOf("Margrethe", "Håkon", "Amalie", "Elias"), redteamForDato.toSet())
+
+            val redteamForDato2 =
+                jacksonObjectMapper()
+                    .readTree(redTeam)["days"]
+                    .single { it["date"].asText() == "2025-01-08" }["teams"]
+                    .flatMap { it["redteamMembers"] }
+                    .map { it["name"].asText() }
+            assertEquals(setOf("Margrethe", "Håkon"), redteamForDato2.toSet())
         }
-
-        val response = client.post("/red-team") {
-            contentType(ContentType.Application.Json)
-            setBody(jsonBody)
-        }
-        assertEquals(HttpStatusCode.OK, response.status)
-
-        val redTeam = client.get("/red-team").bodyAsText()
-
-        val redteamForDato = jacksonObjectMapper().readTree(redTeam)["days"].single { it["date"].asText() == "2025-01-07" }["teams"].flatMap { it["redteamMembers"] }.map { it["name"].asText() }
-        assertEquals(setOf("Margrethe", "Håkon", "Amalie", "Elias"), redteamForDato.toSet())
-
-        val redteamForDato2 = jacksonObjectMapper().readTree(redTeam)["days"].single { it["date"].asText() == "2025-01-08" }["teams"].flatMap { it["redteamMembers"] }.map { it["name"].asText() }
-        assertEquals(setOf("Margrethe", "Håkon"), redteamForDato2.toSet())
-    }
 
     @Language("JSON")
-    val jsonBody = """
+    val jsonBody =
+        """
         [
           {
             "date": "2025-01-07",

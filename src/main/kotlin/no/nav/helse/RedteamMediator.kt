@@ -10,9 +10,8 @@ import java.time.LocalDate
 open class RedteamMediator(
     private val slackUpdater: SlackUpdater,
     private val redTeam: RedTeam,
-    private val bøtte: Bøtte = object : Bøtte {}
+    private val bøtte: Bøtte = object : Bøtte {},
 ) {
-
     private val logger: Logger = LoggerFactory.getLogger("red-team-mediator")
 
     fun override(overstyringer: List<Overstyring>) {
@@ -33,5 +32,4 @@ open class RedteamMediator(
     fun teamFor(date: LocalDate) = redTeam.teamFor(date)
 
     open fun redTeamCalendar(span: Pair<LocalDate, LocalDate>) = redTeam.redTeamCalendar(span)
-
 }

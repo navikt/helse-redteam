@@ -6,10 +6,12 @@ import no.nav.helse.model.TeamDto
 import java.io.File
 
 fun teamDataFromFile(): List<TeamDto> {
-    val teamJson = if (viKjørerPåEtNaisCluster())
-        hentTeamdataFraConfigMap()
-    else
-        hentTeamdataFraLokaltFilsystem()
+    val teamJson =
+        if (viKjørerPåEtNaisCluster()) {
+            hentTeamdataFraConfigMap()
+        } else {
+            hentTeamdataFraLokaltFilsystem()
+        }
 
     val contents = jacksonObjectMapper().readTree(teamJson)
     return contents.map { file ->
@@ -18,9 +20,9 @@ fun teamDataFromFile(): List<TeamDto> {
             file["members"].map {
                 MemberDto(
                     it["name"].asText(),
-                    it["slackId"].asText()
+                    it["slackId"].asText(),
                 )
-            }
+            },
         )
     }
 }

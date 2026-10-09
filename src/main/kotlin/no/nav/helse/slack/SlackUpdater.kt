@@ -13,16 +13,19 @@ import java.time.LocalTime
 class SlackUpdater(
     private val clock: Clock,
     private val slackClient: RedTeamSlack,
-    private val redTeam: RedTeam
+    private val redTeam: RedTeam,
 ) {
     private val logger = LoggerFactory.getLogger("red-team-slack-updater")
     private val now get() = LocalDateTime.now(clock)
     private val today get() = now.toLocalDate()
     private val postTime = 8
     private val tulletidsrommet = LocalTime.of(8, 30)..LocalTime.of(9, 30)
-    private var lastPosted = if (now.hour < 8)
-        today.minusDays(1) else
-        today
+    private var lastPosted =
+        if (now.hour < 8) {
+            today.minusDays(1)
+        } else {
+            today
+        }
     private var tulleLock = false
 
     fun handleOverride(overrideDate: LocalDate) {

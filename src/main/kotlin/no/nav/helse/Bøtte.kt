@@ -9,7 +9,8 @@ import java.nio.ByteBuffer
 /** vet hvordan man henter ut og lagrer ned red-team-greier fra gcp */
 interface Bøtte {
     fun hentOverstyringer(): String? = null
-    fun lagreDagbestemmelser(overstyringsjson: String): Boolean { return false }
+
+    fun lagreDagbestemmelser(overstyringsjson: String): Boolean = false
 }
 
 class GCPBøtte : Bøtte {
@@ -17,6 +18,7 @@ class GCPBøtte : Bøtte {
         private val bøttenavn: String = "tbd-red-team-bucket"
         private val logger: Logger = LoggerFactory.getLogger("red-team-bøtte")
     }
+
     override fun hentOverstyringer(): String = String(hentBøtte().get("dagbestemmelser.json").getContent())
 
     override fun lagreDagbestemmelser(overstyringsjson: String): Boolean {
@@ -24,7 +26,10 @@ class GCPBøtte : Bøtte {
         return lagre(overstyringsjson, "dagbestemmelser.json")
     }
 
-    private fun lagre(tekst: String, filnavn: String): Boolean {
+    private fun lagre(
+        tekst: String,
+        filnavn: String,
+    ): Boolean {
         val bøtte = hentBøtte()
         val blob = bøtte.get(filnavn)
         if (blob == null) {
@@ -39,6 +44,6 @@ class GCPBøtte : Bøtte {
 
     private fun hentBøtte(): Bucket {
         val storage = StorageOptions.getDefaultInstance().service
-        return storage.get(bøttenavn) ?: error("Fant ikke bøtta som heter ${bøttenavn}")
+        return storage.get(bøttenavn) ?: error("Fant ikke bøtta som heter $bøttenavn")
     }
 }

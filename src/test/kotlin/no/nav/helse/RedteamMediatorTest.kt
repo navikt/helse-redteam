@@ -8,16 +8,16 @@ import no.nav.helse.slack.RedTeamSlack
 import no.nav.helse.slack.SlackUpdater
 import org.junit.jupiter.api.Test
 
-internal class RedteamMediatorTest: AbstractRedTeamTest() {
-
+internal class RedteamMediatorTest : AbstractRedTeamTest() {
     @Test
     fun `same day override updates slackGroup`() {
         val slackClient = mockk<RedTeamSlack>(relaxUnitFun = true)
 
-        val mediator = RedteamMediator(
-            slackUpdater = SlackUpdater(testklokke(START_DATE), slackClient, redTeam()),
-            redTeam = redTeam()
-        )
+        val mediator =
+            RedteamMediator(
+                slackUpdater = SlackUpdater(testklokke(START_DATE), slackClient, redTeam()),
+                redTeam = redTeam(),
+            )
         mediator.override(listOf(Overstyring(START_DATE, "Utvikling", listOf("Sondre"))))
         verify { slackClient.updateRedTeamGroup(any()) }
     }
@@ -27,13 +27,12 @@ internal class RedteamMediatorTest: AbstractRedTeamTest() {
         val slackClient = mockk<RedTeamSlack>()
         every { slackClient.updateRedTeamGroup(any()) } returns Unit
 
-        val mediator = RedteamMediator(
-            slackUpdater = SlackUpdater(testklokke(START_DATE), slackClient, redTeam()),
-            redTeam = redTeam()
-        )
+        val mediator =
+            RedteamMediator(
+                slackUpdater = SlackUpdater(testklokke(START_DATE), slackClient, redTeam()),
+                redTeam = redTeam(),
+            )
         mediator.override(listOf(Overstyring(START_DATE.plusDays(1), "Utvikling", listOf("Sondre"))))
         verify(exactly = 0) { slackClient.updateRedTeamGroup(any()) }
     }
 }
-
-

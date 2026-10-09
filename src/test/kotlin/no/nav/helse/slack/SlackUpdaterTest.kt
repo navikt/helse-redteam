@@ -3,18 +3,17 @@ package no.nav.helse.slack
 import io.mockk.clearAllMocks
 import io.mockk.mockk
 import io.mockk.verify
-import java.time.Duration
-import java.time.Instant
-import java.time.LocalDate
-import kotlin.test.assertEquals
 import no.nav.helse.AbstractRedTeamTest
 import no.nav.helse.model.NonWorkday
 import no.nav.helse.model.Workday
 import no.nav.helse.slack.RedTeamSlack.Companion.toPostText
 import org.junit.jupiter.api.Test
+import java.time.Duration
+import java.time.Instant
+import java.time.LocalDate
+import kotlin.test.assertEquals
 
-internal class SlackUpdaterTest: AbstractRedTeamTest() {
-
+internal class SlackUpdaterTest : AbstractRedTeamTest() {
     @Test
     fun `updates user group and post message on slack in the morning on a workday`() {
         val slackClient = mockk<RedTeamSlack>(relaxUnitFun = true)
@@ -76,11 +75,12 @@ internal class SlackUpdaterTest: AbstractRedTeamTest() {
         val slackClient = mockk<RedTeamSlack>(relaxUnitFun = true)
         val starttidspunkt = tidspunkt(7, 23, 12)
         val testklokke = MutableClock(starttidspunkt)
-        val updater = SlackUpdater(
-            testklokke,
-            slackClient,
-            redTeam(listOf(NonWorkday(LocalDate.of(2022, 12, 26))))
-        )
+        val updater =
+            SlackUpdater(
+                testklokke,
+                slackClient,
+                redTeam(listOf(NonWorkday(LocalDate.of(2022, 12, 26)))),
+            )
 
         fun assertPoster(tidspunkt: Instant) {
             testklokke.nyttTidspunkt(tidspunkt)
@@ -113,14 +113,16 @@ internal class SlackUpdaterTest: AbstractRedTeamTest() {
         val dato = START_DATE.plusDays(2)
         val etRedTeam = redTeam()
 
-        val førOverride = """
+        val førOverride =
+            """
                 | - <@slackid-Morten> (Fag)
                 | - <@slackid-Christian> (Utvikling)
                 |
             """.trimMargin()
         assertEquals(førOverride, (etRedTeam.teamFor(dato) as Workday).toPostText())
 
-        val etterOverride = """
+        val etterOverride =
+            """
                 | - <@slackid-Morten> (Fag)
                 | - <@slackid-David>, <@slackid-Sondre> (Utvikling)
                 |
@@ -131,5 +133,4 @@ internal class SlackUpdaterTest: AbstractRedTeamTest() {
         val workday = etRedTeam.teamFor(dato) as Workday
         assertEquals(etterOverride, workday.toPostText())
     }
-
 }

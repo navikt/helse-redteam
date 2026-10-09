@@ -2,16 +2,17 @@ package no.nav.helse.model
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import no.nav.helse.model.Teams.*
 import no.nav.helse.mapper
+import no.nav.helse.model.Teams.*
 import java.time.DayOfWeek.SATURDAY
 import java.time.DayOfWeek.SUNDAY
 import java.time.LocalDate
 
 class RedTeam(
-    /** brukes _kun_ til å generere utkast til red-team. Sikrer en slags determinisme */ private var seedDate: LocalDate,
+    /** brukes _kun_ til å generere utkast til red-team. Sikrer en slags determinisme */
+    private var seedDate: LocalDate,
     private val getTeam: () -> Teams,
-    extraNonWorkDays: List<NonWorkday> = emptyList()
+    extraNonWorkDays: List<NonWorkday> = emptyList(),
 ) {
     private val team get() = getTeam()
     private val dagbestemmelser = mutableMapOf<LocalDate, MutableList<RedTeamMember>>()
@@ -24,25 +25,38 @@ class RedTeam(
         return Workday(date, team.teamAt(antallArbeidsdagerFraSeed(date)).leggPåDagbestemmelser(date).sortedBy { it.team })
     }
 
-    fun override(redteamNavn: List<String>, teamnavn: String, date: LocalDate) {
+    fun override(
+        redteamNavn: List<String>,
+        teamnavn: String,
+        date: LocalDate,
+    ) {
         validateDate(date)
         val redteamMembers = team.somRedTeamMembers(redteamNavn)
         bestemDag(date, teamnavn, redteamMembers)
     }
 
     fun redTeamCalendar(span: Pair<LocalDate, LocalDate>): RedTeamCalendarDto {
-        require(span.first.isBefore(span.second) || span.first == span.second) {"Invalid date span to generate team for"}
-        val redTeams = span.first.datesUntil(span.second).map { teamFor(it) }.toList() + teamFor(span.second)
-        return RedTeamCalendarDto( team.groups(), redTeams)
+        require(span.first.isBefore(span.second) || span.first == span.second) { "Invalid date span to generate team for" }
+        val redTeams =
+            span.first
+                .datesUntil(span.second)
+                .map { teamFor(it) }
+                .toList() + teamFor(span.second)
+        return RedTeamCalendarDto(team.groups(), redTeams)
     }
 
-    private fun bestemDag(date: LocalDate, teamnavn: String, redteamMembers: List<RedTeamMember>) {
-        dagbestemmelser.getOrPut(date) {
-            mutableListOf()
-        }.apply {
-            removeIf { it.team == teamnavn }
-            addAll(redteamMembers)
-        }
+    private fun bestemDag(
+        date: LocalDate,
+        teamnavn: String,
+        redteamMembers: List<RedTeamMember>,
+    ) {
+        dagbestemmelser
+            .getOrPut(date) {
+                mutableListOf()
+            }.apply {
+                removeIf { it.team == teamnavn }
+                addAll(redteamMembers)
+            }
     }
 
     private fun validateDate(date: LocalDate) {
@@ -50,24 +64,36 @@ class RedTeam(
     }
 
     private fun antallArbeidsdagerFraSeed(date: LocalDate) =
-        seedDate.datesUntil(date).filter { it.dayOfWeek !in weekend }.filter { it !in holidays }.count().toInt()
-
+        seedDate
+            .datesUntil(date)
+            .filter { it.dayOfWeek !in weekend }
+            .filter { it !in holidays }
+            .count()
+            .toInt()
 
     private fun List<DayTeam>.leggPåDagbestemmelser(date: LocalDate): List<DayTeam> {
         val dagoverstyringer = dagbestemmelser[date] ?: emptyList()
         return this.map { dayTeam ->
-            val teamoverstyringer =  dagoverstyringer.filter { it.team == dayTeam.team }.map { RedTeamMember(it.name, it.slackId, it.team) }
-            if (teamoverstyringer.isNotEmpty()) DayTeam(dayTeam.team, teamoverstyringer)
-            else dayTeam
+            val teamoverstyringer = dagoverstyringer.filter { it.team == dayTeam.team }.map { RedTeamMember(it.name, it.slackId, it.team) }
+            if (teamoverstyringer.isNotEmpty()) {
+                DayTeam(dayTeam.team, teamoverstyringer)
+            } else {
+                dayTeam
+            }
         }
     }
 
     fun dagbestemmelserSomJson() = jacksonObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(dagbestemmelser)
+
     fun byttUtDagbestemmelserFraFastlager(overridesFraBøtta: String) {
         val nyeOverstyringer = jacksonObjectMapper().readTree(overridesFraBøtta)
-        val ersatz = nyeOverstyringer.fieldNames().asSequence().map {
-                LocalDate.parse(it) to nyeOverstyringer[it].somDagbestemmelser()
-        }.toMap()
+        val ersatz =
+            nyeOverstyringer
+                .fieldNames()
+                .asSequence()
+                .map {
+                    LocalDate.parse(it) to nyeOverstyringer[it].somDagbestemmelser()
+                }.toMap()
 
         dagbestemmelser.clear()
         dagbestemmelser.putAll(ersatz)
@@ -75,17 +101,22 @@ class RedTeam(
 
     private fun JsonNode.somDagbestemmelser(): MutableList<RedTeamMember> {
         if (!this.isArray) return mutableListOf()
-        return this.map {
-            RedTeamMember(team = it["team"].asText(), name = it["name"].asText(), slackId = it["slackId"].asText())
-        }.toMutableList()
+        return this
+            .map {
+                RedTeamMember(team = it["team"].asText(), name = it["name"].asText(), slackId = it["slackId"].asText())
+            }.toMutableList()
     }
 }
 
-data class Overstyring(val date: LocalDate, val team: String, val redteamMembers: List<String>)
+data class Overstyring(
+    val date: LocalDate,
+    val team: String,
+    val redteamMembers: List<String>,
+)
 
 data class RedTeamCalendarDto(
     val teams: List<TeamDto>,
-    val days: List<Day>
+    val days: List<Day>,
 ) {
     fun json(): String = mapper.writeValueAsString(this)
 }
@@ -94,5 +125,11 @@ interface Day {
     fun json(): String = mapper.writeValueAsString(this)
 }
 
-data class Workday(val date: LocalDate, val teams: List<DayTeam>): Day
-data class NonWorkday(val date: LocalDate): Day
+data class Workday(
+    val date: LocalDate,
+    val teams: List<DayTeam>,
+) : Day
+
+data class NonWorkday(
+    val date: LocalDate,
+) : Day
