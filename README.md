@@ -4,7 +4,7 @@ Applikasjonen red team holder styr på red team-ordningen i Team SAS og sørger 
 mennesker som enten er i rotasjonen eller er brukere av red team er godt opplyst om hvem som er på vakt når.
 
 #### Inkluderer
-- [x] Oversikt og overstyring av red team via tbd-siden.
+- [x] Oversikt og overstyring av red team på https://sykepenger-red-team.ansatt.nav.no og https://sykepenger-red-team.intern.nav.no (se [frontend/](frontend/README.md)).
 - [x] Persistens av overstyring av red team
 - [x] Notifikasjoner på Slack
 - [x] Oppdatering av grupper på Slack

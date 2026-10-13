@@ -23,7 +23,7 @@ class RedTeamSlack(
                     .text(
                         ":wave: :small_airplane: Red team for $dateString:\n" +
                             team.toPostText() +
-                            "Red team kan administreres på <https://tbd.ansatt.nav.no|tbd.ansatt.nav.no>",
+                            "Red team kan administreres på <https://sykepenger-red-team.ansatt.nav.no|sykepenger-red-team.ansatt.nav.no>",
                     )
             }
 
@@ -41,7 +41,7 @@ class RedTeamSlack(
                     .text(
                         ":wave: :small_airplane: Red team har blitt oppdatert for $dateString: :thanks: \n" +
                             team.toPostText() +
-                            "Red team kan administreres på <https://tbd.ansatt.nav.no|tbd.ansatt.nav.no>",
+                            "Red team kan administreres på <https://sykepenger-red-team.ansatt.nav.no|sykepenger-red-team.ansatt.nav.no>",
                     )
             }
 

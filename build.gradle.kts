@@ -15,6 +15,14 @@ jib {
     }
 }
 
+tasks.processResources {
+    // Frontenden bygges med pnpm utenfor Gradle (se frontend/README.md og .github/actions/bygg-frontend).
+    // De ferdigbygde statiske filene pakkes inn som statiske ressurser, og serveres av Ktor (se Application.kt).
+    from(layout.projectDirectory.dir("frontend/dist")) {
+        into("static")
+    }
+}
+
 dependencies {
     implementation(libs.bundles.ktor.client)
     implementation(libs.bundles.ktor.server)

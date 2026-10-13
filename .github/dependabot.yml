@@ -1,4 +1,9 @@
 version: 2
+registries:
+  npm-github:
+    type: npm-registry
+    url: https://npm.pkg.github.com
+    token: ${{ secrets.READER_TOKEN }}
 multi-ecosystem-groups:
   dependencies:
     schedule:
@@ -24,3 +29,11 @@ updates:
       exclude:
         - "no.nav.sykepenger.*"
         - "com.github.navikt.tbd-libs:*"
+
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    multi-ecosystem-group: "dependencies"
+    patterns: ["*"]
+    registries: "*"
+    cooldown:
+      default-days: 7

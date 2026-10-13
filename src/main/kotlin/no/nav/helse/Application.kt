@@ -13,6 +13,7 @@ import io.ktor.server.cio.CIO
 import io.ktor.server.engine.applicationEnvironment
 import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
+import io.ktor.server.http.content.staticResources
 import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.path
@@ -127,9 +128,9 @@ fun Application.redTeamModule(mediator: RedteamMediator) {
 fun Application.configureRouting(mediator: RedteamMediator) {
     val logger = LoggerFactory.getLogger("red-team-api")
     routing {
-        get("/") {
-            call.respondText("TBD red-team")
-        }
+        // Frontendens statiske filer (bygget med pnpm i frontend/, kopiert inn i static/ av
+        // build.gradle.kts sin processResources-task) serveres på samme origin som API-et.
+        staticResources("/", "static")
         get("red-team") {
             val calendar = mediator.redTeamCalendar(now() to now().plusDays(14)).json()
             call.respondText(calendar, ContentType.Application.Json)
