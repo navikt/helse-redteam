@@ -1,7 +1,6 @@
 package no.nav.helse
 
 import no.nav.helse.model.MemberDto
-import no.nav.helse.model.NonWorkday
 import no.nav.helse.model.RedTeam
 import no.nav.helse.model.TeamDto
 import no.nav.helse.model.Teams
@@ -17,7 +16,7 @@ import java.time.temporal.TemporalAmount
 open class AbstractRedTeamTest {
     protected open val START_DATE: LocalDate = LocalDate.of(2022, 1, 3)
 
-    internal fun redTeam(extraNonWorkDays: List<NonWorkday> = emptyList()) =
+    internal fun redTeam() =
         RedTeam(
             START_DATE,
             {
@@ -26,7 +25,6 @@ open class AbstractRedTeamTest {
                     TeamDto("Fag", genTeam("Morten", "Cecilie")),
                 )
             },
-            extraNonWorkDays,
         )
 
     private fun genTeam(vararg names: String) = names.map { MemberDto(it, "slackid-$it") }

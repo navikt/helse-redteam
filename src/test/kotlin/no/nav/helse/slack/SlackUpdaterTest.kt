@@ -4,13 +4,11 @@ import io.mockk.clearAllMocks
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.helse.AbstractRedTeamTest
-import no.nav.helse.model.NonWorkday
 import no.nav.helse.model.Workday
 import no.nav.helse.slack.RedTeamSlack.Companion.toPostText
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.Instant
-import java.time.LocalDate
 import kotlin.test.assertEquals
 
 internal class SlackUpdaterTest : AbstractRedTeamTest() {
@@ -79,7 +77,7 @@ internal class SlackUpdaterTest : AbstractRedTeamTest() {
             SlackUpdater(
                 testklokke,
                 slackClient,
-                redTeam(listOf(NonWorkday(LocalDate.of(2022, 12, 26)))),
+                redTeam(),
             )
 
         fun assertPoster(tidspunkt: Instant) {

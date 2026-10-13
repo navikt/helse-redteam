@@ -29,7 +29,6 @@ import kotlinx.coroutines.runBlocking
 import no.nav.helse.model.Overstyring
 import no.nav.helse.model.RedTeam
 import no.nav.helse.model.Teams
-import no.nav.helse.model.holidays
 import no.nav.helse.slack.RedTeamSlack
 import no.nav.helse.slack.SlackUpdater
 import org.slf4j.LoggerFactory
@@ -96,7 +95,7 @@ private fun setUpRedTeam(): RedTeam {
         val teamData = teamDataFromFile()
         Teams(*teamData.toTypedArray())
     }
-    return RedTeam(LocalDate.of(2022, 6, 1), teams, holidays())
+    return RedTeam(LocalDate.of(2022, 6, 1), teams)
 }
 
 fun ktor(mediator: RedteamMediator) =

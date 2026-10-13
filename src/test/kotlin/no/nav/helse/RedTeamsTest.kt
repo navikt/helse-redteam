@@ -107,7 +107,7 @@ internal class RedTeamsTest {
     @Test
     fun `overrides for old team names from bucket are ignored, Fag override still applies`() {
         val overstyringsdag = LocalDate.of(2024, 1, 3)
-        val redTeam = RedTeam(startDato, team, holidays())
+        val redTeam = RedTeam(startDato, team)
 
         // Bucket contains overrides written when the three old teams existed
         val legacyOverrides =
@@ -149,13 +149,13 @@ internal class RedTeamsTest {
 
     @Test
     fun `no red-team on holidays`() {
-        val kalender = RedTeam(startDato, team, holidays())
+        val kalender = RedTeam(startDato, team)
         assertEquals(NonWorkday(1.januar()), kalender.teamFor(1.januar()))
     }
 
     @Test
     fun `skal kunne overstyre alt via én enkelt json fil`() {
-        val redTeam = RedTeam(startDato, team, holidays())
+        val redTeam = RedTeam(startDato, team)
         val team = redTeam.teamFor(LocalDate.of(2024, 1, 3))
         assertEquals(
             listOf("David"),
@@ -183,7 +183,7 @@ internal class RedTeamsTest {
     @Test
     fun `skal kunne bli overstyrt av den jsonen som den selv produserer`() {
         val overstyringsdag = LocalDate.of(2024, 1, 3)
-        val redTeamAlpha = RedTeam(startDato, team, holidays())
+        val redTeamAlpha = RedTeam(startDato, team)
         val teamAlpha = redTeamAlpha.teamFor(overstyringsdag) as Workday
         assertEquals(
             listOf("David"),
@@ -203,7 +203,7 @@ internal class RedTeamsTest {
                 .map { it.name },
         )
 
-        val redTeamBeta = RedTeam(startDato, team, holidays())
+        val redTeamBeta = RedTeam(startDato, team)
         val teamBeta = redTeamBeta.teamFor(overstyringsdag) as Workday
         assertEquals(
             listOf("David"),

@@ -12,15 +12,13 @@ class RedTeam(
     /** brukes _kun_ til å generere utkast til red-team. Sikrer en slags determinisme */
     private var seedDate: LocalDate,
     private val getTeam: () -> Teams,
-    extraNonWorkDays: List<NonWorkday> = emptyList(),
 ) {
     private val team get() = getTeam()
     private val dagbestemmelser = mutableMapOf<LocalDate, MutableList<RedTeamMember>>()
     private val weekend = listOf(SATURDAY, SUNDAY)
-    private val holidays = extraNonWorkDays.associateBy { it.date }
 
     fun teamFor(date: LocalDate): Day {
-        if (date in holidays) return holidays[date]!!
+        if (erHelligdag(date)) return NonWorkday(date)
         if (date.dayOfWeek in weekend) return NonWorkday(date)
         return Workday(date, team.teamAt(antallArbeidsdagerFraSeed(date)).leggPåDagbestemmelser(date).sortedBy { it.team })
     }
@@ -67,7 +65,7 @@ class RedTeam(
         seedDate
             .datesUntil(date)
             .filter { it.dayOfWeek !in weekend }
-            .filter { it !in holidays }
+            .filter { !erHelligdag(it) }
             .count()
             .toInt()
 
