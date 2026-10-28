@@ -1,6 +1,6 @@
 [versions]
 slackApi = "1.52.0"
-sykepengerGradlePlugins = "20261026.1611"
+sykepengerGradlePlugins = "20261028.1441"
 
 [libraries]
 ktor-client-cio = { module = "io.ktor:ktor-client-cio" }
