@@ -34,8 +34,7 @@ private val dagerFraFørstePåskedag =
 
 fun erHelligdag(dato: LocalDate) = dato in helligdagerIÅr(dato.year)
 
-private fun helligdagerIÅr(år: Int): List<LocalDate> =
-    fasteHelligdager.map { it.atYear(år) } + førstePåskedag(år).let { dagerFraFørstePåskedag.map(it::plusDays) }
+private fun helligdagerIÅr(år: Int): List<LocalDate> = fasteHelligdager.map { it.atYear(år) } + førstePåskedag(år).let { dagerFraFørstePåskedag.map(it::plusDays) }
 
 // 1. påskedag er første søndag etter den kirkelige påskefullmånen, men aldri senere enn 25. april
 internal fun førstePåskedag(år: Int): LocalDate {
@@ -68,4 +67,3 @@ private fun påskefullmåne(år: Int): LocalDate {
         fullmånedato
     }
 }
-

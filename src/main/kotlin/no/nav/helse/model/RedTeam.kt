@@ -1,9 +1,9 @@
 package no.nav.helse.model
 
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.helse.mapper
 import no.nav.helse.model.Teams.*
+import tools.jackson.databind.JsonNode
+import tools.jackson.module.kotlin.jacksonObjectMapper
 import java.time.DayOfWeek.SATURDAY
 import java.time.DayOfWeek.SUNDAY
 import java.time.LocalDate
@@ -87,7 +87,7 @@ class RedTeam(
         val nyeOverstyringer = jacksonObjectMapper().readTree(overridesFraBøtta)
         val ersatz =
             nyeOverstyringer
-                .fieldNames()
+                .propertyNames()
                 .asSequence()
                 .map {
                     LocalDate.parse(it) to nyeOverstyringer[it].somDagbestemmelser()
@@ -100,8 +100,9 @@ class RedTeam(
     private fun JsonNode.somDagbestemmelser(): MutableList<RedTeamMember> {
         if (!this.isArray) return mutableListOf()
         return this
+            .values()
             .map {
-                RedTeamMember(team = it["team"].asText(), name = it["name"].asText(), slackId = it["slackId"].asText())
+                RedTeamMember(team = it["team"].asString(), name = it["name"].asString(), slackId = it["slackId"].asString())
             }.toMutableList()
     }
 }

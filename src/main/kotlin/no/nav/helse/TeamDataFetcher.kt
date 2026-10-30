@@ -1,8 +1,8 @@
 package no.nav.helse
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.helse.model.MemberDto
 import no.nav.helse.model.TeamDto
+import tools.jackson.module.kotlin.jacksonObjectMapper
 import java.io.File
 
 fun teamDataFromFile(): List<TeamDto> {
@@ -14,13 +14,13 @@ fun teamDataFromFile(): List<TeamDto> {
         }
 
     val contents = jacksonObjectMapper().readTree(teamJson)
-    return contents.map { file ->
+    return contents.values().map { file ->
         TeamDto(
-            file["name"].asText(),
-            file["members"].map {
+            file["name"].asString(),
+            file["members"].values().map {
                 MemberDto(
-                    it["name"].asText(),
-                    it["slackId"].asText(),
+                    it["name"].asString(),
+                    it["slackId"].asString(),
                 )
             },
         )

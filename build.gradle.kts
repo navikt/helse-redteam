@@ -26,7 +26,6 @@ tasks.processResources {
 dependencies {
     implementation(libs.bundles.ktor.client)
     implementation(libs.bundles.ktor.server)
-    implementation(libs.jackson.datatype.jsr310)
     implementation(libs.jackson.module.kotlin)
     implementation(libs.logback.classic)
     implementation(libs.logstash.logback.encoder)

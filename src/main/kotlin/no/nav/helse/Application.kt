@@ -1,9 +1,5 @@
 package no.nav.helse
 
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
@@ -33,6 +29,9 @@ import no.nav.helse.slack.RedTeamSlack
 import no.nav.helse.slack.SlackUpdater
 import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
+import tools.jackson.databind.cfg.DateTimeFeature
+import tools.jackson.module.kotlin.jacksonMapperBuilder
+import tools.jackson.module.kotlin.readValue
 import java.time.Clock
 import java.time.LocalDate
 import java.time.LocalDate.now
@@ -43,9 +42,9 @@ private const val SLACK_CHANNEL = "team-sas"
 private const val SLACK_USER_GROUP = "S010U3KQ8LQ"
 
 internal val mapper =
-    jacksonObjectMapper()
-        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-        .registerModule(JavaTimeModule())
+    jacksonMapperBuilder()
+        .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+        .build()
 
 fun main() = runBlocking { start() }
 

@@ -1,10 +1,9 @@
 package no.nav.helse
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.serialization.jackson.*
+import io.ktor.serialization.jackson3.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.testing.*
@@ -17,6 +16,7 @@ import no.nav.helse.slack.SlackUpdater
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import tools.jackson.module.kotlin.jacksonObjectMapper
 import java.time.LocalDate
 
 internal class E2ETest {
@@ -59,17 +59,17 @@ internal class E2ETest {
             val redteamForDato =
                 jacksonObjectMapper()
                     .readTree(redTeam)["days"]
-                    .single { it["date"].asText() == "2025-01-07" }["teams"]
+                    .single { it["date"].asString() == "2025-01-07" }["teams"]
                     .flatMap { it["redteamMembers"] }
-                    .map { it["name"].asText() }
+                    .map { it["name"].asString() }
             assertEquals(setOf("Margrethe", "Håkon", "Amalie", "Elias"), redteamForDato.toSet())
 
             val redteamForDato2 =
                 jacksonObjectMapper()
                     .readTree(redTeam)["days"]
-                    .single { it["date"].asText() == "2025-01-08" }["teams"]
+                    .single { it["date"].asString() == "2025-01-08" }["teams"]
                     .flatMap { it["redteamMembers"] }
-                    .map { it["name"].asText() }
+                    .map { it["name"].asString() }
             assertEquals(setOf("Margrethe", "Håkon"), redteamForDato2.toSet())
         }
 
