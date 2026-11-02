@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Alert, BodyShort, Button, Heading, Page, Table, UNSAFE_Combobox, VisuallyHidden, VStack } from '@navikt/ds-react'
+import { Alert, BodyShort, Button, Heading, Page, Table, UNSAFE_Combobox, VStack } from '@navikt/ds-react'
 import { hentRedTeam, lagreOverstyringer } from './api'
 import type { Day, DayTeam, Overstyring, RedTeamCalendar } from './types'
 
@@ -106,9 +106,7 @@ function App() {
                                             {navn}
                                         </Table.HeaderCell>
                                     ))}
-                                    <Table.HeaderCell scope="col">
-                                        <VisuallyHidden>Kopier</VisuallyHidden>
-                                    </Table.HeaderCell>
+                                    <Table.HeaderCell scope="col">Kopier</Table.HeaderCell>
                                 </Table.Row>
                             </Table.Header>
                             <Table.Body>
