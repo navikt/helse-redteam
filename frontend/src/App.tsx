@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Alert, BodyShort, Button, Heading, Page, Table, UNSAFE_Combobox, VStack } from '@navikt/ds-react'
+import { Alert, BodyShort, Button, Heading, Page, Table, UNSAFE_Combobox, VisuallyHidden, VStack } from '@navikt/ds-react'
 import { hentRedTeam, lagreOverstyringer } from './api'
 import type { Day, DayTeam, Overstyring, RedTeamCalendar } from './types'
 
@@ -13,6 +13,10 @@ function helgetekst(dato: string): string {
 // Hvis man går inn på siden på en lørdag eller søndag, mangler den første dagen teams.
 function finnTeamnavn(days: Day[]): string[] {
     return days.find((day) => day.teams !== undefined)?.teams?.map((team) => team.team) ?? []
+}
+
+function nesteRedTeamDag(days: Day[], dagIndeks: number): Day | undefined {
+    return days.slice(dagIndeks + 1).find((day) => day.teams !== undefined)
 }
 
 function App() {
@@ -50,6 +54,24 @@ function App() {
         ])
     }
 
+    function kopierTilNesteDag(dagIndeks: number) {
+        if (!kalender) return
+        const dag = kalender.days[dagIndeks]
+        const nesteDag = nesteRedTeamDag(kalender.days, dagIndeks)
+        if (!dag.teams || !nesteDag?.teams) return
+        const kopierte = nesteDag.teams.flatMap((nesteDayTeam) => {
+            const dayTeam = dag.teams?.find((it) => it.team === nesteDayTeam.team)
+            if (!dayTeam) return []
+            return [{ date: nesteDag.date, team: nesteDayTeam.team, redteamMembers: valgteMedlemmer(dag.date, dayTeam) }]
+        })
+        setOverstyringer([
+            ...overstyringer.filter(
+                (it) => it.date !== nesteDag.date || !kopierte.some((kopiert) => kopiert.team === it.team),
+            ),
+            ...kopierte,
+        ])
+    }
+
     async function lagre() {
         setLagrer(true)
         try {
@@ -84,10 +106,13 @@ function App() {
                                             {navn}
                                         </Table.HeaderCell>
                                     ))}
+                                    <Table.HeaderCell scope="col">
+                                        <VisuallyHidden>Kopier</VisuallyHidden>
+                                    </Table.HeaderCell>
                                 </Table.Row>
                             </Table.Header>
                             <Table.Body>
-                                {kalender.days.map((day) => (
+                                {kalender.days.map((day, dagIndeks) => (
                                     <Table.Row key={day.date}>
                                         <Table.HeaderCell scope="row">{day.date}</Table.HeaderCell>
                                         {day.teams ? (
@@ -115,6 +140,18 @@ function App() {
                                                 {helgetekst(day.date)}
                                             </Table.DataCell>
                                         )}
+                                        <Table.DataCell>
+                                            {day.teams && nesteRedTeamDag(kalender.days, dagIndeks) && (
+                                                <Button
+                                                    variant="tertiary"
+                                                    size="small"
+                                                    aria-label={`Kopier til neste dag fra ${day.date}`}
+                                                    onClick={() => kopierTilNesteDag(dagIndeks)}
+                                                >
+                                                    Kopier til neste dag
+                                                </Button>
+                                            )}
+                                        </Table.DataCell>
                                     </Table.Row>
                                 ))}
                             </Table.Body>

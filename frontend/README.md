@@ -1,7 +1,9 @@
 # Red team-frontend
 
 React-app (Vite og TypeScript) som viser hvem som har red team de neste 14 dagene. Du kan overstyre
-hvem som har red team for et team en gitt dag. UI-komponentene er fra [Aksel](https://aksel.nav.no).
+hvem som har red team for et team en gitt dag. Med «Kopier til neste dag» kopierer du red team for alle
+teamene fra én dag til neste red team-dag. Helger og helligdager hoppes over. UI-komponentene er fra
+[Aksel](https://aksel.nav.no).
 
 Ktor bygger ikke frontenden selv, men serverer de ferdigbygde filene fra jaren på samme origin som
 API-et. Se `processResources` i `build.gradle.kts` og `configureRouting` i `Application.kt`.
