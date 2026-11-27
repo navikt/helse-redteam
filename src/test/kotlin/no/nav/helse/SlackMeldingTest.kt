@@ -1,15 +1,16 @@
 package no.nav.helse
 
+import no.nav.helse.slack.memeMessages
 import no.nav.helse.slack.tulleMessages
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class SlackMeldingTest {
     @Test
-    fun `riktig formatering`() {
-        val forventet = ":wave: Morning :hehege: <@ABCDEFGHIJK>. Har du lest slack i 15 min i dag? Kan du fortelle mer om det?"
-        val id = "ABCDEFGHIJK"
-        val melding = tulleMessages.first()("<@$id>")
-        assertEquals(forventet, melding)
+    fun `alle tulle- og mememeldinger nevner personen`() {
+        val person = "<@ABCDEFGHIJK>"
+        (tulleMessages + memeMessages).forEach { melding ->
+            assertTrue(person in melding(person))
+        }
     }
 }

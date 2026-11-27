@@ -57,7 +57,7 @@ class RedTeamSlack(
                 .shuffled()
                 .take(2)
         siNoeTull(tulleMessages.shuffled().first()("<@${kandidater.last()}>"))
-        siNoeTull(":wave: Morning <@${kandidater.first()}>. Kan ikke du starte meme-ballet med noe lættis denne fredagen?")
+        siNoeTull(memeMessages.shuffled().first()("<@${kandidater.first()}>"))
     }
 
     private fun siNoeTull(fjas: String) {
@@ -102,15 +102,23 @@ private val tulleFolk =
 
 internal val tulleMessages: List<(person: String) -> String> =
     listOf(
-        { ":wave: Morning :hehege: $it. Har du lest slack i 15 min i dag? Kan du fortelle mer om det?" },
-        { ":wave: Morning :explodinghead: $it. Kan ikke du starte dagen med en motiverende tale? Det tror jeg mange setter pris på!" },
-        { ":wave: Morning $it. Hva er din definisjon av en sak?" },
-        { ":wave: Morning $it. Når synes du det er nytt skjæringstidspunkt og vi trenger ny inntektsmelding? :thinking-ass:" },
-        { ":wave: Morning $it. Hvordan går det med dine nyttårsforsetter? :pepe-giggles:" },
-        { ":wave: Morning :ffingerguns: $it. Nå er det snart helg!!! Kan du komme med et par tips til hva dine kolleger kan gjøre i helgen?" },
-        { ":wave: G'day mate :pirate: $it. Er du en ja-kopp eller en nei-kopp i dag?" },
-        { ":wave: God morgen, $it :excited:! Du som er så god i det meste, kan du lære oss noe kult?" },
-        { ":wave: Må itj fårrå nålles, $it :happymarty:! Men del gjerne med oss dagens trønderord og hvorfor det er turan som tælle?" },
-        { ":wave: Heisann $it :maxi-jam:! Har du tenkt på noen spennende nøtter i det siste? :maxi-nut-cracker: :maxi-excited:" },
-        { ":wave: Hællæ, $it :christian-king:! På tide med noen Halden-fæcts, kan du nevne tre ting som er bedre i Halden?" },
+        { ":wave: God fredag, $it! Hvis uka di var en av appene våre, hvilken ville det vært? Spleis, Spesialist, Spøkelse eller noe helt annet? Begrunn gjerne :thinking-ass:" },
+        { ":wave: Morning $it :ffingerguns: Oppsummer uka di som en commit-melding med gitmoji. Eksempel: «:fire: Fjerner alle møter»" },
+        { ":wave: Hei $it! Beskriv uka di med tre emojier, så gjetter vi andre hva som skjedde :pepe-giggles:" },
+        { ":wave: God morgen $it! Vi trenger en ny app. Finn på navnet og hva den gjør. Eneste regel: navnet må begynne med «sp» :rocket:" },
+        { ":wave: Hallo $it! Arbeidsgiverperioden er 16 dager. Hvor lang er din personlige oppstartsperiode før hjernen er på jobb om morgenen? :coffee:" },
+        { ":wave: Morning $it :sloth: Hvis denne uka var et dyr, hvilket dyr ville det vært?" },
+        { ":wave: God fredag $it! Når er skjæringstidspunktet for helgen din? Kl. 15:00, eller er du der allerede? :thinking-ass:" },
+        { ":wave: Hei $it :excited: Du har fått 6G å bruke på helgen. Hva gjør du med pengene? :moneybag:" },
+        { ":wave: Morning $it! To sannheter og én løgn om deg. Vi gjetter i tråden :male-detective:" },
+        { ":wave: Hei $it :jammin_squirtle: Hvilken sang har gått på repeat hos deg denne uka? Lenke i tråden, takk!" },
+        { ":wave: Morning $it :pirate: Hva er ukas lille seier? Alt teller." },
+        { ":wave: Hei $it :small_airplane: Hva er det rareste du har fått spørsmål om som red team? Anonymiser gjerne :shushing_face:" },
+        { ":wave: God fredag $it :yum: Hva er det beste du har spist denne uka?" },
+    )
+
+internal val memeMessages: List<(person: String) -> String> =
+    listOf(
+        { ":wave: Fredagsmeme! $it åpner: del den beste memen du har sett denne uka. Den trenger ikke handle om jobb. Alle andre fyller på i tråden :ffingerguns:" },
+        { ":wave: GIF-fredag! $it starter med en GIF som beskriver uka. Alle andre svarer med en GIF tilbake :pepe-giggles:" },
     )
